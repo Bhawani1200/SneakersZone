@@ -42,6 +42,7 @@ const NewLaunches = () => {
           </button>
 
           <button
+          
             onClick={() => scroll(1)}
             aria-label="Next launches"
             className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 backdrop-blur-md border border-black/10 flex items-center justify-center text-gray-800 shadow-xl hover:bg-black/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"

@@ -5,8 +5,10 @@ import ProductSidebar from "../products/ProductSidebar";
 import Features from "../Info/Features";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
-import Offer from "../Info/Offer";
-import Shop from "../shopInfo/Shop";
+import ImageGallery from "../Gallery/ImageGallery";
+import Marketing from "../Info/Marketing";
+import Offer from "../Offer/Offer";
+// import Shop from "../shopInfo/Shop";
 
 const Home = () => {
   return (
@@ -17,8 +19,10 @@ const Home = () => {
       <ProductsLayout />
       <ProductSidebar />
       <Features />
+      <Marketing />
+      {/* <Shop /> */}
+      <ImageGallery />
       <Offer />
-      <Shop />
     </div>
   );
 };

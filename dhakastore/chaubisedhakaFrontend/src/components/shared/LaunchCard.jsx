@@ -54,23 +54,29 @@ const LaunchCard = ({
   const nextColor = () =>
     setColorIndex((i) => (i + 1) % colors.length);
 
+  const handleCardClick = () => {
+    // navigation is handled by Link; this is just a placeholder
+  };
+
   return (
-    <div className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative">
+    <Link
+      to={`/product/${productId}`}
+      onClick={handleCardClick}
+      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
+    >
       {/* New Badge */}
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
         New
       </span>
 
       {/* Product Image */}
-      <Link to={`/product/${productId}`} className="block">
-        <div className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden">
-          <img
-            src={image}
-            alt={productName}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-      </Link>
+      <div className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden">
+        <img
+          src={image}
+          alt={productName}
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </div>
 
       {/* Card Body */}
       <div className="p-4 sm:p-5 xl:p-6 flex flex-col gap-2.5 xl:gap-4 flex-1">
@@ -128,11 +134,9 @@ const LaunchCard = ({
         )}
 
         {/* Product Name */}
-        <Link to={`/product/${productId}`}>
-          <p className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-1 hover:underline underline-offset-4">
-            {productName}
-          </p>
-        </Link>
+        <p className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-1 hover:underline underline-offset-4">
+          {productName}
+        </p>
 
         {/* Price Row */}
         <div className="flex items-baseline gap-2 xl:gap-3 flex-wrap">
@@ -155,7 +159,11 @@ const LaunchCard = ({
 
         {/* Add To Cart */}
         <button
-          onClick={addToCartHandler}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addToCartHandler();
+          }}
           disabled={!isAvailable}
           className={`mt-auto w-full flex items-center justify-center gap-2 py-2.5 xl:py-4 rounded-lg text-sm xl:text-base 2xl:text-lg font-semibold transition-colors duration-200 ${
             isAvailable
@@ -167,7 +175,7 @@ const LaunchCard = ({
           {isAvailable ? "Add to Cart" : "Stock Out"}
         </button>
       </div>
-    </div>
+    </Link>
   );
 };
 

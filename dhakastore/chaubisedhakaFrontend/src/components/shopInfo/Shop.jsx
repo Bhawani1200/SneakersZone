@@ -14,14 +14,6 @@ const Shop = () => {
               alt="Premium Shoe Store Interior"
               className="w-full h-full object-cover"
             />
-            {/* Overlay with logo - Optional, based on image */}
-            <div className="absolute inset-0 bg-black/5 flex flex-col items-center justify-center pointer-events-none">
-              <div className="bg-white/90 backdrop-blur-sm p-4 md:p-6 rounded-2xl shadow-lg border border-white/20">
-                <h3 className="text-xl md:text-2xl font-black text-gray-900 tracking-tighter uppercase italic">
-                  Chaubise<span className="text-amber-600">Dhaka</span>
-                </h3>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: Store Info Card */}
