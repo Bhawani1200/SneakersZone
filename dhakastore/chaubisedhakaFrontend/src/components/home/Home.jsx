@@ -5,7 +5,7 @@ import ProductSidebar from "../products/ProductSidebar";
 import Features from "../Info/Features";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
-import ImageGallery from "../Gallery/ImageGallery";
+
 import Marketing from "../Info/Marketing";
 import Offer from "../Offer/Offer";
 // import Shop from "../shopInfo/Shop";
@@ -21,7 +21,7 @@ const Home = () => {
       <Features />
       <Marketing />
       {/* <Shop /> */}
-      <ImageGallery />
+      {/* <ImageGallery /> */}
       <Offer />
     </div>
   );

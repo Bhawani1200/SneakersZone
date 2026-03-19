@@ -19,6 +19,7 @@ import axios from "axios";
 import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
+import Footer from "./components/Footer/Footer";
 
 const MyContext = createContext();
 function App() {
@@ -71,6 +72,7 @@ function App() {
               </Route>
             </Route>
           </Routes>
+          <Footer />
         </Router>
         <Toaster position="top-center" />
       </MyContext.Provider>
