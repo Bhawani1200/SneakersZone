@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -25,6 +25,19 @@ const Navigation = () => {
   });
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (accountRef.current && !accountRef.current.contains(event.target)) {
+        setAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Set target date for the sale (example: 5 days from now)
@@ -130,21 +143,61 @@ const Navigation = () => {
           </div>
 
           {/* Account */}
-          {user && user.id ? (
-            <div className="hidden sm:flex items-center justify-center">
-              <UserMenu />
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="hidden sm:flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group"
-            >
-              <FiUser className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
-              <span className="text-[11px] xl:text-xs mt-1.5 font-semibold tracking-wider">
-                ACCOUNT
-              </span>
-            </Link>
-          )}
+          <div className="relative" ref={accountRef}>
+            {user && user.id ? (
+              <div className="hidden sm:flex items-center justify-center h-full">
+                <UserMenu />
+              </div>
+            ) : (
+              <React.Fragment>
+                <div
+                  onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                  className="hidden sm:flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group"
+                >
+                  <div className="flex items-center gap-0.5">
+                    <FiUser className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
+                    <FiChevronDown
+                      className={`text-sm transition-transform duration-300 ${accountMenuOpen ? "rotate-180" : ""}`}
+                    />
+                  </div>
+                  <span className="text-[11px] xl:text-xs mt-1.5 font-semibold tracking-wider uppercase">
+                    ACCOUNT
+                  </span>
+                </div>
+
+                {/* Dropdown Card for Logged Out */}
+                {accountMenuOpen && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 py-2 z-[60] overflow-hidden transform origin-top-right transition-all animate-in fade-in zoom-in duration-200">
+                    <Link
+                      to="/login"
+                      onClick={() => setAccountMenuOpen(false)}
+                      className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
+                    >
+                      <FiUser className="mr-3 text-lg" /> Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setAccountMenuOpen(false)}
+                      className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors border-t border-gray-50"
+                    >
+                      <FiUser
+                        className="mr-3 text-lg rotate-180"
+                        style={{ transform: "scaleX(-1)" }}
+                      />{" "}
+                      Register
+                    </Link>
+                    <Link
+                      to="/cart"
+                      onClick={() => setAccountMenuOpen(false)}
+                      className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-black transition-colors border-t border-gray-50"
+                    >
+                      <FiShoppingCart className="mr-3 text-lg" /> Cart
+                    </Link>
+                  </div>
+                )}
+              </React.Fragment>
+            )}
+          </div>
 
           {/* Cart */}
           <Link

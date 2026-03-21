@@ -8,16 +8,14 @@ const CATEGORIES = [
     label: "MEN",
     description: "Explore performance-ready styles for him.",
     bg: "from-slate-900 via-slate-800 to-slate-700",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
+    image: "https://images.pexels.com/photos/4313491/pexels-photo-4313491.jpeg",
   },
   {
     key: "women",
     label: "WOMEN",
     description: "Discover bold and versatile looks for her.",
     bg: "from-indigo-800 via-indigo-600 to-purple-500",
-    image:
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80",
+    image: "https://images.pexels.com/photos/3214308/pexels-photo-3214308.jpeg",
   },
   {
     key: "kids",
@@ -25,23 +23,21 @@ const CATEGORIES = [
     description: "Fun, colorful comfort for little feet.",
     bg: "from-amber-400 via-yellow-300 to-orange-400",
     image:
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&q=80",
+      "https://images.pexels.com/photos/29283077/pexels-photo-29283077.jpeg",
   },
   {
     key: "unisex",
     label: "UNISEX",
     description: "Clean silhouettes for every wardrobe.",
     bg: "from-emerald-700 via-emerald-600 to-teal-500",
-    image:
-      "https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=800&q=80",
+    image: "https://images.pexels.com/photos/6213961/pexels-photo-6213961.jpeg",
   },
   {
     key: "cleaners",
     label: "CLEANERS",
     description: "Keep your collection fresh and spotless.",
     bg: "from-neutral-800 via-neutral-700 to-neutral-600",
-    image:
-      "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=800&q=80",
+    image: "https://images.pexels.com/photos/7500608/pexels-photo-7500608.jpeg",
   },
 ];
 
