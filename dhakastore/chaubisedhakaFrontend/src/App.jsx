@@ -20,6 +20,7 @@ import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
 import Footer from "./components/Footer/Footer";
+import MainLayout from "./components/layout/MainLayout";
 
 const MyContext = createContext();
 function App() {
@@ -44,19 +45,19 @@ function App() {
     <React.Fragment>
       <MyContext.Provider value={values}>
         <Router>
-          <Navigation />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/cart" element={<Cart />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/cart" element={<Cart />} />
 
-            <Route path="/" element={<PrivateRoute />}>
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/" element={<PrivateRoute />}>
+                <Route path="/checkout" element={<Checkout />} />
+              </Route>
             </Route>
-
             {/* PrivateRoute added */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -72,7 +73,6 @@ function App() {
               </Route>
             </Route>
           </Routes>
-          <Footer />
         </Router>
         <Toaster position="top-center" />
       </MyContext.Provider>

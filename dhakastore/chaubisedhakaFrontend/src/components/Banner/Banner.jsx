@@ -9,7 +9,7 @@ import {
   bannerImgTwo,
   bannerImgThree,
   bannerImgFour,
-  bannerImgFive
+  bannerImgFive,
 } from "../../assets/images";
 
 import Image from "../designLayouts/Image";
@@ -63,7 +63,18 @@ const Banner = () => {
           zIndex: 20,
         }}
       >
-        <ul style={{ margin: "0px", padding: "0px", display: "flex", alignItems: "center", gap: "8px" }}> {dots} </ul>
+        <ul
+          style={{
+            margin: "0px",
+            padding: "0px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          {" "}
+          {dots}{" "}
+        </ul>
       </div>
     ),
     customPaging: (i) => (
@@ -84,59 +95,81 @@ const Banner = () => {
   return (
     <div className="w-full relative bg-black h-[600px] md:h-[800px] overflow-hidden group">
       <Slider ref={sliderRef} {...settings} className="h-full">
-        <Link to="/offer" className="block h-full outline-none">
-          <div className="h-[600px] md:h-[800px] w-full">
-            <Image imgSrc={bannerImgOne} className="w-full h-full object-cover opacity-80" />
+        {[
+          {
+            img: bannerImgOne,
+            title: "AIR MAX 95",
+            titleColor: "text-white",
+            subtitle: "Above the Influence",
+            subtitleColor: "text-gray-300",
+          },
+          {
+            img: bannerImgTwo,
+            title: "RUN REVOLUTION",
+            titleColor: "text-cyan-400",
+            subtitle: "Experience True Speed",
+            subtitleColor: "text-cyan-100",
+          },
+          {
+            img: bannerImgThree,
+            title: "STREET STYLE",
+            titleColor: "text-amber-400",
+            subtitle: "Define Your Own Rules",
+            subtitleColor: "text-amber-100",
+          },
+          {
+            img: bannerImgFour,
+            title: "COMFORT REDEFINED",
+            titleColor: "text-pink-500",
+            subtitle: "Step Into The Future",
+            subtitleColor: "text-pink-200",
+          },
+          {
+            img: bannerImgFive,
+            title: "LIMITED EDITION",
+            titleColor: "text-emerald-400",
+            subtitle: "Exclusive Drops Weekly",
+            subtitleColor: "text-emerald-100",
+          },
+        ].map((slide, index) => (
+          <div
+            key={index}
+            className="outline-none relative h-[600px] md:h-[800px] w-full"
+          >
+            <Image
+              imgSrc={slide.img}
+              className="w-full h-full object-cover opacity-80"
+            />
+
+            {/* Overlay Content for this specific slide */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4">
+              <h1
+                className={`${slide.titleColor} text-6xl sm:text-7xl md:text-[140px] font-black uppercase tracking-tighter text-center leading-[0.9] transition-colors duration-500`}
+                style={{ textShadow: "0 8px 16px rgba(0,0,0,0.6)" }}
+              >
+                {slide.title}
+              </h1>
+              <p
+                className={`${slide.subtitleColor} text-base sm:text-lg md:text-3xl font-bold mt-4 text-center tracking-wide transition-colors duration-500`}
+                style={{ textShadow: "0 4px 8px rgba(0,0,0,0.6)" }}
+              >
+                {slide.subtitle}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 mt-8 pointer-events-auto">
+                <Link to="/products">
+                  <button className="bg-white text-black px-8 py-3 rounded-full font-bold text-base hover:bg-gray-200 transition">
+                    Shop
+                  </button>
+                </Link>
+                <button className="bg-white text-black px-8 py-3 rounded-full font-bold text-base flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+                  Watch <FaPlay className="text-xs" />
+                </button>
+              </div>
+            </div>
           </div>
-        </Link>
-        <Link to="/offer" className="block h-full outline-none">
-          <div className="h-[600px] md:h-[800px] w-full">
-            <Image imgSrc={bannerImgTwo} className="w-full h-full object-cover opacity-80" />
-          </div>
-        </Link>
-        <Link to="/offer" className="block h-full outline-none">
-          <div className="h-[600px] md:h-[800px] w-full">
-            <Image imgSrc={bannerImgThree} className="w-full h-full object-cover opacity-80" />
-          </div>
-        </Link>
-        <Link to="/offer" className="block h-full outline-none">
-          <div className="h-[600px] md:h-[800px] w-full">
-            <Image imgSrc={bannerImgFour} className="w-full h-full object-cover opacity-80" />
-          </div>
-        </Link>
-        <Link to="/offer" className="block h-full outline-none">
-          <div className="h-[600px] md:h-[800px] w-full">
-            <Image imgSrc={bannerImgFive} className="w-full h-full object-cover opacity-80" />
-          </div>
-        </Link>
+        ))}
       </Slider>
-
-      {/* Overlay Content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 px-4">
-        <h1
-          className="text-white text-6xl sm:text-7xl md:text-[140px] font-black uppercase tracking-tighter text-center leading-[0.9]"
-          style={{ textShadow: "0 4px 12px rgba(0,0,0,0.4)" }}
-        >
-          AIR MAX 95
-        </h1>
-        <p
-          className="text-white text-base sm:text-lg md:text-2xl font-semibold mt-4 text-center"
-          style={{ textShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
-        >
-          Above the Influence
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 mt-8 pointer-events-auto">
-          <Link to="/shop">
-            <button className="bg-white text-black px-8 py-3 rounded-full font-bold text-base hover:bg-gray-200 transition">
-              Shop
-            </button>
-          </Link>
-          <button className="bg-white text-black px-8 py-3 rounded-full font-bold text-base flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-            Watch <FaPlay className="text-xs" />
-          </button>
-        </div>
-      </div>
 
       {/* Bottom Right Controls */}
       <div className="absolute bottom-8 right-8 flex gap-3 z-20 pointer-events-auto">

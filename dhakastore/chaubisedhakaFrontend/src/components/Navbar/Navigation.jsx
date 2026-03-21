@@ -9,9 +9,10 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiMenu,
-  FiX
+  FiX,
 } from "react-icons/fi";
 import { MdStorefront } from "react-icons/md";
+import UserMenu from "../UserMenu";
 
 const Navigation = () => {
   const user = useSelector((state) => state.auth?.user);
@@ -76,20 +77,24 @@ const Navigation = () => {
       <div className="w-full bg-[#5A0000] text-[#D1D1D1] text-xs sm:text-sm md:text-base py-2 md:py-2.5 flex justify-start items-center z-10 overflow-hidden">
         <div className="w-full whitespace-nowrap">
           <span className="font-medium tracking-wider inline-block animate-marquee">
-            Get EXTRA 10% OFF On Orders Above रु1299* Code: CAM10 | Get EXTRA 15% OFF On Orders Above रु1999* Code: CAM15
+            Get EXTRA 10% OFF On Orders Above रु1299* Code: CAM10 | Get EXTRA
+            15% OFF On Orders Above रु1999* Code: CAM15
           </span>
         </div>
       </div>
 
       {/* Main Navbar */}
       <div className="w-full bg-[#f8f8f8] border-b border-gray-200 px-4 xl:px-12 py-3 flex justify-between items-center h-[80px] md:h-[90px] xl:h-[100px] sticky top-0 z-50">
-
         {/* Mobile Hamburger Menu Icon */}
         <div
           className="lg:hidden flex items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 mr-4"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          {mobileMenuOpen ? <FiX className="text-3xl" /> : <FiMenu className="text-3xl" />}
+          {mobileMenuOpen ? (
+            <FiX className="text-3xl" />
+          ) : (
+            <FiMenu className="text-3xl" />
+          )}
         </div>
 
         {/* Logo */}
@@ -125,15 +130,15 @@ const Navigation = () => {
           </div>
 
           {/* Account */}
-          {user ? (
-            <Link to="/login" className="hidden sm:flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group">
-              <FiUser className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
-              <span className="text-[11px] xl:text-xs mt-1.5 font-semibold tracking-wider uppercase">
-                {user?.firstName || user?.name || "PROFILE"}
-              </span>
-            </Link>
+          {user && user.id ? (
+            <div className="hidden sm:flex items-center justify-center">
+              <UserMenu />
+            </div>
           ) : (
-            <Link to="/login" className="hidden sm:flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group">
+            <Link
+              to="/login"
+              className="hidden sm:flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group"
+            >
               <FiUser className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
               <span className="text-[11px] xl:text-xs mt-1.5 font-semibold tracking-wider">
                 ACCOUNT
@@ -142,7 +147,10 @@ const Navigation = () => {
           )}
 
           {/* Cart */}
-          <Link to="/cart" className="flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group relative">
+          <Link
+            to="/cart"
+            className="flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group relative"
+          >
             <FiShoppingCart className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
             {/* Optional badge indicator */}
             <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
@@ -174,27 +182,31 @@ const Navigation = () => {
           <MobileNavItem title="OFFERS" />
 
           <div className="mt-4 bg-gray-50 p-4 border-t border-gray-100 grid grid-cols-2 gap-4">
-               {user ? (
-                 <Link to="/login" 
-                   onClick={() => setMobileMenuOpen(false)}
-                   className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
-                 >
-                   <FiUser className="text-lg" /> {user?.firstName || user?.name || "Profile"}
-                 </Link>
-               ) : (
-                 <Link to="/login" 
-                   onClick={() => setMobileMenuOpen(false)}
-                   className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
-                 >
-                   <FiUser className="text-lg" /> Account
-                 </Link>
-               )}
-               <Link to="/stores" 
-                 onClick={() => setMobileMenuOpen(false)}
-                 className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
-               >
-                 <MdStorefront className="text-lg" /> Stores
-               </Link>
+            {user ? (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
+              >
+                <FiUser className="text-lg" />{" "}
+                {user?.firstName || user?.name || "Profile"}
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
+              >
+                <FiUser className="text-lg" /> Account
+              </Link>
+            )}
+            <Link
+              to="/stores"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-base font-medium text-gray-700 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-md bg-white"
+            >
+              <MdStorefront className="text-lg" /> Stores
+            </Link>
           </div>
         </div>
       )}
@@ -204,7 +216,9 @@ const Navigation = () => {
 
 const TimerBlock = ({ value, label }) => (
   <div className="bg-white text-black flex flex-col items-center justify-center w-[40px] sm:w-[46px] h-[44px] sm:h-[50px] rounded-sm shadow-sm md:shadow-md">
-    <span className="font-bold text-base sm:text-lg md:text-xl leading-tight md:leading-none md:mb-0.5">{value}</span>
+    <span className="font-bold text-base sm:text-lg md:text-xl leading-tight md:leading-none md:mb-0.5">
+      {value}
+    </span>
     <span className="text-[10px] md:text-xs uppercase leading-none text-gray-500 font-bold tracking-wider">
       {label}
     </span>
