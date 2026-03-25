@@ -18,7 +18,7 @@ const PaginationForProduct = ({ numberOfPage, totalProducts }) => {
   };
 
   return (
-    <PaginationForProduct
+    <Pagination
       count={numberOfPage}
       page={paramValue}
       defaultPage={10}

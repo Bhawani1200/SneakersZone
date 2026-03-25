@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/cloudinary/upload")
+@RequestMapping("/admin/cloudinary/upload")
 public class CloudinaryImageUploadController {
 
     @Autowired

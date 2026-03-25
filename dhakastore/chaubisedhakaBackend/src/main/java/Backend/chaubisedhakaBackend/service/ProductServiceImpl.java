@@ -1,15 +1,10 @@
 package Backend.chaubisedhakaBackend.service;
 
-import Backend.chaubisedhakaBackend.model.Cart;
-import Backend.chaubisedhakaBackend.model.User;
+import Backend.chaubisedhakaBackend.model.*;
 import Backend.chaubisedhakaBackend.payload.CartDTO;
-import Backend.chaubisedhakaBackend.repositories.CartRepository;
-import Backend.chaubisedhakaBackend.repositories.CategoryRepository;
-import Backend.chaubisedhakaBackend.repositories.ProductRepository;
+import Backend.chaubisedhakaBackend.repositories.*;
 import Backend.chaubisedhakaBackend.exceptions.APIException;
 import Backend.chaubisedhakaBackend.exceptions.ResourceNotFoundException;
-import Backend.chaubisedhakaBackend.model.Category;
-import Backend.chaubisedhakaBackend.model.Product;
 import Backend.chaubisedhakaBackend.payload.ProductDTO;
 import Backend.chaubisedhakaBackend.payload.ProductResponse;
 import Backend.chaubisedhakaBackend.util.AuthUtil;
@@ -26,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +38,15 @@ public class ProductServiceImpl implements ProductService{
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private CloudinaryImageService cloudinaryImageService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -211,21 +216,53 @@ public class ProductServiceImpl implements ProductService{
     }
 
     private String constructImageUrl(String imageName){
-        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
+        if (imageName != null && imageName.startsWith("http")) {
+            return imageName;
+        }
+//        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
+
+        return imageBaseUrl.endsWith("/")
+                ? imageBaseUrl + imageName
+                : imageBaseUrl + "/" + imageName;
     }
 
     @Override
     public ProductDTO deleteProduct(Long productId) {
-        Product product=productRepository.findById(productId)
-                .orElseThrow(()->new ResourceNotFoundException("Product","productId",productId));
+//        Product product=productRepository.findById(productId)
+//                .orElseThrow(()->new ResourceNotFoundException("Product","productId",productId));
+//
+//        List<Cart>carts=cartRepository.findCartsByProductId(productId);
+//
+//        carts.forEach(cart->cartService.deleteProductFromCart(cart.getCartId(),productId));
+//
+//        productRepository.delete(product);
+//
+//        return modelMapper.map(product,ProductDTO.class);
 
-        List<Cart>carts=cartRepository.findCartsByProductId(productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        carts.forEach(cart->cartService.deleteProductFromCart(cart.getCartId(),productId));
+        // Step 1 — Remove from carts
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
 
+        // Step 2 — Find orders that contain this product
+        List<Order> affectedOrders = orderItemRepository.findOrdersByProductId(productId);
+
+        // Step 3 — Delete order_items referencing this product
+        orderItemRepository.deleteByProductId(productId);
+
+        // Step 4 — Delete orders that now have no items
+        affectedOrders.forEach(order -> {
+            if (order.getOrderItems().isEmpty()) {
+                orderRepository.delete(order);
+            }
+        });
+
+        // Step 5 — Safe to delete product now
         productRepository.delete(product);
 
-        return modelMapper.map(product,ProductDTO.class);
+        return modelMapper.map(product, ProductDTO.class);
     }
 
     @Override
@@ -233,8 +270,15 @@ public class ProductServiceImpl implements ProductService{
         Product productFromDb=productRepository.findById(productId)
                 .orElseThrow(()->new ResourceNotFoundException("Product","productId",productId));
 
-        String fileName=fileService.uploadImage(path,image);
-        productFromDb.setImage(fileName);
+        Map uploadResult = cloudinaryImageService.upload(image);
+
+        String imageUrl = (String) uploadResult.get("secure_url");
+
+        productFromDb.setImage(imageUrl);
+
+//        String fileName=fileService.uploadImage(path,image);
+//        productFromDb.setImage(fileName);
+
         Product updatedProduct=productRepository.save(productFromDb);
         return modelMapper.map(updatedProduct,ProductDTO.class);
     }
