@@ -1,11 +1,58 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LaunchCard from "../shared/LaunchCard";
-import { LAUNCHES } from "../../constants/index";
+import api from "../../api/api";
 
 const NewLaunches = () => {
   const scrollRef = useRef(null);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // const fetchNewLaunches = async () => {
+    //   try {
+    //     const { data } = await api.get(
+    //       "/public/products?pageNumber=0&pageSize=10&sortBy=productId&sortOrder=desc",
+    //     );
+
+    //     // Ensure that Cloudinary URLs are not broken by the backend's default localhost prepending
+    //     const formattedProducts = (data.content || []).map((product) => {
+    //       let imgUrl = product.image;
+    //       if (imgUrl) {
+    //         // Find the last "http" to strip out "http://localhost:8080/images/" if appended
+    //         const urlStart = imgUrl.lastIndexOf("http");
+    //         if (urlStart > 0) {
+    //           imgUrl = imgUrl.substring(urlStart);
+    //         }
+    //       }
+    //       return { ...product, image: imgUrl };
+    //     });
+
+    //     setProducts(formattedProducts);
+    //   } catch (error) {
+    //     console.error("Failed to fetch new launches", error);
+    //   }
+    // };
+    const fetchNewLaunches = async () => {
+      try {
+        const { data } = await api.get(
+          "/public/products?pageNumber=0&pageSize=10&sortBy=productId&sortOrder=desc",
+        );
+
+        const formattedProducts = (data.content || []).map((product) => ({
+          ...product,
+          image: product.image?.startsWith("http")
+            ? product.image // Cloudinary full URL — use directly
+            : `http://localhost:8080/images/${product.image}`, // legacy local fallback
+        }));
+
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Failed to fetch new launches", error);
+      }
+    };
+    fetchNewLaunches();
+  }, []);
 
   const scroll = (dir) => {
     if (!scrollRef.current) return;
@@ -42,7 +89,6 @@ const NewLaunches = () => {
           </button>
 
           <button
-          
             onClick={() => scroll(1)}
             aria-label="Next launches"
             className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 backdrop-blur-md border border-black/10 flex items-center justify-center text-gray-800 shadow-xl hover:bg-black/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
@@ -71,25 +117,13 @@ const NewLaunches = () => {
             className="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {LAUNCHES.map((product) => (
+            {products.map((product, index) => (
               <div
-                key={product.id}
+                key={product.productId || index}
                 data-launch-card
                 className="flex-shrink-0 min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] lg:w-[calc(25%-18px)] snap-start"
               >
-                <LaunchCard
-                  productId={product.id}
-                  productName={product.productName}
-                  image={product.image}
-                  description={product.description}
-                  quantity={product.quantity}
-                  price={product.price}
-                  discount={product.discount}
-                  specialPrice={product.specialPrice}
-                  rating={product.rating}
-                  reviewCount={product.reviewCount}
-                  colors={product.colors}
-                />
+                <LaunchCard {...product} key={product.productId || index} />
               </div>
             ))}
           </div>
@@ -97,7 +131,7 @@ const NewLaunches = () => {
 
         {/* ── View All ── */}
         <div className="flex justify-center mt-8 md:mt-10">
-          <Link to="/shop">
+          <Link to="/products">
             <button className="flex items-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full border border-gray-800 text-gray-800 text-sm sm:text-base md:text-lg font-semibold hover:bg-gray-900 hover:text-white transition-colors duration-200">
               View All
               <ChevronRight size={18} />
