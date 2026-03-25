@@ -36,8 +36,8 @@ const LaunchCard = ({
           quantity,
         },
         1,
-        toast
-      )
+        toast,
+      ),
     );
   };
 
@@ -51,12 +51,9 @@ const LaunchCard = ({
 
   const prevColor = () =>
     setColorIndex((i) => (i - 1 + colors.length) % colors.length);
-  const nextColor = () =>
-    setColorIndex((i) => (i + 1) % colors.length);
+  const nextColor = () => setColorIndex((i) => (i + 1) % colors.length);
 
-  const handleCardClick = () => {
-    // navigation is handled by Link; this is just a placeholder
-  };
+  const handleCardClick = () => {};
 
   return (
     <Link
@@ -71,10 +68,19 @@ const LaunchCard = ({
 
       {/* Product Image */}
       <div className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden">
+        {/* <img
+          src={image}
+          alt={productName}
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+        /> */}
+
         <img
           src={image}
           alt={productName}
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          onError={(e) => {
+            e.target.src = "/placeholder-product.png"; // add a placeholder image in your public folder
+          }}
         />
       </div>
 
@@ -88,7 +94,9 @@ const LaunchCard = ({
               {rating}
             </span>
             {reviewCount && (
-              <span className="text-xs xl:text-sm text-gray-400">({reviewCount})</span>
+              <span className="text-xs xl:text-sm text-gray-400">
+                ({reviewCount})
+              </span>
             )}
           </div>
         )}
