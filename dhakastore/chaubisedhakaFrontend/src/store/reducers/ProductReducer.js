@@ -34,6 +34,12 @@ export const productReducer = (state = initialState, action) => {
         },
       };
 
+      case "FETCH_PRODUCT_DETAILS":
+      return {
+        ...state,
+        productDetails: action.payload,
+      };
+
     default:
       return state;
   }

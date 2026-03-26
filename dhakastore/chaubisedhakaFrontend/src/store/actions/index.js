@@ -41,9 +41,24 @@ export const fetchCategories = () => async (dispatch) => {
     dispatch({ type: "CATEGORY_SUCCESS" });
   } catch (error) {
     console.log(error);
+    dispatch({ type: "IS_ERROR", payload: error?.response?.data?.message || "Failed to fetch categories ", });
+  }
+};
+
+export const fetchProductById = (productId) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    const { data } = await api.get(`/public/products/${productId}`);
+    dispatch({
+      type: "FETCH_PRODUCT_DETAILS",
+      payload: data,
+    });
+    dispatch({ type: "IS_SUCCESS" });
+  } catch (error) {
+    console.log(error);
     dispatch({
       type: "IS_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch categories ",
+      payload: error?.response?.data?.message || "Failed to fetch product details",
     });
   }
 };

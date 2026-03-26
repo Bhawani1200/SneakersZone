@@ -20,18 +20,12 @@ const ProductCard = ({
   about = false,
   tag = "Best Seller",
 }) => {
-  const [openProductViewModal, setOpenProductViewModel] = useState(false);
-  const btnLoader = false;
-  const [selectedViewProduct, setSelectedViewProduct] = useState("");
   const isAvailable = quantity && Number(quantity) > 0;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleProductView = (product) => {
-    if (!about) {
-      setSelectedViewProduct(product);
-      setOpenProductViewModel(true);
-    }
+  const handleProductView = () => {
+    navigate(`/product/${productId}`);
   };
 
   const addToCartHandler = (cartItems) => {
@@ -122,7 +116,8 @@ const ProductCard = ({
           </div>
 
           <button
-            onClick={() =>
+            onClick={(e) => {
+              e.stopPropagation();
               addToCartHandler({
                 image,
                 productName,
@@ -131,25 +126,16 @@ const ProductCard = ({
                 productId,
                 price,
                 quantity,
-              })
-            }
-            disabled={!isAvailable || btnLoader}
+              });
+            }}
+            disabled={!isAvailable}
             className={`flex items-center gap-2 border border-gray-200 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 hover:bg-black hover:text-white hover:border-black disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <FiShoppingCart className="scale-110" />
-            <span className="hidden sm:inline">
-              <Link to="/checkout">Add to Cart</Link>
-            </span>
+            <span className="hidden sm:inline">Add to Cart</span>
           </button>
         </div>
       </div>
-
-      <ProductViewModal
-        open={openProductViewModal}
-        setOpen={setOpenProductViewModel}
-        product={selectedViewProduct}
-        isAvailable={isAvailable}
-      />
     </div>
   );
 };

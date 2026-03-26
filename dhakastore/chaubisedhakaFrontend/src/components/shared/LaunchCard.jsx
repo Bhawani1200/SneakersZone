@@ -58,10 +58,9 @@ const LaunchCard = ({
   const handleCardClick = () => {};
 
   return (
-    <Link
-      to={`/product/${productId}`}
-      onClick={handleCardClick}
-      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
+    <div
+      onClick={() => navigate(`/product/${productId}`)}
+      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative cursor-pointer"
     >
       {/* New Badge */}
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
@@ -185,7 +184,7 @@ const LaunchCard = ({
           {isAvailable ? "Add to Cart" : "Stock Out"}
         </button>
       </div>
-    </Link>
+    </div>
   );
 };
 

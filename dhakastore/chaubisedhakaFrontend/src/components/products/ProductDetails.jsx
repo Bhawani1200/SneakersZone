@@ -1,31 +1,30 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Star, ShoppingCart, Heart } from "lucide-react";
-import { LAUNCHES } from "../../constants/index";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../../store/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchProductById } from "../../store/actions";
 import toast from "react-hot-toast";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
+
+  const { product, isLoading, errorMessage } = useSelector((state) => ({
+    product: state.products.productDetails, // Assuming you add this to reducer
+    isLoading: state.errors.isLoading,
+    errorMessage: state.errors.errorMessage,
+  }));
+
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [selectedSize, setSelectedSize] = useState("41");
 
   useEffect(() => {
-    const foundProduct = LAUNCHES.find((p) => String(p.id) === String(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
-      setActiveImageIdx(0);
-      setSelectedSize("41");
-    } else {
-      setProduct(null);
+    if (id) {
+      dispatch(fetchProductById(id));
     }
-    // Scroll to top on load
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [id, dispatch]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -33,7 +32,7 @@ const ProductDetails = () => {
       addToCart(
         {
           ...product,
-          productId: product.id,
+          productId: product.productId || product.id,
         },
         1,
         toast,
@@ -186,10 +185,10 @@ const ProductDetails = () => {
               </div>
 
               <div className="mt-7 text-4xl font-semibold text-gray-900">
-                $
+                रु
                 {Number(
-                  product.specialPrice || product.price || 199,
-                ).toLocaleString("en-US", {
+                  product.specialPrice || product.price || 0,
+                ).toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
