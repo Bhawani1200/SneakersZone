@@ -27,7 +27,7 @@ const UpdateOrderForm = ({
   setLoader,
 }) => {
   const [orderStatus, setOrderStatus] = useState(
-    selectedItem?.status || "Accepted"
+    selectedItem?.status || "Accepted",
   );
   const [error, setError] = useState("");
   const dispatch = useDispatch();
@@ -47,8 +47,8 @@ const UpdateOrderForm = ({
         orderStatus,
         toast,
         setLoader,
-        isAdmin
-      )
+        isAdmin,
+      ),
     );
   };
   return (

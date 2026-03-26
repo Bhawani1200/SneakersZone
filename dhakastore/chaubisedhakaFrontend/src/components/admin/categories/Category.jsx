@@ -32,10 +32,9 @@ const Category = () => {
   const { categoryLoader, errorMessage } = useSelector((state) => state.errors);
   const { categories, pagination } = useSelector((state) => state.products);
   const [currentPage, setCurrentPage] = useState(
-    pagination?.pageNumber + 1 || 1
+    pagination?.pageNumber + 1 || 1,
   );
 
-  // Calling the `useCategoryFilter` custom hook to handle category fetching and pagination based on the current URL parameters.
   useCategoryFilter();
 
   const tableRecords = categories?.map((item) => ({
@@ -59,8 +58,8 @@ const Category = () => {
       deleteCategoryDashboardAction(
         setOpenDeleteModal,
         selectedCategory?.id,
-        toast
-      )
+        toast,
+      ),
     );
   };
 
@@ -69,7 +68,6 @@ const Category = () => {
     params.set("pageSize", pageSize.toString());
     navigate(`${pathname}?${params}`);
   };
-
 
   const emptyCategories = !categories || categories?.length === 0;
 
@@ -126,7 +124,6 @@ const Category = () => {
                   hideNextButton: currentPage === pagination?.totalPages,
                 }}
               />
-           
             </div>
           )}
         </>

@@ -386,7 +386,7 @@ export const updateOrderStatusFromDashboard =
         status: orderStatus,
       });
       toast.success(data.message || "Order updated successfully");
-      await dispatch(getOrdersForDashboard());
+      await dispatch(getOrdersForDashboard("", isAdmin));
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Internal Server Error");
@@ -638,5 +638,27 @@ export const addNewDashboardSeller =
     } finally {
       setLoader(false);
       setOpen(false);
+    }
+  };
+
+export const deleteOrderFromDashboard =
+  (orderId, toast, setLoader, setOpenDeleteModal, isAdmin) =>
+  async (dispatch) => {
+    try {
+      setLoader(true);
+      const endpoint = isAdmin ? "/admin/orders" : "/seller/orders";
+
+      await api.delete(`${endpoint}/${orderId}`);
+
+      toast.success("Order deleted successfully");
+
+      // re-fetch orders after deletion
+      await dispatch(getOrdersForDashboard("", isAdmin));
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Failed to delete order");
+    } finally {
+      setLoader(false);
+      setOpenDeleteModal(false);
     }
   };

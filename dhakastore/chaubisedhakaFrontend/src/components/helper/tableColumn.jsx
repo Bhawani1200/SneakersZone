@@ -5,7 +5,7 @@ export const adminProductTableColumn = (
   handleEdit,
   handleDelete,
   handleImageUpload,
-  handleProductView
+  handleProductView,
 ) => [
   {
     disableColumnMenu: true,
@@ -147,7 +147,7 @@ export const adminProductTableColumn = (
   },
 ];
 
-export const adminOrderTableColumn = (handleEdit) => [
+export const adminOrderTableColumn = (handleEdit, handleDelete) => [
   {
     sortable: false,
     disableColumnMenu: true,
@@ -229,6 +229,14 @@ export const adminOrderTableColumn = (handleEdit) => [
             <FaEdit className="mr-2" />
             Edit
           </button>
+
+          <button
+            onClick={() => handleDelete(params.row)}
+            className="flex items-center bg-red-500 text-white px-4 h-9 rounded-md "
+          >
+            <FaTrashAlt className="mr-2" />
+            Delete
+          </button>
         </div>
       );
     },
@@ -283,21 +291,11 @@ export const categoryTableColumns = (handleEdit, handleDelete) => [
             <FaEdit className="mr-2" />
             Edit
           </button>
-
-          {/* Delete Button */}
-          <button
-            onClick={() => handleDelete(params.row)}
-            className="flex items-center bg-red-500 text-white px-4   h-9 rounded-md"
-          >
-            <FaTrashAlt className="mr-2" />
-            Delete
-          </button>
         </div>
       );
     },
   },
 ];
-
 
 //table column for seller in admin panel
 export const sellerTableColumns = [

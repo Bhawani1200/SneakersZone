@@ -4,14 +4,24 @@ import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Modal from "../../shared/Modal";
 import UpdateOrderForm from "./UpdateOrderForm";
+import DeleteModal from "../../shared/DeleteModal";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteOrderFromDashboard } from "../../../store/actions";
+import toast from "react-hot-toast";
 
 const OrderTable = ({ adminOrder, pagination }) => {
   const [updateOpenModal, setUpdateOpenModal] = useState(false);
+  const [deleteOpenModal, setDeleteOpenModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+  const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
+
   const [currentPage, setCurrentPage] = useState(
-    pagination?.pageNumber + 1 || 1
+    pagination?.pageNumber + 1 || 1,
   );
 
   const [searchParams] = useSearchParams();
@@ -39,6 +49,23 @@ const OrderTable = ({ adminOrder, pagination }) => {
     setUpdateOpenModal(true);
   };
 
+  const handleDelete = (order) => {
+    setSelectedItem(order);
+    setDeleteOpenModal(true);
+  };
+
+  const confirmDelete = () => {
+    dispatch(
+      deleteOrderFromDashboard(
+        selectedItem.id,
+        toast,
+        setLoader,
+        setDeleteOpenModal,
+        isAdmin,
+      ),
+    );
+  };
+
   return (
     <div>
       <h1 className="text-slate-800 text-3xl text-center font-bold pb-6 uppercase">
@@ -49,7 +76,7 @@ const OrderTable = ({ adminOrder, pagination }) => {
         <DataGrid
           className="w-full"
           rows={tableRecords}
-          columns={adminOrderTableColumn(handleEdit)}
+          columns={adminOrderTableColumn(handleEdit, handleDelete)}
           paginationMode="server"
           rowCount={pagination?.totalElements || 0}
           paginationModel={{
@@ -83,6 +110,14 @@ const OrderTable = ({ adminOrder, pagination }) => {
           selectedItem={selectedItem}
         />
       </Modal>
+
+      <DeleteModal
+        open={deleteOpenModal}
+        loader={loader}
+        setOpen={setDeleteOpenModal}
+        title="Delete Order"
+        onDeleteHandler={confirmDelete}
+      />
     </div>
   );
 };
