@@ -9,6 +9,7 @@ import Backend.chaubisedhakaBackend.payload.OrderStatusUpdateDTO;
 import Backend.chaubisedhakaBackend.security.services.UserDetailsImpl;
 import Backend.chaubisedhakaBackend.service.OrderService;
 import Backend.chaubisedhakaBackend.util.AuthUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,13 @@ public class OrderController {
                 orderRequestDTO.getPgResponseMessage()
         );
         return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
+
+
+    @DeleteMapping("/admin/orders/{orderId}")
+    public ResponseEntity<String> deleteOrder(@PathVariable Long orderId) {
+        String status = orderService.deleteOrder(orderId);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @GetMapping("/admin/orders")

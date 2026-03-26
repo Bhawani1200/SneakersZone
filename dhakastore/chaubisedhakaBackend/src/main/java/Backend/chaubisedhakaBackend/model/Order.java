@@ -30,7 +30,7 @@ public class Order {
 
     private LocalDate orderDate;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name="payment_id")
     private Payment payment;
 

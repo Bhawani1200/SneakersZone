@@ -194,4 +194,14 @@ public class OrderServiceImpl implements OrderService{
         orderResponse.setLastPage(pageOrders.isLast());
         return orderResponse;
     }
+
+    @Override
+    @Transactional
+    public String deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+
+        orderRepository.delete(order);
+        return "Order with id " + orderId + " deleted successfully";
+    }
 }
