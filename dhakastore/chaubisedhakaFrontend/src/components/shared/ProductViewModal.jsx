@@ -9,7 +9,11 @@ import {
 import { Divider } from "@mui/material";
 import { useState } from "react";
 import Status from "./Status";
-import { MdClose, MdDone } from "react-icons/md";
+import { MdClose, MdDone, MdShoppingCart } from "react-icons/md";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { addToCart } from "../../store/actions";
+import toast from "react-hot-toast";
 
 function ProductViewModal({ open, setOpen, product, isAvailable }) {
   const {
@@ -22,6 +26,15 @@ function ProductViewModal({ open, setOpen, product, isAvailable }) {
     discount,
     specialPrice,
   } = product;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product, 1, toast));
+    setOpen(false);
+    navigate("/checkout");
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -92,6 +105,15 @@ function ProductViewModal({ open, setOpen, product, isAvailable }) {
               </div>
 
               <div className="px-6 py-4 flex justify-end gap-4">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!isAvailable}
+                  type="button"
+                  className="flex-1 px-4 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-black rounded-md flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  <MdShoppingCart className="text-lg" />
+                  Add to Cart
+                </button>
                 <button
                   onClick={() => setOpen(false)}
                   type="button"

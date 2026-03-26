@@ -28,7 +28,7 @@ const PrivateRoute = ({ publicPage = false, adminOnly = false }) => {
   }
 
 
-  if (!isAdmin && !isSeller) {
+  if (adminOnly && !isAdmin && !isSeller) {
     return <Navigate to="/" />;
   }
 

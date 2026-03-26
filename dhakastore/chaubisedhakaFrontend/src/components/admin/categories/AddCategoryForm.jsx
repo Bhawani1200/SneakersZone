@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { createCategoryDashboardAction, updateCategoryDashboardAction } from "../../../store/actions";
+import {
+  createCategoryDashboardAction,
+  updateCategoryDashboardAction,
+} from "../../../store/actions";
 import InputField from "../../shared/InputField";
-
 
 const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
   const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
     } else {
       //dispatch updateCategoryDashboardAction
       dispatch(
-        updateCategoryDashboardAction(data, setOpen, category.id, reset, toast)
+        updateCategoryDashboardAction(data, setOpen, category.id, reset, toast),
       );
     }
   };
@@ -55,19 +57,19 @@ const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
           />
         </div>
 
-        <div className="flex  w-full justify-between items-center absolute bottom-14">
+        <div className="flex w-full justify-between items-center pt-8 mt-4 border-t border-gray-100">
           <button
             disabled={open}
             onClick={() => setOpen(false)}
             type="button"
-            className={`border border-borderColor rounded-[5px] font-metropolis  text-textColor py-2.5 px-4 text-sm font-medium`}
+            className="border border-borderColor rounded-[5px] font-metropolis text-textColor py-2.5 px-6 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
           <button
             disabled={open}
             type="submit"
-            className={`font-metropolis rounded-[5px]  bg-blue-700 hover:bg-blue-800 text-white  py-2.5 px-4 text-sm font-medium`}
+            className="font-metropolis rounded-[5px] bg-blue-700 hover:bg-blue-800 text-white py-2.5 px-8 text-sm font-medium shadow-md transition-colors"
           >
             {open ? "Loading.." : update ? "Update" : "Save"}
           </button>

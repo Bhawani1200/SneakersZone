@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import ProductViewModal from "./ProductViewModal";
@@ -24,6 +25,7 @@ const ProductCard = ({
   const [selectedViewProduct, setSelectedViewProduct] = useState("");
   const isAvailable = quantity && Number(quantity) > 0;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleProductView = (product) => {
     if (!about) {
@@ -34,6 +36,7 @@ const ProductCard = ({
 
   const addToCartHandler = (cartItems) => {
     dispatch(addToCart(cartItems, 1, toast));
+    navigate("/checkout");
   };
 
   return (
@@ -134,7 +137,9 @@ const ProductCard = ({
             className={`flex items-center gap-2 border border-gray-200 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300 hover:bg-black hover:text-white hover:border-black disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <FiShoppingCart className="scale-110" />
-            <span className="hidden sm:inline">Add to Cart</span>
+            <span className="hidden sm:inline">
+              <Link to="/checkout">Add to Cart</Link>
+            </span>
           </button>
         </div>
       </div>

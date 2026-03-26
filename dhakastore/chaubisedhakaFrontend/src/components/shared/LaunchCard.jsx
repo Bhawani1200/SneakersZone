@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/actions";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LaunchCard = ({
   productId,
@@ -22,6 +22,7 @@ const LaunchCard = ({
   const [colorIndex, setColorIndex] = useState(0);
   const isAvailable = quantity && Number(quantity) > 0;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const addToCartHandler = () => {
     dispatch(
@@ -39,6 +40,7 @@ const LaunchCard = ({
         toast,
       ),
     );
+    navigate("/checkout");
   };
 
   const discountPct =

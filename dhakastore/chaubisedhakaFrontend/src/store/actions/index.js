@@ -51,12 +51,13 @@ export const fetchCategories = () => async (dispatch) => {
 export const addToCart =
   (data, qty = 1, toast) =>
   (dispatch, getState) => {
-    const { products } = getState().products;
-    const getProduct = products.find(
+    const { products } = getState().products; // ✅ get from state
+
+    const getProduct = products?.find(
       (item) => item.productId === data.productId
     );
 
-    const isQuantityExist = getProduct.quantity >= qty;
+    const isQuantityExist = getProduct ? getProduct.quantity >= qty : true;
 
     if (isQuantityExist) {
       dispatch({ type: "ADD_CART", payload: { ...data, quantity: qty } });
@@ -66,6 +67,25 @@ export const addToCart =
       toast.error("Out of stock");
     }
   };
+
+  
+// export const addToCart =
+//   (data, qty = 1, toast) =>
+//   (dispatch, getState) => {
+//     const getProduct = products?.find(
+//       (item) => item.productId === data.productId
+//     );
+
+//     const isQuantityExist = getProduct ? getProduct.quantity >= qty : true;
+
+//     if (isQuantityExist) {
+//       dispatch({ type: "ADD_CART", payload: { ...data, quantity: qty } });
+//       toast.success(`${data?.productName} added to cart successfully`);
+//       localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+//     } else {
+//       toast.error("Out of stock");
+//     }
+//   };
 
 // export const increaseCartQuantity =
 //   (data, toast, currentQuantity, setCurrentQuantity) =>

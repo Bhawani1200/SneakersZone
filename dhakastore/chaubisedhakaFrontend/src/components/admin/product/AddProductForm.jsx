@@ -24,7 +24,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
   const { user } = useSelector((state) => state.auth);
 
-  const isAdmin = user && user?.role?.includes("ROLE_ADMIN");
+  const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
 
   const { errorMessage, categoryLoader } = useSelector((state) => state.errors);
 
@@ -95,13 +95,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
     }
   }, [categories, categoryLoader]);
 
-  if (categoryLoader) {
-    return <Skeleton />;
-  }
-
-  if (errorMessage) {
-    return <ErrorPage />;
-  }
+  // Removed blocking global error/loader to ensure form visibility
+  // If categories are loading, SelectTextField will handle it or we can show a local spinner
 
   return (
     <div className="py-5 relative h-full">
@@ -123,7 +118,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
               label="Select Categories"
               select={selectedCategory}
               setSelect={setSelectedCategory}
-              lists={categories}
+              lists={categories || []}
+              loading={categoryLoader}
             />
           )}
         </div>
