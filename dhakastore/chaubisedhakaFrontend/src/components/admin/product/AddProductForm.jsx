@@ -51,8 +51,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           reset,
           setLoader,
           setOpen,
-          isAdmin
-        )
+          isAdmin,
+        ),
       );
     } else {
       const sendData = {
@@ -66,8 +66,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           toast,
           setLoader,
           setOpen,
-          isAdmin
-        )
+          isAdmin,
+        ),
       );
     }
   };
@@ -137,6 +137,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             placeholder="Product Price"
             register={register}
             errors={errors}
+            className="text-slate-800"
           />
 
           <InputField

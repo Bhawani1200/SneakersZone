@@ -20,12 +20,11 @@ const InputField = ({
     <div className="flex flex-col gap-1 w-full">
       <label
         htmlFor={id}
-        className={`${className ? className : ""} font-semibold text-sm text-white`}
+        className={`${className ? className : ""} font-semibold text-sm text-slate-800`}
       >
         {label}
       </label>
 
-      {/* container must be relative */}
       <div className="relative w-full">
         <input
           type={type}
@@ -33,7 +32,7 @@ const InputField = ({
           placeholder={placeholder}
           className={`
             ${className ? className : ""}
-            w-full px-2 py-2 pr-12 border bg-transparent rounded-md text-gray-200 outline-hidden
+            w-full px-2 py-2 pr-12 border bg-white rounded-md text-slate-800 outline-hidden
             ${errors[id]?.message ? "border-red-500" : "border-slate-700"}
           `}
           {...register(id, {
@@ -48,12 +47,12 @@ const InputField = ({
                     message: "Invalid email",
                   }
                 : type === "url"
-                ? {
-                    value:
-                      /^(https?:\/\/)?(([a-zA-Z0-9\u00a1-\uffff-]+\.)+[a-zA-Z\u00a1-\uffff]{2,})(:\d{2,5})?(\/[^\s]*)?$/,
-                    message: "Please enter a valid URL",
-                  }
-                : null,
+                  ? {
+                      value:
+                        /^(https?:\/\/)?(([a-zA-Z0-9\u00a1-\uffff-]+\.)+[a-zA-Z\u00a1-\uffff]{2,})(:\d{2,5})?(\/[^\s]*)?$/,
+                      message: "Please enter a valid URL",
+                    }
+                  : null,
           })}
         />
 
@@ -66,7 +65,6 @@ const InputField = ({
           </span>
         )}
       </div>
-
 
       {errors[id]?.message && (
         <p className="text-sm font-semibold mt-0 text-red-600">
