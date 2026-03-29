@@ -345,6 +345,12 @@ public class ProductServiceImpl implements ProductService{
         return productResponse;
     }
 
+    @Override
+    public ProductDTO getProductById(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+        return modelMapper.map(product, ProductDTO.class);
+    }
 
 
 }

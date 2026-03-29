@@ -2,9 +2,11 @@ package Backend.chaubisedhakaBackend.service;
 
 import Backend.chaubisedhakaBackend.exceptions.ResourceNotFoundException;
 import Backend.chaubisedhakaBackend.model.Address;
+import Backend.chaubisedhakaBackend.model.Order;
 import Backend.chaubisedhakaBackend.model.User;
 import Backend.chaubisedhakaBackend.payload.AddressDTO;
 import Backend.chaubisedhakaBackend.repositories.AddressRepository;
+import Backend.chaubisedhakaBackend.repositories.OrderRepository;
 import Backend.chaubisedhakaBackend.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class AddressServiceImpl implements AddressService{
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public AddressDTO createAddress(AddressDTO addressDTO, User user) {
@@ -86,6 +91,11 @@ public class AddressServiceImpl implements AddressService{
     public String deleteAddress(Long addressId) {
         Address addFromDatabase=addressRepository.findById(addressId)
                 .orElseThrow(()->new ResourceNotFoundException("Address","addressId",addressId));
+
+
+        List<Order> orders = orderRepository.findByAddress(addFromDatabase);
+        orders.forEach(order -> order.setAddress(null));
+        orderRepository.saveAll(orders);
 
         User user=addFromDatabase.getUser();
         user.getAddresses().removeIf(address -> address.getAddressId().equals(addressId));
