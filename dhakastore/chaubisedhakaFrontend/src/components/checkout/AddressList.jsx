@@ -104,6 +104,3 @@ const AddressList = ({
 };
 
 export default AddressList;
-
-
-

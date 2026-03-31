@@ -25,14 +25,19 @@ const ItemContent = ({
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
   const dispatch = useDispatch();
 
+  // Keep local quantity in sync with Redux state if it changes externally
+  React.useEffect(() => {
+    setCurrentQuantity(quantity);
+  }, [quantity]);
+
   const handleQtyIncrease = (cartItems) => {
     dispatch(
       increaseCartQuantity(
         cartItems,
         toast,
         currentQuantity,
-        setCurrentQuantity
-      )
+        setCurrentQuantity,
+      ),
     );
   };
 
@@ -124,4 +129,3 @@ const ItemContent = ({
 };
 
 export default ItemContent;
-

@@ -16,6 +16,7 @@ import UserMenu from "../UserMenu";
 
 const Navigation = () => {
   const user = useSelector((state) => state.auth?.user);
+  const { cart } = useSelector((state) => state.carts);
   const dispatch = useDispatch();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -199,15 +200,13 @@ const Navigation = () => {
             )}
           </div>
 
-          {/* Cart */}
           <Link
             to="/cart"
             className="flex flex-col items-center justify-center cursor-pointer text-[#111] hover:text-gray-600 transition-colors group relative"
           >
             <FiShoppingCart className="text-2xl xl:text-[28px] group-hover:scale-110 transition-transform" />
-            {/* Optional badge indicator */}
             <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-              0
+              {cart?.reduce((acc, cur) => acc + Number(cur?.quantity), 0)}
             </span>
             <span className="text-[11px] xl:text-xs mt-1.5 font-semibold tracking-wider">
               CART
