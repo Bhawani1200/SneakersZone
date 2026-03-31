@@ -352,5 +352,29 @@ public class ProductServiceImpl implements ProductService{
         return modelMapper.map(product, ProductDTO.class);
     }
 
+    @Override
+    public ProductResponse getProductsByGender(String gender, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Gender genderEnum = Gender.valueOf(gender.toUpperCase());
+        Page<Product> products = productRepository.findByGender(genderEnum, pageable);
+
+        List<ProductDTO> productDTOs = products.getContent().stream()
+                .map(p -> modelMapper.map(p, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOs);
+        productResponse.setPageNumber(products.getNumber());
+        productResponse.setPageSize(products.getSize());
+        productResponse.setTotalElements(products.getTotalElements());
+        productResponse.setTotalPages(products.getTotalPages());
+        productResponse.setLastPage(products.isLast());
+        return productResponse;
+    }
 
 }

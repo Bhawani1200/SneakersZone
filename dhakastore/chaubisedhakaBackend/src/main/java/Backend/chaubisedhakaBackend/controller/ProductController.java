@@ -112,6 +112,18 @@ public class ProductController {
         return new ResponseEntity<>(productResponse,HttpStatus.OK);
     }
 
+    @GetMapping("/public/products/gender/{gender}")
+    public ResponseEntity<ProductResponse> getProductsByGender(
+            @PathVariable String gender,
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+            @RequestParam(defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
+    ) {
+        ProductResponse products = productService.getProductsByGender(gender, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
     @PutMapping("/seller/products/{productId}")
     public ResponseEntity<ProductDTO> updateProductSeller(@Valid @RequestBody ProductDTO productDTO,
                                                           @PathVariable Long productId){

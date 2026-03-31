@@ -1,6 +1,7 @@
 package Backend.chaubisedhakaBackend.repositories;
 
 import Backend.chaubisedhakaBackend.model.Category;
+import Backend.chaubisedhakaBackend.model.Gender;
 import Backend.chaubisedhakaBackend.model.Product;
 import Backend.chaubisedhakaBackend.model.User;
 import org.springframework.data.domain.Page;
@@ -17,5 +18,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> , JpaSpec
     Page<Product> findByProductNameLikeIgnoreCase(String keyword, Pageable pageDetails);
 
     Page<Product> findByUser(User user, Pageable pageDetails);
+
+    Page<Product> findByGender(Gender gender, Pageable pageable);
 
 }

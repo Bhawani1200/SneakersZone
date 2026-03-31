@@ -1,5 +1,6 @@
 package Backend.chaubisedhakaBackend.payload;
 
+import Backend.chaubisedhakaBackend.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ public class ProductDTO {
     private double price;
     private double specialPrice;
     private double discount;
+    private Gender gender;
 
 }
