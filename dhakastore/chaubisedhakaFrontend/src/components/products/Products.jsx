@@ -124,21 +124,33 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import LaunchCard from "../shared/LaunchCard";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchCategories } from "../../store/actions";
+import { fetchCategories, fetchProductsByGender } from "../../store/actions";
 import Filter from "./Filter";
-
 import Loader from "../shared/Loader";
-
 import useProductFilter from "../../hook/useProductFilter";
 import PaginationForProduct from "../shared/PaginationForProducts";
+import { useSearchParams } from "react-router-dom";
+import ProductSidebar from "./ProductSidebar";
 
 const Products = () => {
+  const [searchParams] = useSearchParams();
   const { isLoading, errorMessage } = useSelector((state) => state.errors);
   const { products, categories, pagination } = useSelector(
     (state) => state.products,
   );
   const dispatch = useDispatch();
-  useProductFilter();
+
+  const genderFilter = searchParams.get("gender");
+  const categoryFilter = searchParams.get("category");
+
+  // ✅ Only run useProductFilter when NO gender filter is active
+  useProductFilter(!genderFilter && !categoryFilter);
+
+  useEffect(() => {
+    if (genderFilter) {
+      dispatch(fetchProductsByGender(genderFilter));
+    }
+  }, [genderFilter, dispatch]);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -146,32 +158,62 @@ const Products = () => {
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
-      <Filter categories={categories ? categories : []} />
-      {isLoading ? (
-        <Loader />
-      ) : errorMessage ? (
-        <div className="flex justify-center items-center h-[200px]">
-          <FaExclamationTriangle className="text-slate-800 text-3xl mr-2" />
-          <span className="text-slate-800 text-lg font-medium">
-            {errorMessage}
-          </span>
+      <div className="flex flex-col lg:flex-row gap-10">
+        <div className="lg:w-1/4">
+          <ProductSidebar />
         </div>
-      ) : (
-        <div className="min-h-[700px]">
-          <div className="pb-6 pt-14 grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-y-6 gap-x-6">
-            {products &&
-              products.map((item, i) => (
-                <LaunchCard key={item.productId || i} {...item} />
-              ))}
-          </div>
-          <div className="flex justify-center pt-10">
-            <PaginationForProduct
-              numberOfPage={pagination?.totalPages}
-              totalProducts={pagination?.totalElements}
-            />
-          </div>
+
+        <div className="flex-1">
+          {/* ✅ Active filter badge */}
+          {(genderFilter || categoryFilter) && (
+            <div className="mb-4 flex items-center gap-2">
+              <span className="text-sm text-gray-500">Filtering by:</span>
+              <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full uppercase">
+                {genderFilter || categoryFilter}
+              </span>
+            </div>
+          )}
+
+          <Filter categories={categories || []} />
+
+          {isLoading ? (
+            <Loader />
+          ) : errorMessage ? (
+            <div className="flex justify-center items-center h-[200px]">
+              <FaExclamationTriangle className="text-slate-800 text-3xl mr-2" />
+              <span className="text-slate-800 text-lg font-medium">
+                {errorMessage}
+              </span>
+            </div>
+          ) : (
+            <div className="min-h-[700px]">
+              {products?.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[400px] gap-3">
+                  <span className="text-5xl">👟</span>
+                  <p className="text-gray-500 font-medium text-lg">
+                    No products found for{" "}
+                    <span className="text-blue-600 font-bold capitalize">
+                      {genderFilter || categoryFilter}
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <div className="pb-6 pt-14 grid xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-2 gap-y-6 gap-x-6">
+                  {products?.map((item, i) => (
+                    <LaunchCard key={item.productId || i} {...item} />
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-center pt-10">
+                <PaginationForProduct
+                  numberOfPage={pagination?.totalPages}
+                  totalProducts={pagination?.totalElements}
+                />
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

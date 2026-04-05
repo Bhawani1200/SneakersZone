@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Image from "../designLayouts/Image";
 import { LAUNCHES } from "../../constants/index";
-import { useState } from "react";
+import { fetchCategories } from "../../store/actions";
 
 const FilterSection = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -30,6 +33,32 @@ const FilterSection = ({ title, children, defaultOpen = false }) => {
 };
 
 const ProductSidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const { categories, products } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    if (!categories) {
+      dispatch(fetchCategories());
+    }
+  }, [dispatch, categories]);
+
+  const handleFilterChange = (type, value) => {
+    const params = new URLSearchParams(searchParams);
+    if (params.get(type) === value) {
+      params.delete(type);
+    } else {
+      params.set(type, value);
+    }
+    navigate(`${location.pathname}?${params.toString()}`);
+  };
+
+  const isChecked = (type, value) => {
+    return searchParams.get(type) === value;
+  };
+
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(4499);
 
@@ -49,13 +78,15 @@ const ProductSidebar = () => {
       <div className="w-[320px] hidden lg:block pr-8 py-2">
         <FilterSection title="Gender" defaultOpen={true}>
           <div className="space-y-3">
-            {["Men", "Women", "Unisex"].map((opt) => (
+            {["MEN", "WOMEN", "KIDS", "UNISEX"].map((opt) => (
               <label
                 key={opt}
                 className="flex items-center gap-3 cursor-pointer group"
               >
                 <input
                   type="checkbox"
+                  checked={isChecked("gender", opt)}
+                  onChange={() => handleFilterChange("gender", opt)}
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                 />
                 <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
@@ -68,23 +99,19 @@ const ProductSidebar = () => {
 
         <FilterSection title="Product type | Category" defaultOpen={true}>
           <div className="space-y-3">
-            {[
-              "Sneakers",
-              "Running Shoes",
-              "Basketball",
-              "Lifestyle",
-              "Training & Gym",
-            ].map((opt) => (
+            {categories?.map((cat) => (
               <label
-                key={opt}
+                key={cat.categoryId}
                 className="flex items-center gap-3 cursor-pointer group"
               >
                 <input
                   type="checkbox"
+                  checked={isChecked("category", cat.categoryName)}
+                  onChange={() => handleFilterChange("category", cat.categoryName)}
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                 />
                 <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
-                  {opt}
+                  {cat.categoryName}
                 </span>
               </label>
             ))}
@@ -225,10 +252,10 @@ const ProductSidebar = () => {
       {/* Product Image Grid */}
       <div className="flex-1">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {LAUNCHES.slice(0, 4).map((product) => (
+          {(products?.length > 0 ? products : LAUNCHES).slice(0, 4).map((product) => (
             <Link
-              to={`/product/${product.id}`}
-              key={product.id}
+              to={`/product/${product.id || product.productId}`}
+              key={product.id || product.productId}
               className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 block"
             >
               <Image

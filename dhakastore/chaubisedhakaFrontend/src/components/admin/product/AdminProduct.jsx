@@ -19,6 +19,8 @@ import ProductViewModal from "../../shared/ProductViewModal";
 const AdminProduct = () => {
   const { products, pagination } = useSelector((state) => state.products);
   const { isLoading, errorMessage } = useSelector((state) => state.errors);
+  const { user } = useSelector((state) => state.auth);
+  const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
 
   const [selectedProduct, setSelectedProduct] = useState("");
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
@@ -29,7 +31,7 @@ const AdminProduct = () => {
   const [loader, setLoader] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(
-    pagination?.pageNumber + 1 || 1
+    pagination?.pageNumber + 1 || 1,
   );
   const dispatch = useDispatch();
 
@@ -51,6 +53,7 @@ const AdminProduct = () => {
       price: item.price,
       quantity: item.quantity,
       specialPrice: item.specialPrice,
+      gender: item.gender,
     };
   });
   const handleEdit = (product) => {
@@ -81,7 +84,13 @@ const AdminProduct = () => {
 
   const onDeleteHandler = () => {
     dispatch(
-      deleteProduct(setLoader, selectedProduct?.id, toast, setOpenDeleteModal)
+      deleteProduct(
+        setLoader,
+        selectedProduct?.id,
+        toast,
+        setOpenDeleteModal,
+        isAdmin,
+      ),
     );
   };
 
@@ -123,7 +132,7 @@ const AdminProduct = () => {
                   handleEdit,
                   handleDelete,
                   handleImageUpload,
-                  handleProductView
+                  handleProductView,
                 )}
                 paginationMode="server"
                 rowCount={pagination?.totalElements || 0}

@@ -40,7 +40,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       const sendData = {
         ...data,
         categoryId: selectedCategory.categoryId,
-        gender: selectedGender, // ✅
+        gender: selectedGender, 
       };
       dispatch(
         addNewProductFromDashboard(
@@ -56,13 +56,13 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       const sendData = {
         ...data,
         id: product.id,
-        gender: selectedGender, // ✅
+        gender: selectedGender, 
       };
       dispatch(
         updateProductFromDashboard(
           sendData,
-          reset,
           toast,
+          reset,
           setLoader,
           setOpen,
           isAdmin,
@@ -79,7 +79,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
-      setSelectedGender(product?.gender || "UNISEX"); // ✅ prefill on update
+      setSelectedGender(product?.gender || "UNISEX"); 
     }
   }, [product, update]);
 
@@ -166,7 +166,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 4 — Gender Toggle ✅ */}
+        {/* Row 4 — Gender Toggle  */}
         <div className="flex flex-col gap-2 w-full">
           <label className="font-semibold text-sm text-slate-800">Gender</label>
           <div className="flex gap-2 flex-wrap">
@@ -215,6 +215,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
               disabled={loader}
               onClick={() => setOpen(false)}
               variant="outlined"
+              className="text-slate-700 py-2.5 px-4 text-sm font-medium border-slate-300"
             >
               Cancel
             </Button>
@@ -223,11 +224,14 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
               type="submit"
               variant="contained"
               color="primary"
+              className="bg-blue-600 text-white py-2.5 px-4 text-sm font-medium"
             >
               {loader ? (
                 <div className="flex gap-2 items-center">
                   <Spinners /> Loading...
                 </div>
+              ) : update ? (
+                "Update"
               ) : (
                 "Save"
               )}

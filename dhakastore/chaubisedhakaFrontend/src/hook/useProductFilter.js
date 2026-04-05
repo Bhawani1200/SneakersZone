@@ -17,12 +17,16 @@ const useProductFilter = () => {
 
     const sortOrder = searchParams.get("sortby") || "asc";
     const categoryParams = searchParams.get("category") || null;
+    const genderParams = searchParams.get("gender") || null;
     const keyword = searchParams.get("keyword") || null;
     params.set("sortBy", "price");
     params.set("sortOrder", sortOrder);
 
     if (categoryParams) {
       params.set("category", categoryParams);
+    }
+    if (genderParams) {
+      params.set("gender", genderParams);
     }
     if (keyword) {
       params.set("keyword", keyword);

@@ -697,3 +697,31 @@ export const deleteOrderFromDashboard =
       setOpenDeleteModal(false);
     }
   };
+
+
+  export const fetchProductsByGender =
+  (gender, pageNumber = 0, pageSize = 10) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: "IS_FETCHING" });
+      const { data } = await api.get(
+        `/public/products/gender/${gender}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+      );
+      dispatch({ type: "FETCH_PRODUCTS", payload: data.content });
+      dispatch({
+        type: "SET_PAGINATION",
+        payload: {
+          pageNumber: data.pageNumber,
+          pageSize: data.pageSize,
+          totalElements: data.totalElements,
+          totalPages: data.totalPages,
+        },
+      });
+      dispatch({ type: "IS_SUCCESS" });
+    } catch (error) {
+      dispatch({
+        type: "IS_ERROR",
+        payload: error?.response?.data?.message || "Failed to fetch products",
+      });
+    }
+  };
