@@ -93,39 +93,83 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category) {
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender) {
+        Sort sortByAndOrder = sortOrder.equals("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Specification<Product> spec = Specification.where(null);
 
-        Sort sortByAndOrder=sortOrder.equals("asc")
-                ?Sort.by(sortBy).ascending()
-                :Sort.by(sortBy).descending();
-        Pageable pageDetails= PageRequest.of(pageNumber,pageSize,sortByAndOrder);
-        Specification <Product>spec=Specification.where(null);
-        if(keyword != null && !keyword.isEmpty()){
-            spec=spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("productName"),"%" + keyword.toLowerCase() + "%")));
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("productName"), "%" + keyword.toLowerCase() + "%"));
         }
 
-        if(category != null && !category.isEmpty()){
-            spec=spec.and(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")),category)));
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")), category));
         }
 
-        Page<Product> pageProducts=productRepository.findAll(spec,pageDetails);
+        // ✅ gender filter added
+        if (gender != null && !gender.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("gender"), Gender.valueOf(gender.toUpperCase())));
+        }
 
-        List<Product> products=pageProducts.getContent();
-        List<ProductDTO>productDTOS=products.stream()
-                .map(product->modelMapper.map(product,ProductDTO.class))
+        Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
+
+        List<Product> products = pageProducts.getContent();
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
 
-        ProductResponse productResponse=new ProductResponse();
+        ProductResponse productResponse = new ProductResponse();
         productResponse.setPageNumber(pageProducts.getNumber());
         productResponse.setPageSize(pageProducts.getSize());
         productResponse.setTotalElements(pageProducts.getTotalElements());
         productResponse.setTotalPages(pageProducts.getTotalPages());
-        productResponse.setLastPage(productResponse.isLastPage());
+        productResponse.setLastPage(pageProducts.isLast()); // ✅ fixed bug: was productResponse.isLastPage()
         productResponse.setContent(productDTOS);
         return productResponse;
     }
+
+
+//    @Override
+//    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category) {
+//
+//        Sort sortByAndOrder=sortOrder.equals("asc")
+//                ?Sort.by(sortBy).ascending()
+//                :Sort.by(sortBy).descending();
+//        Pageable pageDetails= PageRequest.of(pageNumber,pageSize,sortByAndOrder);
+//        Specification <Product>spec=Specification.where(null);
+//        if(keyword != null && !keyword.isEmpty()){
+//            spec=spec.and(((root, query, criteriaBuilder) ->
+//                    criteriaBuilder.like(root.get("productName"),"%" + keyword.toLowerCase() + "%")));
+//        }
+//
+//        if(category != null && !category.isEmpty()){
+//            spec=spec.and(((root, query, criteriaBuilder) ->
+//                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")),category)));
+//        }
+//
+//
+//
+//        Page<Product> pageProducts=productRepository.findAll(spec,pageDetails);
+//
+//        List<Product> products=pageProducts.getContent();
+//        List<ProductDTO>productDTOS=products.stream()
+//                .map(product->modelMapper.map(product,ProductDTO.class))
+//                .toList();
+//
+//        ProductResponse productResponse=new ProductResponse();
+//        productResponse.setPageNumber(pageProducts.getNumber());
+//        productResponse.setPageSize(pageProducts.getSize());
+//        productResponse.setTotalElements(pageProducts.getTotalElements());
+//        productResponse.setTotalPages(pageProducts.getTotalPages());
+//        productResponse.setLastPage(productResponse.isLastPage());
+//        productResponse.setContent(productDTOS);
+//        return productResponse;
+//    }
 
     @Override
     public ProductResponse searchCategoryById(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
@@ -193,6 +237,7 @@ public class ProductServiceImpl implements ProductService{
         productFromDB.setPrice(product.getPrice());
         productFromDB.setDiscount(product.getDiscount());
         productFromDB.setSpecialPrice(product.getSpecialPrice());
+        productFromDB.setGender(product.getGender());
 
         Product savedProduct=productRepository.save(productFromDB);
 
