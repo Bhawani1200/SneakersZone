@@ -1,23 +1,32 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Star, ShoppingCart, Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "motion/react";
+import {
+  ShoppingCart,
+  Heart,
+  Truck,
+  Shield,
+  RotateCcw,
+  Star,
+} from "lucide-react";
 import { addToCart, fetchProductById } from "../../store/actions";
 import toast from "react-hot-toast";
+
+const sizes = ["US 7", "US 8", "US 9", "US 10", "US 11", "US 12"];
 
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [selectedSize, setSelectedSize] = useState("");
+
   const { product, isLoading, errorMessage } = useSelector((state) => ({
-    product: state.products.productDetails, // Assuming you add this to reducer
+    product: state.products.productDetails,
     isLoading: state.errors.isLoading,
     errorMessage: state.errors.errorMessage,
   }));
-
-  const [activeImageIdx, setActiveImageIdx] = useState(0);
-  const [selectedSize, setSelectedSize] = useState("41");
 
   useEffect(() => {
     if (id) {
@@ -27,12 +36,17 @@ const ProductDetails = () => {
   }, [id, dispatch]);
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      toast.error("Please select a size");
+      return;
+    }
     if (!product) return;
     dispatch(
       addToCart(
         {
           ...product,
           productId: product.productId || product.id,
+          size: selectedSize,
         },
         1,
         toast,
@@ -41,262 +55,203 @@ const ProductDetails = () => {
     navigate("/checkout");
   };
 
-  const galleryImages = useMemo(() => {
-    const base = product?.image ? [product.image] : [];
-    const extra = Array.isArray(product?.images) ? product.images : [];
-    const merged = [...base, ...extra].filter(Boolean);
-    // Ensure at least a few thumbnails even if we only have one image
-    if (merged.length === 1) {
-      return [merged[0], merged[0], merged[0], merged[0], merged[0], merged[0]];
-    }
-    return merged;
-  }, [product]);
+  const handleAddToWishlist = () => {
+    toast.success("Added to wishlist");
+  };
 
-  const mainImage =
-    galleryImages[
-      Math.min(activeImageIdx, Math.max(0, galleryImages.length - 1))
-    ];
-
-  const sizes = useMemo(
-    () => ["40.5", "41", "42", "43", "43.5", "44", "44.5", "45", "46"],
-    [],
-  );
-
-  return (
-    <div className="max-w-7xl mx-auto bg-white p-6 sm:p-8">
-      {!product ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  if (!product) {
+    return (
+      <div className="pt-[180px] min-h-screen bg-white dark:bg-black">
+        <div className="container mx-auto px-4 py-16 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Product Not Found
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+              {isLoading ? "Loading..." : "Product Not Found"}
             </h2>
             <Link to="/" className="text-blue-600 hover:underline">
               Back to Home
             </Link>
           </div>
         </div>
-      ) : (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-            {/* Left: Gallery */}
-            <div className="w-full">
-              <div className="flex flex-row gap-4">
-                {/* Vertical thumbnails */}
-                <div className="flex flex-col gap-3 w-20 sm:w-24 shrink-0">
-                  {galleryImages.slice(0, 4).map((src, idx) => (
-                    <button
-                      key={`${src}-${idx}`}
-                      type="button"
-                      onClick={() => setActiveImageIdx(idx)}
-                      className={[
-                        "w-full aspect-[64/85] rounded-lg overflow-hidden border bg-white",
-                        idx === activeImageIdx
-                          ? "border-gray-900"
-                          : "border-gray-200 hover:border-gray-400",
-                      ].join(" ")}
-                      aria-label={`Select image ${idx + 1}`}
-                    >
-                      <img
-                        src={src}
-                        alt=""
-                        className="w-full h-full object-cover object-top"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
+      </div>
+    );
+  }
 
-                {/* Main image */}
-                <div className="flex-1 bg-[#f3f3ef] rounded-3xl overflow-hidden">
-                  <div className="w-full aspect-[548/712]">
-                    <img
-                      src={mainImage}
-                      alt={product.productName}
-                      className="w-full h-full object-cover object-center"
-                    />
-                  </div>
-                </div>
+  // Derive display values
+  const currentPrice = product.specialPrice || product.price || 0;
+  const originalPrice =
+    product.specialPrice && product.specialPrice < product.price
+      ? product.price
+      : null;
+  const discountPercentage = originalPrice
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+    : 0;
+
+  const mainImage =
+    product.image || (product.images && product.images[0]) || "";
+
+  const defaultFeatures = [
+    "Premium leather upper",
+    "Air-Sole unit for cushioning",
+    "Padded collar for support",
+    "Rubber outsole for traction",
+    "Classic Wings logo",
+  ];
+  const features =
+    product.features && product.features.length
+      ? product.features
+      : defaultFeatures;
+
+  return (
+    <div className="pt-[180px] min-h-screen bg-white dark:bg-black">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Product Images */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            {mainImage ? (
+              <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden">
+                <img
+                  src={mainImage}
+                  alt={product.productName}
+                  className="w-full h-full object-cover"
+                />
               </div>
+            ) : (
+              <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl" />
+            )}
+          </motion.div>
 
-              {/* Extra thumbnails when more than 4 images (for small screens) */}
-              <div className="mt-4 flex items-center gap-3 lg:hidden">
-                {galleryImages.slice(0, 4).map((src, idx) => (
-                  <button
-                    key={`${src}-${idx}`}
-                    type="button"
-                    onClick={() => setActiveImageIdx(idx)}
-                    className={[
-                      "w-20 h-16 sm:w-24 sm:h-20 rounded-xl overflow-hidden border bg-white",
-                      idx === activeImageIdx
-                        ? "border-gray-900"
-                        : "border-gray-200 hover:border-gray-400",
-                    ].join(" ")}
-                    aria-label={`Select image ${idx + 1}`}
-                  >
-                    <img
-                      src={src}
-                      alt=""
-                      className="w-full h-full object-cover object-center"
-                      loading="lazy"
-                    />
-                  </button>
+          {/* Product Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <p className="text-blue-600 font-medium mb-2">
+              {product.brand || "Brand"}
+            </p>
+            <h1 className="text-3xl sm:text-4xl font-black mb-4 dark:text-white">
+              {product.productName}
+            </h1>
+
+            <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-5 h-5 ${i < Math.round(product.rating || 4) ? "fill-yellow-400 text-yellow-400" : "text-gray-300 dark:text-gray-600"}`}
+                  />
                 ))}
-
-                {galleryImages.length > 4 && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveImageIdx(4)}
-                    className="w-20 h-16 sm:w-24 sm:h-20 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-900 hover:border-gray-400"
-                  >
-                    +{galleryImages.length - 4} more
-                  </button>
-                )}
               </div>
+              <span className="text-gray-600 dark:text-gray-400">
+                ({product.reviewCount || 128} reviews)
+              </span>
             </div>
 
-            {/* Right: Details */}
-            <div className="w-full">
-              <div className="text-sm sm:text-base font-semibold text-gray-500 mb-3">
-                {product.brand || "Reebok"}
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900">
-                {product.productName}
-              </h1>
-
-              <div className="mt-4 flex items-center gap-4">
-                <div className="flex items-center gap-1.5 text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={18}
-                      fill="currentColor"
-                      className={
-                        i < Math.round(product.rating || 4)
-                          ? "text-amber-500"
-                          : "text-gray-200"
-                      }
-                    />
-                  ))}
-                </div>
-                <span className="text-base text-gray-500">
-                  {product.reviewCount || 0} reviews
-                </span>
-              </div>
-
-              <div className="mt-7 text-4xl font-semibold text-gray-900">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-4xl font-black dark:text-white">
                 रु
-                {Number(
-                  product.specialPrice || product.price || 0,
-                ).toLocaleString("en-IN", {
+                {Number(currentPrice).toLocaleString("en-IN", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
-              </div>
+              </span>
+              {originalPrice && (
+                <>
+                  <span className="text-2xl text-gray-500 line-through">
+                    रु
+                    {Number(originalPrice).toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <span className="bg-red-600 text-white px-3 py-1 rounded-full font-bold text-sm">
+                    -{discountPercentage}%
+                  </span>
+                </>
+              )}
+            </div>
 
-              {/* Color */}
-              <div className="mt-8">
-                <div className="text-base text-gray-500">
-                  Color <span className="mx-2 text-gray-300">•</span>{" "}
-                  <span className="text-gray-700 font-medium">White</span>
-                </div>
-                <div className="mt-4 flex items-center gap-3">
-                  {galleryImages.slice(0, 3).map((src, idx) => (
-                    <button
-                      key={`color-${idx}`}
-                      type="button"
-                      onClick={() => setActiveImageIdx(idx)}
-                      className={[
-                        "w-14 h-14 rounded-xl border bg-white overflow-hidden",
-                        idx === activeImageIdx
-                          ? "border-gray-900"
-                          : "border-gray-200 hover:border-gray-400",
-                      ].join(" ")}
-                      aria-label={`Select color option ${idx + 1}`}
-                    >
-                      <img
-                        src={src}
-                        alt=""
-                        className="w-full h-full object-contain object-center"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <p className="text-gray-700 dark:text-gray-300 mb-8">
+              {product.description || "No description available."}
+            </p>
 
-              {/* Size */}
-              <div className="mt-8">
-                <div className="flex items-center justify-between">
-                  <div className="text-base text-gray-500">
-                    Size <span className="mx-2 text-gray-300">•</span>{" "}
-                    <span className="text-gray-700 font-medium">EU Men</span>
-                  </div>
+            {/* Size Selection */}
+            <div className="mb-8">
+              <h3 className="font-bold mb-4 dark:text-white">Select Size</h3>
+              <div className="grid grid-cols-6 gap-3">
+                {sizes.map((size) => (
                   <button
-                    type="button"
-                    className="text-sm text-gray-500 hover:text-gray-700 underline underline-offset-4"
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`py-3 rounded-lg border-2 font-medium transition-all ${
+                      selectedSize === size
+                        ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600"
+                        : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:text-gray-300"
+                    }`}
                   >
-                    Size guide
+                    {size.replace("US ", "")}
                   </button>
-                </div>
-
-                <div className="mt-4 grid grid-cols-5 gap-3">
-                  {sizes.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setSelectedSize(s)}
-                      className={[
-                        "h-11 rounded-lg border text-sm font-semibold transition-colors",
-                        selectedSize === s
-                          ? "border-gray-900 bg-gray-900 text-white"
-                          : "border-gray-200 bg-white text-gray-900 hover:border-gray-400",
-                      ].join(" ")}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="mt-9 flex items-center gap-4">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={product.quantity === 0}
-                  className="flex-1 h-14 rounded-xl bg-black text-white font-semibold flex items-center justify-center gap-3 text-base sm:text-lg hover:bg-gray-900 active:scale-[0.99] disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
-                >
-                  <ShoppingCart size={20} />
-                  {product.quantity > 0 ? "Add to cart" : "Out of stock"}
-                </button>
-
-                <button
-                  type="button"
-                  className="w-14 h-14 rounded-xl border border-gray-200 flex items-center justify-center hover:border-gray-400"
-                  aria-label="Add to wishlist"
-                >
-                  <Heart size={20} className="text-gray-700" />
-                </button>
-              </div>
-
-              <div className="mt-5 text-sm text-gray-500 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                Free delivery on orders over $30.0
-              </div>
-
-              {/* Back link (optional) */}
-              <div className="mt-10">
-                <Link
-                  to="/shop"
-                  className="text-base text-gray-500 hover:text-gray-700 underline underline-offset-4"
-                >
-                  Back to shop
-                </Link>
+                ))}
               </div>
             </div>
-          </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 mb-8">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.quantity === 0}
+                className="flex-1 bg-blue-600 text-white py-4 rounded-full font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                <span>
+                  {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                </span>
+              </button>
+              <button
+                onClick={handleAddToWishlist}
+                className="w-14 h-14 border-2 border-gray-300 dark:border-gray-700 rounded-full flex items-center justify-center hover:border-red-500 hover:text-red-500 transition-colors dark:text-gray-300"
+              >
+                <Heart className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3">
+                <Truck className="w-6 h-6 text-blue-600" />
+                <span className="dark:text-gray-300">
+                  Free shipping on orders over $100
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <RotateCcw className="w-6 h-6 text-blue-600" />
+                <span className="dark:text-gray-300">30-day return policy</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Shield className="w-6 h-6 text-blue-600" />
+                <span className="dark:text-gray-300">1-year warranty</span>
+              </div>
+            </div>
+
+            {/* Product Features */}
+            <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
+              <h3 className="font-bold mb-4 dark:text-white">
+                Product Features
+              </h3>
+              <ul className="space-y-2">
+                {features.map((feature, index) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                    <span className="dark:text-gray-300">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
