@@ -19,7 +19,7 @@ import axios from "axios";
 import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
-import Footer from "./components/Footer/Footer";
+
 import MainLayout from "./components/layout/MainLayout";
 
 const MyContext = createContext();

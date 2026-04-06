@@ -26,7 +26,7 @@ const Banner = () => {
   };
 
   return (
-    <div className="relative h-[70vh] md:h-[850px] overflow-hidden bg-black">
+    <div className="relative h-[80vh] lg:h-screen overflow-hidden bg-black">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -36,22 +36,21 @@ const Banner = () => {
           transition={{ duration: 0.7 }}
           className="absolute inset-0"
         >
-          {/* Background Image Container */}
           <div className="absolute inset-0 z-0">
             <Image
               imgSrc={slides[currentSlide].img}
               className="w-full h-full object-cover opacity-60"
             />
-            {/* Gradient Overlay for Text Readability */}
+
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
           </div>
 
-          <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 h-full flex items-center relative z-10">
+          <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 h-full flex items-center justify-center relative z-10">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="max-w-2xl lg:max-w-4xl text-white"
+              className="max-w-4xl text-white text-center"
             >
               <motion.h1
                 initial={{ y: 30, opacity: 0 }}
@@ -65,7 +64,7 @@ const Banner = () => {
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-gray-100 max-w-lg lg:max-w-2xl"
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-gray-100 max-w-lg lg:max-w-2xl mx-auto"
               >
                 {slides[currentSlide].subtitle}
               </motion.p>
@@ -102,7 +101,7 @@ const Banner = () => {
       </button>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
             key={index}

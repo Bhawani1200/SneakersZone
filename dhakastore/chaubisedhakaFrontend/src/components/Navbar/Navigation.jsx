@@ -3,44 +3,54 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   Search,
-  User,
-  Heart,
   ShoppingCart,
+  Heart,
+  User,
   Phone,
   Mail,
+  ChevronDown,
+  Menu,
+  X,
+  Sun,
+  Moon,
   Facebook,
   Instagram,
-  Twitter,
   Globe,
-  Moon,
-  Sun,
 } from "lucide-react";
+import { FaTiktok } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
 import UserMenu from "../UserMenu";
 
 const Navigation = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [darkMode, setDarkMode] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    document.documentElement.classList.contains("dark"),
+  );
 
   const user = useSelector((state) => state.auth?.user);
   const { cart } = useSelector((state) => state.carts);
+  const wishlistItems = useSelector((state) => state.wishlist?.items || []);
+
   const cartCount =
     cart?.reduce((acc, cur) => acc + Number(cur?.quantity), 0) || 0;
-
-  const wishlistItems = useSelector((state) => state.wishlist?.items || []);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      setScrolled(currentScrollY > 20);
+      if (currentScrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setHidden(true);
+        setIsVisible(false);
       } else {
-        setHidden(false);
+        setIsVisible(true);
       }
 
       setLastScrollY(currentScrollY);
@@ -51,87 +61,143 @@ const Navigation = () => {
   }, [lastScrollY]);
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    const newMode = !darkMode;
+    setDarkMode(newMode);
     document.documentElement.classList.toggle("dark");
   };
+
+  const navLinks = [
+    { label: "Men", path: "/category/men" },
+    { label: "Women", path: "/category/women" },
+    { label: "Kids", path: "/category/kids" },
+    { label: "Unisex", path: "/category/unisex" },
+    { label: "New Arrivals", path: "/category/new-arrivals" },
+    { label: "Sale", path: "/category/sale", highlight: true },
+    { label: "Brands", path: "/category/brands" },
+  ];
 
   return (
     <motion.header
       initial={{ y: 0 }}
-      animate={{ y: hidden ? -200 : 0 }}
+      animate={{ y: isVisible ? 0 : -200 }}
       transition={{ duration: 0.3 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all ${
-        scrolled
-          ? "backdrop-blur-lg bg-white/90 dark:bg-black/90 shadow-lg"
-          : "bg-white dark:bg-black"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md shadow-lg"
+          : "bg-white dark:bg-zinc-950"
       }`}
     >
       {/* Top Bar */}
-      <div className="border-b border-gray-200 dark:border-gray-800">
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="flex items-center justify-between py-2 text-base">
-            <div className="flex items-center gap-6 lg:gap-10">
-              <div className="flex items-center gap-2">
-                <Phone className="w-6 h-6" />
-                <span>+977-9876543210</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-6 h-6" />
-                <span>info@chaubisedhaka.com</span>
-              </div>
-            </div>
+      <div className="bg-zinc-900 border-b border-zinc-800 text-white py-3 text-sm hidden md:block">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 flex justify-between items-center font-bold">
+          <div className="flex items-center gap-10">
+            <a
+              href="tel:+9779800000000"
+              className="flex items-center gap-3 hover:text-blue-400 transition-all hover:scale-105"
+            >
+              <Phone className="w-5 h-5 text-blue-500" />
+              <span>+977 9800000000</span>
+            </a>
+            <a
+              href="mailto:info@chaubisedhaka.com"
+              className="flex items-center gap-3 hover:text-blue-400 transition-all hover:scale-105"
+            >
+              <Mail className="w-5 h-5 text-blue-500" />
+              <span>info@chaubisedhaka.com</span>
+            </a>
+          </div>
 
-            <div className="flex items-center gap-6 lg:gap-8">
-              <div className="flex items-center gap-6">
-                <button className="hover:text-blue-600 transition-colors">
-                  <Facebook className="w-6 h-6" />
-                </button>
-                <button className="hover:text-blue-600 transition-colors">
-                  <Instagram className="w-6 h-6" />
-                </button>
-                <button className="hover:text-blue-600 transition-colors">
-                  <Twitter className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="flex items-center gap-3 border-l border-gray-300 dark:border-gray-700 pl-6">
-                <Globe className="w-6 h-6" />
-                <select className="bg-transparent outline-none cursor-pointer">
-                  <option>USD</option>
-                  <option>NPR</option>
-                  <option>EUR</option>
-                </select>
-              </div>
-
-              <button
-                onClick={toggleDarkMode}
-                className="hover:text-blue-600 transition-colors"
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-8 pr-8 border-r border-zinc-700">
+              <a
+                href="#"
+                className="hover:scale-125 transition-all text-[#1877F2] hover:text-[#1877F2]/80"
+                title="Facebook"
               >
-                {darkMode ? (
-                  <Sun className="w-6 h-6" />
-                ) : (
-                  <Moon className="w-6 h-6" />
-                )}
-              </button>
+                <Facebook className="w-6 h-6 fill-current" />
+              </a>
+              <a
+                href="#"
+                className="hover:scale-125 transition-all text-[#E4405F] hover:text-[#E4405F]/80"
+                title="Instagram"
+              >
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a
+                href="#"
+                className="hover:scale-125 transition-all text-white hover:text-zinc-300"
+                title="TikTok"
+              >
+                <FaTiktok className="w-6 h-6" />
+              </a>
+            </div>
+            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
+                <Globe className="w-5 h-5 text-blue-500" />
+                <span className="tracking-widest capitalize">NPR</span>
+                <ChevronDown className="w-4 h-4" />
+              </div>
+              <span className="text-zinc-600">|</span>
+              <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
+                <span className="tracking-widest capitalize">EN</span>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Middle Bar */}
-      <div className="border-b border-gray-200 dark:border-gray-800">
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="flex flex-wrap md:flex-nowrap items-center justify-between py-4 gap-4 md:gap-8 lg:gap-12 xl:gap-20">
-            {/* Logo */}
-            <Link
-              to="/"
-              className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight shrink-0 order-1"
+      <div className="border-b border-zinc-200 dark:border-zinc-800">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 py-5">
+          <div className="flex items-center justify-between gap-4">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
             >
-              CHAUBISE<span className="text-blue-600">DHAKA</span>
+              {isMobileMenuOpen ? (
+                <X className="w-7 h-7" />
+              ) : (
+                <Menu className="w-7 h-7" />
+              )}
+            </button>
+
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tighter uppercase">
+                SNEAKERS<span className="text-blue-600">ZONE</span>
+              </h1>
             </Link>
 
-            {/* Right Icons */}
-            <div className="flex items-center gap-5 sm:gap-6 lg:gap-10 shrink-0 order-2 md:order-3">
+            {/* Search Bar */}
+            <div className="hidden md:flex flex-1 max-w-2xl mx-8 lg:mx-16">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  placeholder="Search for your favorite kicks..."
+                  className="w-full px-5 py-3 pl-12 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
+              <button
+                onClick={toggleDarkMode}
+                className="p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-all hover:scale-110"
+              >
+                {darkMode ? (
+                  <Sun className="w-6 h-6 text-yellow-500" />
+                ) : (
+                  <Moon className="w-6 h-6 text-blue-600" />
+                )}
+              </button>
+
+              <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800 mx-1 hidden sm:block" />
+
+              {/* User Menu / Login */}
               {user && user.id ? (
                 <div className="flex items-center justify-center">
                   <UserMenu />
@@ -139,106 +205,113 @@ const Navigation = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="flex flex-col items-center hover:text-blue-600 transition-colors"
+                  className="flex flex-col items-center hover:text-blue-600 transition-all hover:scale-105"
                 >
-                  <User className="w-6 h-6" />
-                  <span className="hidden sm:block text-xs mt-1">Login</span>
+                  <User className="w-7 h-7" />
+                  <span className="hidden sm:block text-xs font-bold mt-1 uppercase">
+                    Login
+                  </span>
                 </Link>
               )}
 
+              {/* Wishlist */}
               <Link
                 to="/wishlist"
-                className="relative flex flex-col items-center hover:text-blue-600 transition-colors"
+                className="relative flex flex-col items-center hover:text-blue-600 transition-all hover:scale-105"
               >
-                <Heart className="w-6 h-6" />
-                <span className="hidden sm:block text-xs mt-1">Wishlist</span>
+                <Heart className="w-7 h-7" />
+                <span className="hidden sm:block text-xs font-bold mt-1 uppercase">
+                  Wishlist
+                </span>
                 {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1.5 bg-red-500 text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center border-2 border-white dark:border-zinc-900 shadow-lg">
                     {wishlistItems.length}
                   </span>
                 )}
               </Link>
 
+              {/* Cart */}
               <Link
                 to="/cart"
-                className="relative flex flex-col items-center hover:text-blue-600 transition-colors"
+                className="relative flex flex-col items-center hover:text-blue-600 transition-all hover:scale-105"
               >
-                <ShoppingCart className="w-6 h-6" />
-                <span className="hidden sm:block text-xs mt-1">Cart</span>
+                <ShoppingCart className="w-7 h-7" />
+                <span className="hidden sm:block text-xs font-bold mt-1 uppercase">
+                  Cart
+                </span>
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1.5 bg-blue-600 text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center border-2 border-white dark:border-zinc-900 shadow-lg">
                     {cartCount}
                   </span>
                 )}
               </Link>
             </div>
+          </div>
 
-            {/* Search Bar */}
-            <div className="w-full md:w-auto flex-1 max-w-none md:max-w-2xl lg:max-w-4xl mx-0 md:mx-6 lg:mx-16 xl:mx-24 order-3 md:order-2 mt-3 md:mt-0">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search for shoes, brands..."
-                  className="w-full px-4 py-3 pr-12 rounded-full border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
-                  <Search className="w-5 h-5" />
-                </button>
-              </div>
+          {/* Mobile Search */}
+          <div className="md:hidden mt-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search kicks..."
+                className="w-full px-4 py-3 pl-10 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar - Navigation */}
-      <div className="bg-gray-50 dark:bg-gray-900">
+      {/* Bottom Navigation (Desktop) */}
+      <nav className="hidden lg:block border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
-          <nav className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-16 py-5">
-            <Link
-              to="/category/men"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors"
-            >
-              Men
-            </Link>
-            <Link
-              to="/category/women"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors"
-            >
-              Women
-            </Link>
-            <Link
-              to="/category/kids"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors"
-            >
-              Kids
-            </Link>
-            <Link
-              to="/category/unisex"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors"
-            >
-              Unisex
-            </Link>
-            <Link
-              to="/category/new-arrivals"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors text-blue-600"
-            >
-              New Arrivals
-            </Link>
-            <Link
-              to="/category/sale"
-              className="text-lg uppercase tracking-wider font-bold hover:text-red-600 transition-colors text-red-600"
-            >
-              Sale
-            </Link>
-            <Link
-              to="/category/brands"
-              className="text-lg uppercase tracking-wider font-bold hover:text-blue-600 transition-colors"
-            >
-              Brands
-            </Link>
-          </nav>
+          <ul className="flex items-center justify-center gap-12 py-5">
+            {navLinks.map((link) => (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className={`text-lg font-bold uppercase tracking-widest hover:text-blue-600 dark:hover:text-blue-400 transition-all relative group ${
+                    link.highlight ? "text-red-500" : ""
+                  }`}
+                >
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden shadow-2xl"
+          >
+            <nav className="w-full max-w-[1920px] mx-auto px-4 py-8">
+              <ul className="space-y-6">
+                {navLinks.map((link) => (
+                  <li key={link.path}>
+                    <Link
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block text-2xl font-black uppercase tracking-wider hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
+                        link.highlight ? "text-red-500" : ""
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
