@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../store/actions";
 
@@ -8,55 +9,62 @@ const GENDER_METADATA = [
   {
     key: "MEN",
     type: "gender",
-    label: "MEN",
+    label: "Men",
     description: "Explore performance-ready styles for him.",
     bg: "from-slate-900 via-slate-800 to-slate-700",
+    gradient: "from-blue-600/80 to-transparent",
     image: "https://images.pexels.com/photos/4313491/pexels-photo-4313491.jpeg",
   },
   {
     key: "WOMEN",
     type: "gender",
-    label: "WOMEN",
+    label: "Women",
     description: "Discover bold and versatile looks for her.",
     bg: "from-indigo-800 via-indigo-600 to-purple-500",
+    gradient: "from-pink-600/80 to-transparent",
     image: "https://images.pexels.com/photos/3214308/pexels-photo-3214308.jpeg",
   },
   {
     key: "KIDS",
     type: "gender",
-    label: "KIDS",
+    label: "Kids",
     description: "Fun, colorful comfort for little feet.",
     bg: "from-amber-400 via-yellow-300 to-orange-400",
+    gradient: "from-yellow-600/80 to-transparent",
     image:
       "https://images.pexels.com/photos/29283077/pexels-photo-29283077.jpeg",
   },
   {
     key: "UNISEX",
     type: "gender",
-    label: "UNISEX",
+    label: "Unisex",
     description: "Clean silhouettes for every wardrobe.",
     bg: "from-emerald-700 via-emerald-600 to-teal-500",
+    gradient: "from-purple-600/80 to-transparent",
     image: "https://images.pexels.com/photos/6213961/pexels-photo-6213961.jpeg",
   },
 ];
 
 const CATEGORY_MAP = {
   SNEAKERS: {
-    label: "SNEAKERS",
+    label: "Sneakers",
     description: "Trendy sneakers for your daily adventures.",
     bg: "from-neutral-800 via-neutral-700 to-neutral-600",
+    gradient: "from-red-600/80 to-transparent",
     image: "https://images.pexels.com/photos/7500608/pexels-photo-7500608.jpeg",
   },
   CLOTHING: {
-    label: "CLOTHING",
+    label: "Clothing",
     description: "Premium apparel for every occasion.",
     bg: "from-blue-800 via-blue-700 to-blue-600",
+    gradient: "from-cyan-600/80 to-transparent",
     image: "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg",
   },
   ACCESSORIES: {
-    label: "ACCESSORIES",
+    label: "Accessories",
     description: "Complement your look with our curated extras.",
     bg: "from-stone-700 via-stone-600 to-stone-500",
+    gradient: "from-gray-600/80 to-transparent",
     image: "https://images.pexels.com/photos/1453008/pexels-photo-1453008.jpeg",
   },
 };
@@ -64,6 +72,7 @@ const CATEGORY_MAP = {
 const DEFAULT_CATEGORY_METADATA = {
   description: "Explore our latest collections and specialized fits.",
   bg: "from-gray-800 via-gray-700 to-gray-600",
+  gradient: "from-green-600/80 to-transparent",
   image: "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg",
 };
 
@@ -87,101 +96,64 @@ const CategoryShowcase = () => {
       return {
         key: cat.categoryName,
         type: "category",
-        label: metadata.label || cat.categoryName.toUpperCase(),
+        label: metadata.label || cat.categoryName,
         description: metadata.description,
         bg: metadata.bg,
         image: metadata.image,
+        gradient: metadata.gradient,
       };
     }),
   ];
 
-  const scroll = (dir) => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-
-    const firstCard = container.querySelector("[data-category-card]");
-    if (firstCard) {
-      const cardWidth = firstCard.offsetWidth;
-      const gap = parseInt(window.getComputedStyle(container).gap) || 24;
-      const scrollAmount = cardWidth + gap;
-      container.scrollBy({ left: dir * scrollAmount, behavior: "smooth" });
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.firstElementChild;
+      const scrollAmount = card ? card.offsetWidth + 24 : 300;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
 
   return (
-    <section className="w-full bg-white py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-12 xl:px-16">
-      <div className="w-full">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 md:mb-10">
-          <div>
-            <h2 className="text-2xl sm:text-3xl md:text-[32px] font-bold text-gray-900 tracking-tight">
-              Shop by Category
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-gray-600 max-w-xl">
-              Find your perfect fit across our specialized collections.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* Scroll arrows — show when more than 4 cards */}
-            {combinedCategories.length > 4 && (
-              <div className="hidden md:flex items-center gap-2">
-                <button
-                  onClick={() => scroll(-1)}
-                  aria-label="Previous categories"
-                  className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:border-gray-500 transition shadow-sm"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  onClick={() => scroll(1)}
-                  aria-label="Next categories"
-                  className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:border-gray-500 transition shadow-sm"
-                >
-                  <ChevronRight size={18} />
-                </button>
-              </div>
-            )}
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-1 text-sm sm:text-base font-semibold text-indigo-600 hover:text-indigo-700"
-            >
-              View All
-              <ChevronRight size={18} />
-            </Link>
-          </div>
+    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 sm:mb-10 lg:mb-12 gap-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black">
+            Shop by Category
+          </h2>
         </div>
 
-        {/* Category Cards */}
         <div className="relative group/carousel">
           {/* Side Navigation Arrows */}
           <button
-            onClick={() => scroll(-1)}
+            onClick={() => scroll("left")}
             aria-label="Previous categories"
-            className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl hover:bg-white/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
+            className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/60 dark:bg-black/40 backdrop-blur-md border border-gray-200 dark:border-white/20 flex items-center justify-center text-gray-800 dark:text-gray-100 shadow-xl hover:bg-white/90 dark:hover:bg-black/80 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
           >
             <ChevronLeft size={24} />
           </button>
 
           <button
-            onClick={() => scroll(1)}
+            onClick={() => scroll("right")}
             aria-label="Next categories"
-            className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl hover:bg-white/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
+            className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/60 dark:bg-black/40 backdrop-blur-md border border-gray-200 dark:border-white/20 flex items-center justify-center text-gray-800 dark:text-gray-100 shadow-xl hover:bg-white/90 dark:hover:bg-black/80 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
           >
             <ChevronRight size={24} />
           </button>
 
-          {/* mobile view arrows */}
+          {/* mobile view arrows - always visible on very small screens */}
           <div className="flex sm:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 justify-between px-2 pointer-events-none z-10">
             <button
-              onClick={() => scroll(-1)}
-              className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white pointer-events-auto"
+              onClick={() => scroll("left")}
+              className="w-10 h-10 rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md flex items-center justify-center text-gray-800 dark:text-gray-100 shadow-lg pointer-events-auto"
             >
               <ChevronLeft size={20} />
             </button>
             <button
-              onClick={() => scroll(1)}
-              className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white pointer-events-auto"
+              onClick={() => scroll("right")}
+              className="w-10 h-10 rounded-full bg-white/80 dark:bg-black/60 backdrop-blur-md flex items-center justify-center text-gray-800 dark:text-gray-100 shadow-lg pointer-events-auto"
             >
               <ChevronRight size={20} />
             </button>
@@ -189,46 +161,54 @@ const CategoryShowcase = () => {
 
           <div
             ref={scrollRef}
-            className="flex gap-4 md:gap-6 overflow-x-auto overflow-y-hidden pb-3 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {combinedCategories.map((category) => (
-              <Link
+            {combinedCategories.map((category, index) => (
+              <motion.div
                 key={category.key}
-                to={`/products?${category.type === "gender" ? "gender" : "category"}=${category.key}`}
-                data-category-card
-                className="group relative flex-shrink-0 min-w-full sm:min-w-[45%] md:min-w-[calc(25%-18px)] md:w-[calc(25%-18px)] snap-start"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group relative flex-shrink-0 min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(25%-18px)] lg:w-[calc(25%-18px)] h-[320px] sm:h-96 lg:h-[450px] rounded-2xl sm:rounded-[32px] overflow-hidden snap-start"
               >
-                <div
-                  className={`relative h-80 sm:h-80 md:h-[22rem] lg:h-[24rem] rounded-[30px] overflow-hidden shadow-lg bg-gradient-to-br ${category.bg}`}
+                <Link
+                  to={`/products?${category.type === "gender" ? "gender" : "category"}=${category.key}`}
                 >
-                  <img
-                    src={category.image}
-                    alt={category.label}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gray-300 dark:bg-gray-700">
+                    <img
+                      src={category.image}
+                      alt={category.label}
+                      className="w-full h-full object-cover"
+                    />
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-t ${category.gradient}`}
+                    />
+                  </div>
 
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-7 md:p-8">
-                    <p className="text-[11px] tracking-[0.28em] text-white/80 uppercase mb-1">
-                      {category.type === "gender" ? "GENDER" : "CATEGORY"}
-                    </p>
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-[0.16em] mb-2">
+                  <div className="relative h-full flex flex-col justify-end p-6 lg:p-8 z-10 w-full">
+                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl font-black mb-2 sm:mb-3">
                       {category.label}
                     </h3>
-                    <p className="text-xs sm:text-sm text-white/80 max-w-xs mb-4">
-                      {category.description}
-                    </p>
-                    <div className="inline-flex items-center text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-white/90">
-                      Explore Now
-                      <ChevronRight
-                        size={16}
-                        className="ml-1 transition-transform group-hover:translate-x-0.5"
-                      />
+                    <div className="flex items-center gap-2 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="font-medium text-sm sm:text-base">
+                        Explore
+                      </span>
+                      <motion.div initial={{ x: 0 }} whileHover={{ x: 5 }}>
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </motion.div>
                     </div>
                   </div>
-                </div>
-              </Link>
+
+                  <motion.div
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 -z-10"
+                  />
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>

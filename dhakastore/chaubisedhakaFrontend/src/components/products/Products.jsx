@@ -143,14 +143,9 @@ const Products = () => {
   const genderFilter = searchParams.get("gender");
   const categoryFilter = searchParams.get("category");
 
-  // ✅ Only run useProductFilter when NO gender filter is active
-  useProductFilter(!genderFilter && !categoryFilter);
-
-  useEffect(() => {
-    if (genderFilter) {
-      dispatch(fetchProductsByGender(genderFilter));
-    }
-  }, [genderFilter, dispatch]);
+  // ✅ useProductFilter automatically extracts all URL params (including gender and category)
+  // and fetches from the unified endpoint.
+  useProductFilter();
 
   useEffect(() => {
     dispatch(fetchCategories());

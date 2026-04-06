@@ -40,7 +40,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       const sendData = {
         ...data,
         categoryId: selectedCategory.categoryId,
-        gender: selectedGender, 
+        gender: selectedGender,
       };
       dispatch(
         addNewProductFromDashboard(
@@ -56,7 +56,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       const sendData = {
         ...data,
         id: product.id,
-        gender: selectedGender, 
+        gender: selectedGender,
+        categoryId: selectedCategory?.categoryId,
       };
       dispatch(
         updateProductFromDashboard(
@@ -79,7 +80,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
-      setSelectedGender(product?.gender || "UNISEX"); 
+      setSelectedGender(product?.gender || "UNISEX");
     }
   }, [product, update]);
 
@@ -109,15 +110,13 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             placeholder="Product Name"
             errors={errors}
           />
-          {!update && (
-            <SelectTextField
-              label="Select Categories"
-              select={selectedCategory}
-              setSelect={setSelectedCategory}
-              lists={categories || []}
-              loading={categoryLoader}
-            />
-          )}
+          <SelectTextField
+            label="Select Categories"
+            select={selectedCategory}
+            setSelect={setSelectedCategory}
+            lists={categories || []}
+            loading={categoryLoader}
+          />
         </div>
 
         {/* Row 2 — Price + Quantity */}

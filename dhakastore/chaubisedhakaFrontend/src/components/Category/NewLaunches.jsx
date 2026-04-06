@@ -96,7 +96,6 @@ const NewLaunches = () => {
             <ChevronRight size={24} />
           </button>
 
-          {/* mobile view arrows - always visible on very small screens */}
           <div className="flex sm:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 justify-between px-2 pointer-events-none z-10">
             <button
               onClick={() => scroll(-1)}
@@ -129,7 +128,6 @@ const NewLaunches = () => {
           </div>
         </div>
 
-        {/* ── View All ── */}
         <div className="flex justify-center mt-8 md:mt-10">
           <Link to="/products">
             <button className="flex items-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full border border-gray-800 text-gray-800 text-sm sm:text-base md:text-lg font-semibold hover:bg-gray-900 hover:text-white transition-colors duration-200">

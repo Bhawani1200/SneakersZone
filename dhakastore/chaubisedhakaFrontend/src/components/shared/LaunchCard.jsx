@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaShoppingCart, FaStar } from "react-icons/fa";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/actions";
 import toast from "react-hot-toast";
@@ -20,6 +20,14 @@ const LaunchCard = ({
   colors = [],
 }) => {
   const [colorIndex, setColorIndex] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const toggleWishlist = (e) => {
+    e.stopPropagation();
+    setIsWishlisted(!isWishlisted);
+    toast.success(isWishlisted ? "Removed from Wishlist" : "Added to Wishlist");
+  };
+
   const isAvailable = quantity && Number(quantity) > 0;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,6 +74,15 @@ const LaunchCard = ({
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
         New
       </span>
+
+      <button
+        onClick={toggleWishlist}
+        className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full text-gray-500 hover:text-red-500 hover:bg-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all hover:scale-110"
+      >
+        <Heart
+          className={`w-[18px] h-[18px] transition-colors ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}
+        />
+      </button>
 
       {/* Product Image */}
       <div className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden">
