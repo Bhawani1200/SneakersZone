@@ -7,33 +7,48 @@ const useProductFilter = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
 
-  return useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams();
 
-    const currentPage = searchParams.get("page")
-      ? Number(searchParams.get("page"))
-      : 1;
-    params.set("pageNumber", currentPage - 1);
+    // Pagination
+    const page = searchParams.get("page") || 1;
+    params.set("pageNumber", Number(page) - 1);
+    
+    // Default or passed values
+    const pageSize = searchParams.get("pageSize") || 12; 
+    params.set("pageSize", pageSize);
 
-    const sortOrder = searchParams.get("sortby") || "asc";
-    const categoryParams = searchParams.get("category") || null;
-    const genderParams = searchParams.get("gender") || null;
-    const keyword = searchParams.get("keyword") || null;
-    params.set("sortBy", "price");
+    // Sorting
+    const sortBy = searchParams.get("sortBy") || "productId";
+    const sortOrder = searchParams.get("sortOrder") || "desc";
+    params.set("sortBy", sortBy);
     params.set("sortOrder", sortOrder);
 
-    if (categoryParams) {
-      params.set("category", categoryParams);
-    }
-    if (genderParams) {
-      params.set("gender", genderParams);
-    }
-    if (keyword) {
-      params.set("keyword", keyword);
+    // Filters
+    const keyword = searchParams.get("keyword");
+    const category = searchParams.get("category");
+    const gender = searchParams.get("gender");
+    const size = searchParams.get("size");
+    const color = searchParams.get("color");
+    const minPrice = searchParams.get("minPrice") || "0";
+    const maxPrice = searchParams.get("maxPrice") || "999999"; // Bypassing backend's 4499 default
+    const minDiscount = searchParams.get("minDiscount") || searchParams.get("discount");
+    const inStock = searchParams.get("inStock");
+
+    if (keyword) params.set("keyword", keyword);
+    if (category) params.set("category", category);
+    if (gender) params.set("gender", gender);
+    if (size) params.set("size", size);
+    if (color) params.set("color", color);
+    params.set("minPrice", minPrice);
+    params.set("maxPrice", maxPrice);
+    if (minDiscount) params.set("minDiscount", minDiscount);
+    if (inStock !== null && inStock !== undefined && inStock !== "") {
+      params.set("inStock", inStock);
     }
 
     const queryString = params.toString();
-    console.log("Query string", queryString);
+    console.log("Filtered Query String:", queryString);
     dispatch(fetchProducts(queryString));
   }, [searchParams, dispatch]);
 };

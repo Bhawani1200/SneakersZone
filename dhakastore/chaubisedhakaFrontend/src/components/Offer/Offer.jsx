@@ -42,7 +42,7 @@ const DealsOfTheDay = () => {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = scrollRef.current.offsetWidth;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -53,7 +53,7 @@ const DealsOfTheDay = () => {
   const dealsProducts = mockProducts.filter((p) => p.discount);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-950 dark:to-zinc-900">
+    <section className="py-20 bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-950 dark:to-zinc-900 overflow-hidden">
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -105,30 +105,43 @@ const DealsOfTheDay = () => {
           </div>
         </motion.div>
 
-        <div className="relative">
+        <div className="relative group">
           {/* Scroll Buttons */}
           <button
             onClick={() => scroll("left")}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white dark:bg-zinc-800 shadow-lg rounded-full items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+            className="hidden lg:flex absolute -left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-white dark:bg-zinc-800 shadow-2xl rounded-full items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all hover:scale-110 border border-zinc-200 dark:border-zinc-700 opacity-0 group-hover:opacity-100"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-8 h-8" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white dark:bg-zinc-800 shadow-lg rounded-full items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+            className="hidden lg:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-white dark:bg-zinc-800 shadow-2xl rounded-full items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all hover:scale-110 border border-zinc-200 dark:border-zinc-700 opacity-0 group-hover:opacity-100"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-8 h-8" />
           </button>
 
           {/* Scrollable Products */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex overflow-x-auto scrollbar-hide scroll-smooth pb-8 -mx-2 sm:-mx-3"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {dealsProducts.map((product, index) => (
-              <div key={product.id} className="flex-shrink-0 w-80">
-                <ProductCard product={product} index={index} />
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 px-2 sm:px-3"
+              >
+                <ProductCard
+                  productId={product.id}
+                  productName={product.name}
+                  image={product.image}
+                  description={product.brand}
+                  price={product.originalPrice || product.price}
+                  specialPrice={product.price}
+                  discount={product.discount}
+                  quantity={10}
+                  tag="Limited Deal"
+                />
               </div>
             ))}
           </div>

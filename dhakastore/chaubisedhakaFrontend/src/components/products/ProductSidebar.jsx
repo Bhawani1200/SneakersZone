@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Image from "../designLayouts/Image";
 import { LAUNCHES } from "../../constants/index";
 import { fetchCategories } from "../../store/actions";
+import api from "../../api/api";
 
 const FilterSection = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -59,21 +60,81 @@ const ProductSidebar = () => {
     return searchParams.get(type) === value;
   };
 
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(4499);
+  const PRICE_MIN = 2000;
+  const PRICE_MAX = 10000;
 
-  const handleMinChange = (e) => {
-    const value = Math.min(Number(e.target.value), maxPrice - 1);
-    setMinPrice(value);
+  const [maxPrice, setMaxPrice] = useState(
+    Number(searchParams.get("maxPrice")) || PRICE_MAX,
+  );
+
+  useEffect(() => {
+    const urlMax = searchParams.get("maxPrice");
+    if (urlMax !== null) setMaxPrice(Number(urlMax));
+  }, [searchParams]);
+
+  // Fetch all products from backend for accurate sidebar counts
+  const [allProducts, setAllProducts] = useState([]);
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const { data } = await api.get(
+          "/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&maxPrice=999999",
+        );
+        setAllProducts(data.content || []);
+      } catch (err) {
+        console.error("Sidebar: failed to fetch products", err);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  // Use fetched backend products for counts; fall back to Redux/mock if empty
+  const productsList =
+    allProducts.length > 0
+      ? allProducts
+      : products && products.length > 0
+        ? products
+        : LAUNCHES;
+
+  // Derive unique colors from real product data
+  const dynamicColors = [
+    ...new Set(
+      productsList
+        .map((p) => p.color)
+        .filter(Boolean)
+        .map((c) => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()),
+    ),
+  ];
+
+  const getDiscountCount = (minDiscount) => {
+    return productsList.filter((p) => {
+      const pct =
+        p.discount ||
+        (p.price && p.specialPrice
+          ? Math.round(((p.price - p.specialPrice) / p.price) * 100)
+          : 0);
+      return pct >= minDiscount;
+    }).length;
   };
 
-  const handleMaxChange = (e) => {
-    const value = Math.max(Number(e.target.value), minPrice + 1);
-    setMaxPrice(value);
+  const discountBuckets = [
+    { label: "10% and above", value: 10 },
+    { label: "20% and above", value: 20 },
+    { label: "30% and above", value: 30 },
+    { label: "40% and above", value: 40 },
+    { label: "50% and above", value: 50 },
+  ];
+
+  const handlePriceChange = (value) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("minPrice", PRICE_MIN);
+    params.set("maxPrice", value);
+    params.set("page", "1");
+    navigate(`${location.pathname}?${params.toString()}`);
   };
 
   return (
-    <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 py-10">
+    <div className="mt-28 max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 py-10">
       {/* Filter Sidebar */}
       <div className="w-[320px] hidden lg:block pr-8 py-2">
         <FilterSection title="Gender" defaultOpen={true}>
@@ -107,7 +168,9 @@ const ProductSidebar = () => {
                 <input
                   type="checkbox"
                   checked={isChecked("category", cat.categoryName)}
-                  onChange={() => handleFilterChange("category", cat.categoryName)}
+                  onChange={() =>
+                    handleFilterChange("category", cat.categoryName)
+                  }
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                 />
                 <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
@@ -121,7 +184,7 @@ const ProductSidebar = () => {
 
         <FilterSection title="Size">
           <div className="grid grid-cols-4 gap-2">
-            {["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11"].map((size) => (
+            {[38, 39, 40, 41, 42, 43, 44, 45].map((size) => (
               <button
                 key={size}
                 className="border border-gray-200 py-2 text-xs font-medium rounded hover:border-black transition-colors"
@@ -133,90 +196,74 @@ const ProductSidebar = () => {
         </FilterSection>
 
         <FilterSection title="Color">
-          <div className="flex flex-wrap gap-3">
-            {["#000", "#fff", "#ff0000", "#0000ff", "#008000", "#ffff00"].map(
-              (color) => (
-                <div
-                  key={color}
-                  className="w-6 h-6 rounded-full border border-gray-200 cursor-pointer hover:scale-110 transition-transform"
-                  style={{ backgroundColor: color }}
-                />
-              ),
+          <div className="flex flex-wrap gap-2">
+            {["Red", "Blue", "Green", "Yellow", "Black", "White"].map(
+              (color) => {
+                const colorValue = color.toLowerCase();
+                const isSelected = isChecked("color", colorValue);
+                return (
+                  <button
+                    key={color}
+                    onClick={() => handleFilterChange("color", colorValue)}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-all ${
+                      isSelected
+                        ? "bg-black text-white border-black shadow-md"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-black active:scale-95"
+                    }`}
+                  >
+                    {color}
+                  </button>
+                );
+              },
             )}
           </div>
         </FilterSection>
 
         <FilterSection title="Price" defaultOpen={true}>
-          <div className="space-y-4">
-            <div className="relative h-1 bg-gray-200 rounded-full mt-6 mb-8 mx-2">
-              <div
-                className="absolute h-full bg-black rounded-full"
-                style={{
-                  left: `${(minPrice / 4499) * 100}%`,
-                  right: `${100 - (maxPrice / 4499) * 100}%`,
-                }}
-              />
-              <input
-                type="range"
-                min="0"
-                max="4499"
-                value={minPrice}
-                onChange={handleMinChange}
-                className="absolute inset-0 w-full h-1 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-black [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
-              />
-              <input
-                type="range"
-                min="0"
-                max="4499"
-                value={maxPrice}
-                onChange={handleMaxChange}
-                className="absolute inset-0 w-full h-1 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-black [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
-              />
+          <div className="space-y-3">
+            {/* Price Range Display */}
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>₹{PRICE_MIN.toLocaleString("en-IN")}</span>
+              <span className="font-semibold text-gray-900">
+                up to ₹{maxPrice.toLocaleString("en-IN")}
+              </span>
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium whitespace-nowrap">
-                  ₹
-                </span>
-                <input
-                  type="number"
-                  value={minPrice}
-                  onChange={handleMinChange}
-                  className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-2xl text-base focus:ring-1 focus:ring-black outline-none transition-all"
-                />
-              </div>
-              <span className="text-gray-400 font-medium text-sm px-1">to</span>
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium whitespace-nowrap">
-                  ₹
-                </span>
-                <input
-                  type="number"
-                  value={maxPrice}
-                  onChange={handleMaxChange}
-                  className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-2xl text-base focus:ring-1 focus:ring-black outline-none transition-all"
-                />
-              </div>
+
+            {/* Single slider */}
+            <input
+              type="range"
+              min={PRICE_MIN}
+              max={PRICE_MAX}
+              step={500}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              onMouseUp={() => handlePriceChange(maxPrice)}
+              onTouchEnd={() => handlePriceChange(maxPrice)}
+              className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-black"
+            />
+
+            {/* Min / Max labels */}
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>₹2,000</span>
+              <span>₹10,000</span>
             </div>
           </div>
         </FilterSection>
 
         <FilterSection title="Discounts" defaultOpen={true}>
           <div className="space-y-5">
-            {[
-              { label: "30% and above", count: 402 },
-              { label: "40% and above", count: 314 },
-              { label: "50% and above", count: 206 },
-              { label: "60% and above", count: 97 },
-              { label: "70% and above", count: 30 },
-            ].map((d) => (
+            {discountBuckets.map((d) => (
               <label
-                key={d.label}
+                key={d.value}
                 className="flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
+                    checked={isChecked("discount", String(d.value))}
+                    onChange={() =>
+                      handleFilterChange("discount", String(d.value))
+                    }
                     className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black cursor-pointer"
                   />
                   <span className="text-base text-gray-700 font-medium group-hover:text-black transition-colors">
@@ -224,7 +271,7 @@ const ProductSidebar = () => {
                   </span>
                 </div>
                 <span className="text-sm text-gray-400 font-medium">
-                  ({d.count})
+                  ({getDiscountCount(d.value)})
                 </span>
               </label>
             ))}
@@ -237,13 +284,19 @@ const ProductSidebar = () => {
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
+                  checked={isChecked("availability", "in-stock")}
+                  onChange={() =>
+                    handleFilterChange("availability", "in-stock")
+                  }
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black cursor-pointer"
                 />
                 <span className="text-base text-gray-700 font-medium group-hover:text-black transition-colors">
                   In stock only
                 </span>
               </div>
-              <span className="text-sm text-gray-400 font-medium">(542)</span>
+              <span className="text-sm text-gray-400 font-medium">
+                ({productsList.filter((p) => p.quantity > 0).length})
+              </span>
             </label>
           </div>
         </FilterSection>
@@ -252,23 +305,25 @@ const ProductSidebar = () => {
       {/* Product Image Grid */}
       <div className="flex-1">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {(products?.length > 0 ? products : LAUNCHES).slice(0, 4).map((product) => (
-            <Link
-              to={`/product/${product.id || product.productId}`}
-              key={product.id || product.productId}
-              className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 block"
-            >
-              <Image
-                imgSrc={product.image}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                <span className="text-white opacity-0 group-hover:opacity-100 font-bold tracking-widest uppercase py-2 px-4 border border-white rounded-sm transition-opacity">
-                  View Details
-                </span>
-              </div>
-            </Link>
-          ))}
+          {(products?.length > 0 ? products : LAUNCHES)
+            .slice(0, 4)
+            .map((product) => (
+              <Link
+                to={`/product/${product.id || product.productId}`}
+                key={product.id || product.productId}
+                className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 block"
+              >
+                <Image
+                  imgSrc={product.image}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                  <span className="text-white opacity-0 group-hover:opacity-100 font-bold tracking-widest uppercase py-2 px-4 border border-white rounded-sm transition-opacity">
+                    View Details
+                  </span>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
     </div>

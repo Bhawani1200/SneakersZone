@@ -16,6 +16,7 @@ import {
   Facebook,
   Instagram,
   Globe,
+  MapPin,
 } from "lucide-react";
 import { FaTiktok } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
@@ -109,39 +110,33 @@ const Navigation = () => {
 
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-8 pr-8 border-r border-zinc-700">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="hover:scale-125 transition-all text-[#1877F2] hover:text-[#1877F2]/80"
                 title="Facebook"
               >
                 <Facebook className="w-6 h-6 fill-current" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="hover:scale-125 transition-all text-[#E4405F] hover:text-[#E4405F]/80"
                 title="Instagram"
               >
                 <Instagram className="w-6 h-6" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="hover:scale-125 transition-all text-white hover:text-zinc-300"
                 title="TikTok"
               >
                 <FaTiktok className="w-6 h-6" />
-              </a>
+              </Link>
             </div>
-            <div className="flex items-center gap-5">
-              <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
-                <Globe className="w-5 h-5 text-blue-500" />
-                <span className="tracking-widest capitalize">NPR</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
-              <span className="text-zinc-600">|</span>
-              <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
-                <span className="tracking-widest capitalize">EN</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
+            <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
+              <MapPin className="w-5 h-5 text-blue-500" />
+              <span className="tracking-widest capitalize">
+                Dharan-9 AcharyaLine,Nepal
+              </span>
             </div>
           </div>
         </div>

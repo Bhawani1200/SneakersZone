@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-[#0a0a0a] text-[#f0ede6];
+  }
+}
+
 /* @keyframes marquee {
   0% { transform: translateX(100vw); }
   100% { transform: translateX(-100%); }
@@ -36,7 +46,7 @@
   display: none;
 } */
 
-.new-launches-slider .slick-track {
+/* .new-launches-slider .slick-track {
   display: flex !important;
 }
 
@@ -48,4 +58,4 @@
 
 .new-launches-slider .slick-slide > div {
   width: 100%;
-}
+} */

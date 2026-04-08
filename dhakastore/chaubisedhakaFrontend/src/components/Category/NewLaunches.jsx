@@ -36,16 +36,19 @@ const NewLaunches = () => {
     const fetchNewLaunches = async () => {
       try {
         const { data } = await api.get(
-          "/public/products?pageNumber=0&pageSize=10&sortBy=productId&sortOrder=desc",
+          "/public/products?pageNumber=0&pageSize=50&sortBy=productId&sortOrder=desc&maxPrice=999999",
         );
+        console.log("New Launches raw:", data);
 
         const formattedProducts = (data.content || []).map((product) => ({
           ...product,
+          productId: product.productId || product.id, // Ensure we have an ID for the key
           image: product.image?.startsWith("http")
             ? product.image // Cloudinary full URL — use directly
             : `http://localhost:8080/images/${product.image}`, // legacy local fallback
         }));
 
+        console.log("New Launches formatted:", formattedProducts);
         setProducts(formattedProducts);
       } catch (error) {
         console.error("Failed to fetch new launches", error);
