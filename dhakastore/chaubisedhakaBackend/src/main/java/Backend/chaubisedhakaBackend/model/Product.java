@@ -51,4 +51,11 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender = Gender.UNISEX;
+
+    private Integer size;
+
+    private String color;
+
+    private Boolean inStock = true;
+
 }

@@ -93,7 +93,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender) {
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock) {
         Sort sortByAndOrder = sortOrder.equals("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -116,6 +116,31 @@ public class ProductServiceImpl implements ProductService{
                     criteriaBuilder.equal(root.get("gender"), Gender.valueOf(gender.toUpperCase())));
         }
 
+        if (size != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("size"), size));
+        }
+
+        if (color != null && !color.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(cb.lower(root.get("color")), color.toLowerCase()));
+        }
+
+        // Price range filter
+        spec = spec.and((root, query, cb) ->
+                cb.between(root.get("specialPrice"), minPrice, maxPrice));
+
+        // Discount filter — frontend sends "30", "40" etc.
+        if (minDiscount != null && minDiscount > 0) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("discount"), (double) minDiscount));
+        }
+
+        if (inStock != null && inStock) {
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThan(root.get("quantity"), 0));
+        }
+
         Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
 
         List<Product> products = pageProducts.getContent();
@@ -128,7 +153,7 @@ public class ProductServiceImpl implements ProductService{
         productResponse.setPageSize(pageProducts.getSize());
         productResponse.setTotalElements(pageProducts.getTotalElements());
         productResponse.setTotalPages(pageProducts.getTotalPages());
-        productResponse.setLastPage(pageProducts.isLast()); // ✅ fixed bug: was productResponse.isLastPage()
+        productResponse.setLastPage(pageProducts.isLast());
         productResponse.setContent(productDTOS);
         return productResponse;
     }

@@ -18,5 +18,8 @@ public class ProductDTO {
     private double specialPrice;
     private double discount;
     private Gender gender;
-
+    private Integer size;
+    private String color;
+    private Boolean inStock;
+    private String categoryName;
 }

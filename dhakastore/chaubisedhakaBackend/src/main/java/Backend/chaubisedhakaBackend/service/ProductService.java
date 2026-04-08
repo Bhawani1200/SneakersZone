@@ -11,7 +11,7 @@ public interface ProductService {
 
     ProductDTO addProduct(ProductDTO product, Long categoryId);
 
-    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category,String gender);
+    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock);
 
     ProductResponse searchCategoryById(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 

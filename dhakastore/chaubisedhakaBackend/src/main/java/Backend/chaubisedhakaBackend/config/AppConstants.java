@@ -9,4 +9,8 @@ public class AppConstants {
     public static final String SORT_ORDERS_BY = "totalAmount";
     public static final String SORT_USERS_BY = "userId";
 
+    public static final Double MIN_PRICE = 0.0;
+    public static final Double MAX_PRICE = 4499.0;
+    public static final Integer MIN_DISCOUNT = 0;
+
 }
