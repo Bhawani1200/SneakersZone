@@ -1,6 +1,7 @@
 package Backend.chaubisedhakaBackend.service;
 
 
+import Backend.chaubisedhakaBackend.payload.AdminProductDTO;
 import Backend.chaubisedhakaBackend.payload.ProductDTO;
 import Backend.chaubisedhakaBackend.payload.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,4 +31,35 @@ public interface ProductService {
     ProductDTO getProductById(Long productId);
 
     ProductResponse getProductsByGender(String gender, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+
+    
+    // Admin: Create new product
+    ProductDTO adminCreateProduct(AdminProductDTO adminProductDTO);
+
+    // Admin: Update existing product
+    ProductDTO adminUpdateProduct(Long productId, AdminProductDTO adminProductDTO);
+
+    // Admin: Delete product
+    ProductDTO adminDeleteProduct(Long productId);
+
+    // Admin: Get all products (complete list)
+    ProductResponse adminGetAllProducts(Integer pageNumber, Integer pageSize,
+                                        String sortBy, String sortOrder);
+
+    // Admin: Update product image
+    ProductDTO adminUpdateProductImage(Long productId, MultipartFile image) throws IOException;
+
+    // Admin: Get products by category name
+    ProductResponse adminGetProductsByCategory(String categoryName, Integer pageNumber,
+                                               Integer pageSize, String sortBy, String sortOrder);
+
+    // Admin: Get products by brand
+    ProductResponse adminGetProductsByBrand(String brand, Integer pageNumber, Integer pageSize,
+                                            String sortBy, String sortOrder);
+
+    // Admin: Get discounted products
+    ProductResponse adminGetDiscountedProducts(Integer minDiscount, Integer pageNumber,
+                                               Integer pageSize, String sortBy, String sortOrder);
+
+    ProductDTO getSingleProductById(Long productId);
 }
