@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 export const fetchProducts = (queryString) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
-    const { data } = await api.get(`/public/products?${queryString}`);
+    const { data } = await api.get(`/user/public/products?${queryString}`);
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,
@@ -72,9 +72,12 @@ export const addToCart =
       (item) => item.productId === data.productId
     );
 
-    const isQuantityExist = getProduct ? getProduct.quantity >= qty : true;
+    const isInStock = getProduct ? getProduct.inStock !== false : data.inStock !== false;
+    const isQuantityExist = getProduct 
+        ? getProduct.quantity >= qty 
+        : (data.quantity === undefined || data.quantity >= qty);
 
-    if (isQuantityExist) {
+    if (isInStock && isQuantityExist) {
       dispatch({ type: "ADD_CART", payload: { ...data, quantity: qty } });
       toast.success(`${data?.productName} added to cart successfully`);
       localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
@@ -157,6 +160,21 @@ export const increaseCartQuantity =
     }
 
     const newQuantity = currentQuantity + 1;
+
+    // Check store for actual stock bounds
+    const { products } = getState().products;
+    const storeProduct = products?.find(p => p.productId === data.productId);
+    
+    if (storeProduct && (storeProduct.inStock === false || storeProduct.quantity < newQuantity)) {
+       toast.error("Requested quantity not available in stock");
+       return;
+    }
+    
+    // Check incoming data bounds if not in store
+    if (!storeProduct && (data.inStock === false || (data.quantity !== undefined && data.quantity < newQuantity))) {
+       toast.error("Requested quantity not available");
+       return;
+    }
 
     // Set a reasonable limit
     if (newQuantity > 10) {
@@ -475,22 +493,69 @@ export const updateProductFromDashboard =
     }
   };
 
+// export const addNewProductFromDashboard =
+//   (sendData, toast, reset, setLoader, setOpen, isAdmin) =>
+//   async (dispatch, getState) => {
+//     try {
+//       setLoader(true);
+//       const endpoint = isAdmin ? "/admin/categories/" : "/seller/categories/";
+//       await api.post(`${endpoint}${sendData.categoryId}/product`, sendData);
+//       toast.success("Product created successfully");
+//       reset();
+//       setOpen(false);
+//       await dispatch(dashboardProductsAction());
+//     } catch (error) {
+//       console.error(error);
+//       toast.error(
+//         error?.response?.data?.description || "Product creation failed"
+//       );
+//     } finally {
+//       setLoader(false);
+//     }
+//   };
+
 export const addNewProductFromDashboard =
   (sendData, toast, reset, setLoader, setOpen, isAdmin) =>
   async (dispatch, getState) => {
     try {
       setLoader(true);
-      const endpoint = isAdmin ? "/admin/categories/" : "/seller/categories/";
-      await api.post(`${endpoint}${sendData.categoryId}/product`, sendData);
+      
+      const endpoint = isAdmin ? "/admin/products" : "/seller/products";
+      
+      console.log("Sending to endpoint:", endpoint);
+      console.log("Product data:", JSON.stringify(sendData, null, 2));
+      
+      const response = await api.post(endpoint, sendData);
+      
       toast.success("Product created successfully");
       reset();
       setOpen(false);
       await dispatch(dashboardProductsAction());
+      
     } catch (error) {
-      console.error(error);
-      toast.error(
-        error?.response?.data?.description || "Product creation failed"
-      );
+      console.error("Product creation error:", error);
+      
+    
+      if (error.response) {
+        console.error("Error status:", error.response.status);
+        console.error("Error data:", error.response.data);
+        console.error("Error headers:", error.response.headers);
+        
+       
+        const errorMessage = error.response.data?.description || 
+                           error.response.data?.message ||
+                           error.response.data?.error ||
+                           JSON.stringify(error.response.data) ||
+                           "Product creation failed";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.error("No response from server");
+      } else {
+        console.error("Error message:", error.message);
+        toast.error(error.message);
+      }
+      
     } finally {
       setLoader(false);
     }

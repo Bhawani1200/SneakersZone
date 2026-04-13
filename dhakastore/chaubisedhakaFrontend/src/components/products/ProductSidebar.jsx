@@ -72,13 +72,12 @@ const ProductSidebar = () => {
     if (urlMax !== null) setMaxPrice(Number(urlMax));
   }, [searchParams]);
 
-  // Fetch all products from backend for accurate sidebar counts
   const [allProducts, setAllProducts] = useState([]);
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const { data } = await api.get(
-          "/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&maxPrice=999999",
+          "/api/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
         setAllProducts(data.content || []);
       } catch (err) {
@@ -88,7 +87,6 @@ const ProductSidebar = () => {
     fetchAll();
   }, []);
 
-  // Use fetched backend products for counts; fall back to Redux/mock if empty
   const productsList =
     allProducts.length > 0
       ? allProducts
@@ -96,15 +94,45 @@ const ProductSidebar = () => {
         ? products
         : LAUNCHES;
 
-  // Derive unique colors from real product data
-  const dynamicColors = [
-    ...new Set(
-      productsList
-        .map((p) => p.color)
-        .filter(Boolean)
-        .map((c) => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()),
-    ),
-  ];
+  const extractUnique = (list, property) =>
+    [
+      ...new Set(
+        list
+          .flatMap((p) => {
+            let vals = p[`${property}s`];
+            if (!vals || vals.length === 0) {
+              vals = p[property] ? [p[property]] : [];
+            }
+            return vals;
+          })
+          .filter(Boolean)
+          .map((v) => {
+            let val =
+              typeof v === "object" && v !== null
+                ? v.label || v.name || v.color || String(v)
+                : v;
+            return typeof val === "string"
+              ? val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()
+              : val;
+          }),
+      ),
+    ].sort((a, b) =>
+      typeof a === "number" || typeof b === "number"
+        ? Number(a) - Number(b)
+        : String(a).localeCompare(String(b)),
+    );
+
+  const dynamicColors = extractUnique(productsList, "color");
+  const dynamicSizes = extractUnique(productsList, "size");
+  const dynamicBrands = extractUnique(productsList, "brand");
+
+  // fallbacks if empty
+  const colorsToDisplay =
+    dynamicColors.length > 0
+      ? dynamicColors
+      : ["Red", "Blue", "Green", "Yellow", "Black", "White"];
+  const sizesToDisplay =
+    dynamicSizes.length > 0 ? dynamicSizes : [38, 39, 40, 41, 42, 43, 44, 45];
 
   const getDiscountCount = (minDiscount) => {
     return productsList.filter((p) => {
@@ -180,42 +208,72 @@ const ProductSidebar = () => {
             ))}
           </div>
         </FilterSection>
-        {/* <FilterSection title="Collections | Usage"></FilterSection> */}
+        {/* Brand Filter */}
+        {dynamicBrands.length > 0 && (
+          <FilterSection title="Brand" defaultOpen={true}>
+            <div className="space-y-3">
+              {dynamicBrands.map((brand) => (
+                <label
+                  key={brand}
+                  className="flex items-center gap-3 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked("brand", brand)}
+                    onChange={() => handleFilterChange("brand", brand)}
+                    className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
+                  />
+                  <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
+                    {brand}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </FilterSection>
+        )}
 
         <FilterSection title="Size">
           <div className="grid grid-cols-4 gap-2">
-            {[38, 39, 40, 41, 42, 43, 44, 45].map((size) => (
-              <button
-                key={size}
-                className="border border-gray-200 py-2 text-xs font-medium rounded hover:border-black transition-colors"
-              >
-                {size}
-              </button>
-            ))}
+            {sizesToDisplay.map((size) => {
+              const strSize = String(size);
+              const isSelected = isChecked("size", strSize);
+              return (
+                <button
+                  key={strSize}
+                  onClick={() => handleFilterChange("size", strSize)}
+                  className={`border py-2 text-xs font-medium rounded transition-colors ${
+                    isSelected
+                      ? "bg-black text-white border-black shadow-md"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-black"
+                  }`}
+                >
+                  {strSize}
+                </button>
+              );
+            })}
           </div>
         </FilterSection>
 
         <FilterSection title="Color">
           <div className="flex flex-wrap gap-2">
-            {["Red", "Blue", "Green", "Yellow", "Black", "White"].map(
-              (color) => {
-                const colorValue = color.toLowerCase();
-                const isSelected = isChecked("color", colorValue);
-                return (
-                  <button
-                    key={color}
-                    onClick={() => handleFilterChange("color", colorValue)}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-all ${
-                      isSelected
-                        ? "bg-black text-white border-black shadow-md"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-black active:scale-95"
-                    }`}
-                  >
-                    {color}
-                  </button>
-                );
-              },
-            )}
+            {colorsToDisplay.map((color) => {
+              const colorStr = String(color);
+              const colorValue = colorStr.toLowerCase();
+              const isSelected = isChecked("color", colorValue);
+              return (
+                <button
+                  key={colorStr}
+                  onClick={() => handleFilterChange("color", colorValue)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-all ${
+                    isSelected
+                      ? "bg-black text-white border-black shadow-md"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-black active:scale-95"
+                  }`}
+                >
+                  {colorStr}
+                </button>
+              );
+            })}
           </div>
         </FilterSection>
 

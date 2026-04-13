@@ -36,8 +36,11 @@ const NewLaunches = () => {
     const fetchNewLaunches = async () => {
       try {
         const { data } = await api.get(
-          "/public/products?pageNumber=0&pageSize=50&sortBy=productId&sortOrder=desc&maxPrice=999999",
+          "/api/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
+        // const { data } = await api.get(
+        //   "/api/user/public/products?pageNumber=0&pageSize=50&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
+        // );
         console.log("New Launches raw:", data);
 
         const formattedProducts = (data.content || []).map((product) => ({
@@ -45,7 +48,7 @@ const NewLaunches = () => {
           productId: product.productId || product.id, // Ensure we have an ID for the key
           image: product.image?.startsWith("http")
             ? product.image // Cloudinary full URL — use directly
-            : `http://localhost:8080/images/${product.image}`, // legacy local fallback
+            : `http://localhost:8080/images/${product.image}`,
         }));
 
         console.log("New Launches formatted:", formattedProducts);

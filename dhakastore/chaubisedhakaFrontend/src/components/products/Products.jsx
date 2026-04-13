@@ -143,8 +143,6 @@ const Products = () => {
   const genderFilter = searchParams.get("gender");
   const categoryFilter = searchParams.get("category");
 
-  // ✅ useProductFilter automatically extracts all URL params (including gender and category)
-  // and fetches from the unified endpoint.
   useProductFilter();
 
   useEffect(() => {
@@ -159,7 +157,6 @@ const Products = () => {
         </div>
 
         <div className="flex-1">
-          {/* ✅ Active filter badge */}
           {(genderFilter || categoryFilter) && (
             <div className="mb-4 flex items-center gap-2">
               <span className="text-sm text-gray-500">Filtering by:</span>

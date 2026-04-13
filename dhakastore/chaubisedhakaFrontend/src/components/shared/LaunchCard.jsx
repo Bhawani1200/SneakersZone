@@ -18,6 +18,10 @@ const LaunchCard = ({
   rating,
   reviewCount,
   colors = [],
+  brand,
+  sellerName,
+  inStock = true,
+  sizes = [],
 }) => {
   const [colorIndex, setColorIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -28,7 +32,8 @@ const LaunchCard = ({
     toast.success(isWishlisted ? "Removed from Wishlist" : "Added to Wishlist");
   };
 
-  const isAvailable = quantity && Number(quantity) > 0;
+  const isAvailable =
+    inStock !== false && (quantity === undefined || Number(quantity) > 0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -43,6 +48,11 @@ const LaunchCard = ({
           productId,
           price,
           quantity,
+          brand,
+          sellerName,
+          inStock,
+          colors,
+          sizes,
         },
         1,
         toast,
@@ -137,7 +147,7 @@ const LaunchCard = ({
                 <button
                   key={idx}
                   onClick={() => setColorIndex(idx)}
-                  title={color.label}
+                  title={color.label || color}
                   className={`w-6 h-6 xl:w-8 xl:h-8 rounded-full border-2 transition-all duration-150 ${
                     colorIndex === idx
                       ? "border-gray-700 scale-110"
@@ -159,13 +169,25 @@ const LaunchCard = ({
           </div>
         )}
 
+        {/* Brand */}
+        {brand && (
+          <p className="text-xs xl:text-sm text-gray-500 font-semibold uppercase tracking-wider mb-[-8px]">
+            {brand}{" "}
+            {sellerName && (
+              <span className="text-gray-400 font-normal normal-case tracking-normal ml-1">
+                by {sellerName}
+              </span>
+            )}
+          </p>
+        )}
+
         {/* Product Name */}
-        <p className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-1 hover:underline underline-offset-4">
+        <p className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-2 hover:underline underline-offset-4">
           {productName}
         </p>
 
         {/* Price Row */}
-        <div className="flex items-baseline gap-2 xl:gap-3 flex-wrap">
+        <div className="flex items-baseline gap-2 xl:gap-3 flex-wrap mt-auto">
           <span className="text-base xl:text-lg 2xl:text-xl font-bold text-gray-800">
             ₹{Number(displayPrice).toLocaleString("en-IN")}
           </span>
@@ -191,7 +213,7 @@ const LaunchCard = ({
             addToCartHandler();
           }}
           disabled={!isAvailable}
-          className={`mt-auto w-full flex items-center justify-center gap-2 py-2.5 xl:py-4 rounded-lg text-sm xl:text-base 2xl:text-lg font-semibold transition-colors duration-200 ${
+          className={`mt-2 w-full flex items-center justify-center gap-2 py-2.5 xl:py-4 rounded-lg text-sm xl:text-base 2xl:text-lg font-semibold transition-colors duration-200 ${
             isAvailable
               ? "bg-gray-900 text-white hover:bg-gray-700"
               : "bg-gray-200 text-gray-400 cursor-not-allowed"

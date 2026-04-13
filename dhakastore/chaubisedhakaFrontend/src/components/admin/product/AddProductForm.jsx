@@ -261,17 +261,18 @@ import ErrorPage from "../../shared/ErrorPage";
 import Skeleton from "../../shared/Skeleton";
 
 const GENDERS = ["MEN", "WOMEN", "KIDS", "UNISEX"];
-const SIZES = [38, 39, 40, 41, 42, 43, 44, 45];
+const SIZES = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
 const DEFAULT_COLORS = ["Red", "Blue", "Green", "Yellow", "Black", "White"];
 
 const AddProductForm = ({ setOpen, product, update = false }) => {
   const [loader, setLoader] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(false);
   const [selectedGender, setSelectedGender] = useState("UNISEX");
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
   const [dynamicColors, setDynamicColors] = useState(DEFAULT_COLORS);
   const [newColorInput, setNewColorInput] = useState("");
+  const [inStock, setInStock] = useState(true);
 
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.products);
@@ -287,40 +288,98 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
     formState: { errors },
   } = useForm({ mode: "onTouched" });
 
+  // const saveProductHandler = (data) => {
+  //   const baseData = {
+  //     ...data,
+  //     gender: selectedGender,
+  //     size: selectedSizes[0] || null, // Primary size
+  //     color: selectedColors[0] || null, // Primary color
+  //     sizes: selectedSizes,
+  //     colors: selectedColors,
+  //     inStock: inStock,
+  //     categoryId: selectedCategory?.categoryId,
+  //   };
+
+  //   if (!update) {
+  //     dispatch(
+  //       addNewProductFromDashboard(
+  //         baseData,
+  //         toast,
+  //         reset,
+  //         setLoader,
+  //         setOpen,
+  //         isAdmin,
+  //       ),
+  //     );
+  //   } else {
+  //     dispatch(
+  //       updateProductFromDashboard(
+  //         { ...baseData, id: product.id },
+  //         toast,
+  //         reset,
+  //         setLoader,
+  //         setOpen,
+  //         isAdmin,
+  //       ),
+  //     );
+  //   }
+  // };
+
   const saveProductHandler = (data) => {
-    const baseData = {
-      ...data,
+    if (!selectedCategory?.categoryId) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    if (!data.productName) {
+      toast.error("Product name is required");
+      return;
+    }
+
+    if (!data.price) {
+      toast.error("Price is required");
+      return;
+    }
+
+    if (!data.quantity) {
+      toast.error("Quantity is required");
+      return;
+    }
+
+    const stringSizes = selectedSizes.map((size) => size.toString());
+
+    const sendData = {
+      productName: data.productName,
+      description: data.description,
+      quantity: parseInt(data.quantity),
+      price: parseFloat(data.price),
+      discount: parseFloat(data.discount || 0),
+      specialPrice: parseFloat(data.specialPrice) || parseFloat(data.price),
+      image: data.image || "",
+      images: data.image ? [data.image] : [],
       gender: selectedGender,
-      size: selectedSize,
-      color: selectedColor,
+      sizes: stringSizes,
+      colors: selectedColors,
+      inStock: inStock,
+      brand: data.brand || "",
       categoryId: selectedCategory?.categoryId,
+      categoryName: selectedCategory?.categoryName,
+      sellerName: data.sellerName || "admin",
     };
 
-    if (!update) {
-      dispatch(
-        addNewProductFromDashboard(
-          baseData,
-          toast,
-          reset,
-          setLoader,
-          setOpen,
-          isAdmin,
-        ),
-      );
-    } else {
-      dispatch(
-        updateProductFromDashboard(
-          { ...baseData, id: product.id },
-          toast,
-          reset,
-          setLoader,
-          setOpen,
-          isAdmin,
-        ),
-      );
-    }
-  };
+    console.log("Sending product data to backend:", sendData);
 
+    dispatch(
+      addNewProductFromDashboard(
+        sendData,
+        toast,
+        reset,
+        setLoader,
+        setOpen,
+        isAdmin,
+      ),
+    );
+  };
   const handleAddColor = () => {
     if (!newColorInput.trim()) return;
 
@@ -331,36 +390,75 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
     if (!dynamicColors.includes(capitalizedColor)) {
       setDynamicColors([...dynamicColors, capitalizedColor]);
     }
-    setSelectedColor(capitalizedColor);
+
+    if (!selectedColors.includes(capitalizedColor)) {
+      setSelectedColors([...selectedColors, capitalizedColor]);
+    }
     setNewColorInput("");
+  };
+
+  const toggleSize = (s) => {
+    if (selectedSizes.includes(s)) {
+      setSelectedSizes(selectedSizes.filter((sz) => sz !== s));
+    } else {
+      setSelectedSizes([...selectedSizes, s]);
+    }
+  };
+
+  const toggleColor = (c) => {
+    if (selectedColors.includes(c)) {
+      setSelectedColors(selectedColors.filter((clr) => clr !== c));
+    } else {
+      setSelectedColors([...selectedColors, c]);
+    }
   };
 
   useEffect(() => {
     if (update && product) {
       setValue("productName", product?.productName);
+      setValue("brand", product?.brand);
+      setValue("sellerName", product?.sellerName);
+      setValue("image", product?.image);
       setValue("price", product?.price);
       setValue("quantity", product?.quantity);
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
       setSelectedGender(product?.gender || "UNISEX");
-      setSelectedSize(product?.size || null); // NEW
-      setSelectedColor(product?.color || null); // NEW
+      setInStock(product?.inStock ?? true);
 
-      // Ensure product's color is in the dynamic list if it's there
-      if (product?.color && !dynamicColors.includes(product.color)) {
-        setDynamicColors([...dynamicColors, product.color]);
+      const pSizes = product?.sizes || (product?.size ? [product.size] : []);
+      setSelectedSizes(pSizes);
+
+      const pColors =
+        product?.colors || (product?.color ? [product.color] : []);
+      setSelectedColors(pColors);
+
+      const newColors = pColors.filter((c) => !dynamicColors.includes(c));
+      if (newColors.length > 0) {
+        setDynamicColors([...dynamicColors, ...newColors]);
+      }
+
+      if (product?.categoryId && categories?.length > 0) {
+        const pCat = categories.find(
+          (c) => c.categoryId === product.categoryId,
+        );
+        if (pCat) setSelectedCategory(pCat);
       }
     }
-  }, [product, update]);
+  }, [product, update, categories]);
 
   useEffect(() => {
-    if (!update) dispatch(fetchCategories());
-  }, [dispatch, update]);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!categoryLoader && categories) setSelectedCategory(categories[0]);
-  }, [categories, categoryLoader]);
+    if (!categoryLoader && categories?.length > 0) {
+      if (!selectedCategory && (!update || !product?.categoryId)) {
+        setSelectedCategory(categories[0]);
+      }
+    }
+  }, [categories, categoryLoader, update, product]);
 
   if (categoryLoader) return <Skeleton />;
   if (errorMessage) return <ErrorPage />;
@@ -389,7 +487,29 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 2 — Price + Quantity */}
+        {/* Row 2 — Brand + Seller Name */}
+        <div className="flex md:flex-row flex-col gap-4 w-full">
+          <InputField
+            label="Brand"
+            id="brand"
+            type="text"
+            message="Brand name is required*"
+            placeholder="Brand Name"
+            register={register}
+            errors={errors}
+          />
+          <InputField
+            label="Seller Name"
+            id="sellerName"
+            type="text"
+            message="Seller name is required*"
+            register={register}
+            placeholder="Seller Name"
+            errors={errors}
+          />
+        </div>
+
+        {/* Row 3 — Price + Quantity */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
           <InputField
             label="Price"
@@ -413,13 +533,12 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 3 — Discount + Special Price */}
+        {/* Row 4 — Discount + Special Price */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
           <InputField
-            label="Discount"
+            label="Discount (%)"
             id="discount"
             type="number"
-            message="This field is required*"
             placeholder="Product Discount"
             register={register}
             errors={errors}
@@ -428,14 +547,45 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             label="Special Price"
             id="specialPrice"
             type="number"
-            message="This field is required*"
             placeholder="Special Price"
             register={register}
             errors={errors}
           />
         </div>
 
-        {/* Row 4 — Gender Toggle */}
+        {/* Row 5 — Main Image URL + In Stock */}
+        <div className="flex md:flex-row flex-col gap-4 w-full items-end">
+          <InputField
+            label="Image URL"
+            id="image"
+            type="text"
+            register={register}
+            placeholder="Main Product Image URL"
+            errors={errors}
+          />
+          <div className="flex flex-col gap-2 w-full md:w-1/2">
+            <label className="font-semibold text-sm text-slate-800">
+              Availability
+            </label>
+            <div className="flex items-center gap-2 h-[42px]">
+              <input
+                type="checkbox"
+                id="inStock"
+                checked={inStock}
+                onChange={(e) => setInStock(e.target.checked)}
+                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+              />
+              <label
+                htmlFor="inStock"
+                className="text-sm font-medium text-slate-700 cursor-pointer"
+              >
+                In Stock
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 6 — Gender Toggle */}
         <div className="flex flex-col gap-2 w-full">
           <label className="font-semibold text-sm text-slate-800">Gender</label>
           <div className="flex gap-2 flex-wrap">
@@ -457,20 +607,21 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           </div>
         </div>
 
-        {/* Row 5 — Size Picker (NEW) */}
+        {/* Row 7 — Sizes Picker (Multi) */}
         <div className="flex flex-col gap-2 w-full">
           <label className="font-semibold text-sm text-slate-800">
-            Size <span className="text-slate-400 font-normal">(EU)</span>
+            Available Sizes{" "}
+            <span className="text-slate-400 font-normal">(EU)</span>
           </label>
           <div className="flex gap-2 flex-wrap">
             {SIZES.map((s) => (
               <button
                 key={s}
                 type="button"
-                onClick={() => setSelectedSize(s === selectedSize ? null : s)}
+                onClick={() => toggleSize(s)}
                 className={`w-12 h-10 rounded-md text-sm font-semibold border transition-all duration-200
                   ${
-                    selectedSize === s
+                    selectedSizes.includes(s)
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-white text-slate-700 border-slate-300 hover:border-blue-400 hover:text-blue-500"
                   }`}
@@ -481,26 +632,21 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           </div>
         </div>
 
-        {/* Row 6 — Color Picker (DYNAMIC) */}
+        {/* Row 8 — Color Picker (Multi) */}
         <div className="flex flex-col gap-2 w-full">
           <label className="font-semibold text-sm text-slate-800">
-            Color
-            {selectedColor && (
-              <span className="ml-2 font-normal text-slate-500">
-                — {selectedColor}
-              </span>
-            )}
+            Available Colors
           </label>
           <div className="flex gap-3 flex-wrap items-center">
-            {/* Existing/Dynamic Color Buttons */}
+            {/* Dynamic Color Buttons */}
             {dynamicColors.map((c) => (
               <button
                 key={c}
                 type="button"
-                onClick={() => setSelectedColor(c === selectedColor ? null : c)}
+                onClick={() => toggleColor(c)}
                 className={`px-4 py-2 rounded-md text-sm font-semibold border transition-all duration-200
                   ${
-                    selectedColor === c
+                    selectedColors.includes(c)
                       ? "bg-blue-600 text-white border-blue-600 shadow-md"
                       : "bg-white text-slate-700 border-slate-300 hover:border-blue-400 hover:text-blue-500"
                   }`}
@@ -536,7 +682,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           </div>
         </div>
 
-        {/* Row 7 — Description */}
+        {/* Row 9 — Description */}
         <div className="flex flex-col gap-2 w-full">
           <label
             htmlFor="desc"
@@ -558,7 +704,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             })}
           />
 
-          <div className="flex w-full justify-between items-center absolute bottom-14">
+          <div className="flex w-full justify-between items-center absolute bottom-14 pt-4">
             <Button
               disabled={loader}
               onClick={() => setOpen(false)}

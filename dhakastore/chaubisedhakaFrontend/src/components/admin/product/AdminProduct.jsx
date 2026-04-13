@@ -45,7 +45,7 @@ const AdminProduct = () => {
   const emptyProduct = !products || products?.length === 0;
   const tableRecords = products?.map((item) => {
     return {
-      id: item.productId,
+      id: item.productId || item.id,
       productName: item.productName,
       description: item.description,
       discount: item.discount,
@@ -54,6 +54,12 @@ const AdminProduct = () => {
       quantity: item.quantity,
       specialPrice: item.specialPrice,
       gender: item.gender,
+      categoryId: item.categoryId || item.category?.categoryId,
+      brand: item.brand,
+      sellerName: item.sellerName,
+      inStock: item.inStock,
+      sizes: item.sizes,
+      colors: item.colors,
     };
   });
   const handleEdit = (product) => {
