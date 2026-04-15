@@ -298,20 +298,43 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
 
-        Product productFromDb=productRepository.findById(productId)
-                .orElseThrow(()->new ResourceNotFoundException("Product","productId",productId));
-
-        Map uploadResult = cloudinaryImageService.upload(image);
-
-        String imageUrl = (String) uploadResult.get("secure_url");
-
-        productFromDb.setImage(imageUrl);
+//        Product productFromDb=productRepository.findById(productId)
+//                .orElseThrow(()->new ResourceNotFoundException("Product","productId",productId));
+//
+//        Map uploadResult = cloudinaryImageService.upload(image);
+//
+//        String imageUrl = (String) uploadResult.get("secure_url");
+//
+//        productFromDb.setImage(imageUrl);
 
 //        String fileName=fileService.uploadImage(path,image);
 //        productFromDb.setImage(fileName);
 
-        Product updatedProduct=productRepository.save(productFromDb);
-        return modelMapper.map(updatedProduct,ProductDTO.class);
+//        Product updatedProduct=productRepository.save(productFromDb);
+//        return modelMapper.map(updatedProduct,ProductDTO.class);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        // Upload image to Cloudinary
+        Map uploadResult = cloudinaryImageService.upload(image);
+        String imageUrl = (String) uploadResult.get("secure_url");
+
+        // Set the image URL
+        product.setImage(imageUrl);
+
+        // Also add to images list if you want to maintain multiple images
+        List<String> images = product.getImages();
+        if (images == null) {
+            images = new ArrayList<>();
+        }
+        if (!images.contains(imageUrl)) {
+            images.add(imageUrl);
+        }
+        product.setImages(images);
+
+        Product updatedProduct = productRepository.save(product);
+        return convertToProductDTO(updatedProduct);
     }
 
     @Override

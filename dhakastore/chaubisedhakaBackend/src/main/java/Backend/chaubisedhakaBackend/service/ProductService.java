@@ -46,7 +46,6 @@ public interface ProductService {
     ProductResponse adminGetAllProducts(Integer pageNumber, Integer pageSize,
                                         String sortBy, String sortOrder);
 
-    // Admin: Update product image
     ProductDTO adminUpdateProductImage(Long productId, MultipartFile image) throws IOException;
 
     // Admin: Get products by category name

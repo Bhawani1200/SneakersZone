@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,5 +58,50 @@ public class Product {
     private String color;
 
     private Boolean inStock = true;
+
+//    new added
+
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> images = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "product_sizes", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "size_value")
+    private List<String> sizes = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "color_value")
+    private List<String> colors = new ArrayList<>();
+
+    private String brand;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        calculateSpecialPrice();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+        calculateSpecialPrice();
+    }
+
+    public void calculateSpecialPrice() {
+        if (discount > 0) {
+            this.specialPrice = price - (price * discount / 100);
+        } else {
+            this.specialPrice = price;
+        }
+    }
 
 }
