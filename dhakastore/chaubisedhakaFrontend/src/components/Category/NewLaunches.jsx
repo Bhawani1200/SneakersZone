@@ -36,7 +36,7 @@ const NewLaunches = () => {
     const fetchNewLaunches = async () => {
       try {
         const { data } = await api.get(
-          "/api/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
+          "/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
         // const { data } = await api.get(
         //   "/api/user/public/products?pageNumber=0&pageSize=50&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
@@ -46,9 +46,11 @@ const NewLaunches = () => {
         const formattedProducts = (data.content || []).map((product) => ({
           ...product,
           productId: product.productId || product.id, // Ensure we have an ID for the key
-          image: product.image?.startsWith("http")
-            ? product.image // Cloudinary full URL — use directly
-            : `http://localhost:8080/images/${product.image}`,
+          image: product.image
+            ? product.image.startsWith("http")
+              ? product.image // Cloudinary full URL — use directly
+              : `http://localhost:8080/images/${product.image}`
+            : "/placeholder-product.png",
         }));
 
         console.log("New Launches formatted:", formattedProducts);

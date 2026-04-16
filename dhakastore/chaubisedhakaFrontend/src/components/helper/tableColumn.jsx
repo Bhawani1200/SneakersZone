@@ -75,7 +75,7 @@ export const adminProductTableColumn = (
   {
     sortable: false,
     field: "description",
-    headerName: "Image",
+    headerName: "Description",
     headerAlign: "center",
     align: "center",
     width: 200,
@@ -86,17 +86,87 @@ export const adminProductTableColumn = (
     renderHeader: (params) => <span className="ps-10">Description</span>,
   },
   {
+    disableColumnMenu: true,
+    field: "brand",
+    headerName: "Brand",
+    align: "center",
+    width: 150,
+    editable: false,
+    sortable: false,
+    headerAlign: "center",
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border text-center",
+    renderHeader: (params) => <span>Brand</span>,
+  },
+  {
+    disableColumnMenu: true,
+    field: "sellerName",
+    headerName: "Seller",
+    align: "center",
+    width: 150,
+    editable: false,
+    sortable: false,
+    headerAlign: "center",
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border text-center",
+    renderHeader: (params) => <span>Seller</span>,
+  },
+  {
+    disableColumnMenu: true,
+    field: "inStock",
+    headerName: "In Stock",
+    align: "center",
+    width: 120,
+    editable: false,
+    sortable: false,
+    headerAlign: "center",
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border text-center",
+    renderHeader: (params) => <span>In Stock</span>,
+    renderCell: (params) => (
+      <span
+        className={
+          params.value !== false
+            ? "text-green-600 font-semibold"
+            : "text-red-600 font-semibold"
+        }
+      >
+        {params.value !== false ? "Yes" : "No"}
+      </span>
+    ),
+  },
+  {
     sortable: false,
     field: "image",
     headerName: "Image",
     headerAlign: "center",
     align: "center",
-    width: 200,
+    width: 100,
     editable: false,
     disableColumnMenu: true,
     headerClassName: "text-black font-semibold border ",
     cellClassName: "text-slate-700 font-normal border",
-    renderHeader: (params) => <span className="ps-10">Image</span>,
+    renderHeader: (params) => <span>Image</span>,
+    renderCell: (params) => {
+      const imageUrl = params.value?.startsWith("http")
+        ? params.value
+        : params.value
+          ? `http://localhost:8080/images/${params.value}`
+          : "/placeholder-product.png";
+
+      return (
+        <div className="flex items-center justify-center h-full py-1">
+          <img
+            src={imageUrl}
+            alt="product"
+            className="w-10 h-10 object-cover rounded-md border"
+            onError={(e) => {
+              e.target.src = "/placeholder-product.png";
+            }}
+          />
+        </div>
+      );
+    },
   },
 
   {

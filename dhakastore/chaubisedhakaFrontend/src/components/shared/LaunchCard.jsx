@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const LaunchCard = ({
   productId,
+  id,
   productName,
   image,
   description,
@@ -23,6 +24,7 @@ const LaunchCard = ({
   inStock = true,
   sizes = [],
 }) => {
+  const actualId = productId || id;
   const [colorIndex, setColorIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -45,7 +47,7 @@ const LaunchCard = ({
           productName,
           description,
           specialPrice,
-          productId,
+          productId: actualId,
           price,
           quantity,
           brand,
@@ -73,11 +75,23 @@ const LaunchCard = ({
     setColorIndex((i) => (i - 1 + colors.length) % colors.length);
   const nextColor = () => setColorIndex((i) => (i + 1) % colors.length);
 
-  const handleCardClick = () => {};
+  const handleCardClick = () => {
+    if (actualId) {
+      navigate(`/product/${actualId}`);
+    } else {
+      toast.error("Product ID not found");
+    }
+  };
+
+  const displayImage = image
+    ? image.startsWith("http")
+      ? image
+      : `http://localhost:8080/images/${image}`
+    : "/placeholder-product.png";
 
   return (
     <div
-      onClick={() => navigate(`/product/${productId}`)}
+      onClick={handleCardClick}
       className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative cursor-pointer"
     >
       {/* New Badge */}
@@ -103,7 +117,7 @@ const LaunchCard = ({
         /> */}
 
         <img
-          src={image}
+          src={displayImage}
           alt={productName}
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           onError={(e) => {
@@ -134,7 +148,11 @@ const LaunchCard = ({
           <div className="flex items-center gap-2">
             {/* Prev Arrow */}
             <button
-              onClick={prevColor}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                prevColor();
+              }}
               className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition"
               aria-label="Previous color"
             >
@@ -146,7 +164,11 @@ const LaunchCard = ({
               {colors.slice(0, 4).map((color, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setColorIndex(idx)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setColorIndex(idx);
+                  }}
                   title={color.label || color}
                   className={`w-6 h-6 xl:w-8 xl:h-8 rounded-full border-2 transition-all duration-150 ${
                     colorIndex === idx
@@ -160,7 +182,11 @@ const LaunchCard = ({
 
             {/* Next Arrow */}
             <button
-              onClick={nextColor}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                nextColor();
+              }}
               className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-500 transition"
               aria-label="Next color"
             >

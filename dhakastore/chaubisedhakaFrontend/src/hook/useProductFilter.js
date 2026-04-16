@@ -57,7 +57,7 @@ export const fetchProductsDashboard = (queryString) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
     
-      const { data } = await api.get(`/api/user/public/products?${queryString}`);
+      const { data } = await api.get(`/user/public/products?${queryString}`);
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,

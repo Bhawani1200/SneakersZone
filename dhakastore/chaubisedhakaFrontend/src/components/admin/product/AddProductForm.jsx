@@ -285,8 +285,11 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({ mode: "onTouched" });
+
+  const watchedImage = watch("image");
 
   // const saveProductHandler = (data) => {
   //   const baseData = {
@@ -369,16 +372,29 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
     console.log("Sending product data to backend:", sendData);
 
-    dispatch(
-      addNewProductFromDashboard(
-        sendData,
-        toast,
-        reset,
-        setLoader,
-        setOpen,
-        isAdmin,
-      ),
-    );
+    if (update) {
+      dispatch(
+        updateProductFromDashboard(
+          { ...sendData, id: product?.id || product?.productId },
+          toast,
+          reset,
+          setLoader,
+          setOpen,
+          isAdmin,
+        ),
+      );
+    } else {
+      dispatch(
+        addNewProductFromDashboard(
+          sendData,
+          toast,
+          reset,
+          setLoader,
+          setOpen,
+          isAdmin,
+        ),
+      );
+    }
   };
   const handleAddColor = () => {
     if (!newColorInput.trim()) return;
@@ -553,36 +569,57 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 5 — Main Image URL + In Stock */}
-        <div className="flex md:flex-row flex-col gap-4 w-full items-end">
-          <InputField
-            label="Image URL"
-            id="image"
-            type="text"
-            register={register}
-            placeholder="Main Product Image URL"
-            errors={errors}
-          />
-          <div className="flex flex-col gap-2 w-full md:w-1/2">
-            <label className="font-semibold text-sm text-slate-800">
-              Availability
-            </label>
-            <div className="flex items-center gap-2 h-[42px]">
-              <input
-                type="checkbox"
-                id="inStock"
-                checked={inStock}
-                onChange={(e) => setInStock(e.target.checked)}
-                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
-              />
-              <label
-                htmlFor="inStock"
-                className="text-sm font-medium text-slate-700 cursor-pointer"
-              >
-                In Stock
+        {/* Row 5 — Main Image URL + In Stock + Preview */}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex md:flex-row flex-col gap-4 w-full items-end">
+            <InputField
+              label="Image URL"
+              id="image"
+              type="text"
+              register={register}
+              placeholder="Main Product Image URL"
+              errors={errors}
+            />
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
+              <label className="font-semibold text-sm text-slate-800">
+                Availability
               </label>
+              <div className="flex items-center gap-2 h-[42px]">
+                <input
+                  type="checkbox"
+                  id="inStock"
+                  checked={inStock}
+                  onChange={(e) => setInStock(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+                />
+                <label
+                  htmlFor="inStock"
+                  className="text-sm font-medium text-slate-700 cursor-pointer"
+                >
+                  In Stock
+                </label>
+              </div>
             </div>
           </div>
+          {watchedImage && (
+            <div className="flex flex-col gap-2 w-full mt-2">
+              <p className="text-sm font-semibold text-slate-800">
+                Image Preview:
+              </p>
+              <img
+                src={
+                  watchedImage.startsWith("http")
+                    ? watchedImage
+                    : `http://localhost:8080/images/${watchedImage}`
+                }
+                alt="Preview"
+                className="h-40 w-auto object-contain rounded-md border border-slate-300 p-1"
+                onError={(e) => {
+                  e.target.src = "/placeholder-product.png";
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Row 6 — Gender Toggle */}

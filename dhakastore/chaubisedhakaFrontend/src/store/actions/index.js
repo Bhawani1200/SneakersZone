@@ -48,7 +48,7 @@ export const fetchCategories = () => async (dispatch) => {
 export const fetchProductById = (productId) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
-    const { data } = await api.get(`/public/products/${productId}`);
+    const { data } = await api.get(`/user/public/products/${productId}`);
     dispatch({
       type: "FETCH_PRODUCT_DETAILS",
       payload: data,
@@ -448,32 +448,66 @@ export const updateOrderStatusFromDashboard =
     }
   };
 
-export const dashboardProductsAction =
-  (isAdmin, queryString) => async (dispatch) => {
-    try {
-      dispatch({ type: "IS_FETCHING" });
-      const endpoint = isAdmin ? "/admin/products" : "/seller/products";
-      const { data } = await api.get(`${endpoint}?${queryString}`);
-      dispatch({
-        type: "FETCH_PRODUCTS",
-        payload: data.content,
-        pageNumber: data.pageNumber,
-        pageSize: data.pageSize,
-        totalElements: data.totalElements,
-        totalPages: data.totalPages,
-        lastPage: data.lastPage,
-      });
-      dispatch({ type: "IS_SUCCESS" });
-    } catch (error) {
-      console.log(error);
-      dispatch({
-        type: "IS_ERROR",
-        payload:
-          error?.response?.data?.message ||
-          "Failed to fetch dashboard products",
-      });
+// export const dashboardProductsAction =
+//   (isAdmin, queryString) => async (dispatch) => {
+//     try {
+//       dispatch({ type: "IS_FETCHING" });
+//       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
+//       const { data } = await api.get(`${endpoint}?${queryString}`);
+//       dispatch({
+//         type: "FETCH_PRODUCTS",
+//         payload: data.content,
+//         pageNumber: data.pageNumber,
+//         pageSize: data.pageSize,
+//         totalElements: data.totalElements,
+//         totalPages: data.totalPages,
+//         lastPage: data.lastPage,
+//       });
+//       dispatch({ type: "IS_SUCCESS" });
+//     } catch (error) {
+//       console.log(error);
+//       dispatch({
+//         type: "IS_ERROR",
+//         payload:
+//           error?.response?.data?.message ||
+//           "Failed to fetch dashboard products",
+//       });
+//     }
+//   };
+
+// In your store/actions/index.js
+
+export const dashboardProductsAction = (isAdmin, queryString) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    
+    let url;
+    if (isAdmin) {
+      url = `/admin/products?${queryString}`;
+    } else {
+      url = `/seller/products?${queryString}`;
     }
-  };
+    
+    const { data } = await api.get(url);
+    
+    dispatch({
+      type: "FETCH_PRODUCTS",
+      payload: data.content,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "IS_SUCCESS" });
+  } catch (error) {
+    console.error("Error fetching dashboard products:", error);
+    dispatch({
+      type: "IS_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch products",
+    });
+  }
+};
 
 export const updateProductFromDashboard =
   (sendData, toast, reset, setLoader, setOpen, isAdmin) => async (dispatch) => {
@@ -578,24 +612,99 @@ export const deleteProduct =
     }
   };
 
+// export const updateProductImageFromDashboard =
+//   (formData, productId, toast, setLoader, setOpen, isAdmin) =>
+//   async (dispatch) => {
+//     try {
+//       setLoader(true);
+//       const endpoint = isAdmin ? "/admin/products/" : "/seller/products/";
+//       await api.put(`${endpoint}${productId}/image`, formData);
+//       toast.success("Image upload successful");
+//       setLoader(false);
+//       setOpen(false);
+//       await dispatch(dashboardProductsAction());
+//     } catch (error) {
+//       toast.error(
+//         error?.response?.data?.description || "Product Image upload failed"
+//       );
+//     }
+//   };
+
+// In your store/actions/index.js or wherever this action is defined
+
+// export const updateProductImageFromDashboard =
+//   (formData, productId, toast, setLoader, setOpen, isAdmin) =>
+//   async (dispatch) => {
+//     try {
+//       setLoader(true);
+//       const endpoint = isAdmin ? "/api/admin/products/" : "/seller/products/";
+//       const response = await api.put(`${endpoint}${productId}/image`, formData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+      
+//       toast.success("Image upload successful");
+//       setLoader(false);
+//       setOpen(false);
+      
+//       // Refresh the products list
+//       await dispatch(dashboardProductsAction());
+      
+//       return response.data;
+//     } catch (error) {
+//       console.error("Image upload error:", error);
+//       toast.error(
+//         error?.response?.data?.description || 
+//         error?.response?.data?.message || 
+//         "Product Image upload failed"
+//       );
+//       setLoader(false);
+//     }
+//   };
 export const updateProductImageFromDashboard =
-  (formData, productId, toast, setLoader, setOpen, isAdmin) =>
+  (formData, productId, toast, setLoader, setOpen, isAdmin, queryString = "") =>
   async (dispatch) => {
     try {
       setLoader(true);
-      const endpoint = isAdmin ? "/admin/products/" : "/seller/products/";
-      await api.put(`${endpoint}${productId}/image`, formData);
+      
+      // Construct URL correctly - no extra slash issues
+      const baseUrl = isAdmin ? "/admin/products" : "/api/seller/products";
+      const url = `${baseUrl}/${productId}/image`;
+      
+      console.log("Uploading to URL:", url);
+      console.log("Product ID:", productId);
+      console.log("FormData:", formData);
+      
+      const response = await api.put(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log("Upload response:", response.data);
+      
       toast.success("Image upload successful");
       setLoader(false);
       setOpen(false);
-      await dispatch(dashboardProductsAction());
+      
+      // Refresh the dashboard products
+      await dispatch(dashboardProductsAction(isAdmin, queryString));
+      
     } catch (error) {
+      console.error("Image upload error:", error);
+      console.error("Error response:", error.response?.data);
+      
       toast.error(
-        error?.response?.data?.description || "Product Image upload failed"
+        error?.response?.data?.description || 
+        error?.response?.data?.message || 
+        "Product Image upload failed"
       );
+      setLoader(false);
     }
   };
 
+  
 export const getAllCategoriesDashboard = (queryString) => async (dispatch) => {
   dispatch({ type: "CATEGORY_LOADER" });
   try {
