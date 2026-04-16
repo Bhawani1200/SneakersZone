@@ -257,14 +257,23 @@ public class ProductServiceImpl implements ProductService{
     }
 
     private String constructImageUrl(String imageName){
-        if (imageName != null && imageName.startsWith("http")) {
+//        if (imageName != null && imageName.startsWith("http")) {
+//            return imageName;
+//        }
+////        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
+//
+//        return imageBaseUrl.endsWith("/")
+//                ? imageBaseUrl + imageName
+//                : imageBaseUrl + "/" + imageName;
+        if (imageName == null) {
+            return null;
+        }
+        // If it's already a full URL (Cloudinary), return as is
+        if (imageName.startsWith("http")) {
             return imageName;
         }
-//        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
-
-        return imageBaseUrl.endsWith("/")
-                ? imageBaseUrl + imageName
-                : imageBaseUrl + "/" + imageName;
+        // For local images (if any)
+        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
 
     @Override
@@ -306,35 +315,38 @@ public class ProductServiceImpl implements ProductService{
 //        String imageUrl = (String) uploadResult.get("secure_url");
 //
 //        productFromDb.setImage(imageUrl);
-
+//
 //        String fileName=fileService.uploadImage(path,image);
 //        productFromDb.setImage(fileName);
-
+//
 //        Product updatedProduct=productRepository.save(productFromDb);
 //        return modelMapper.map(updatedProduct,ProductDTO.class);
 
-        Product product = productRepository.findById(productId)
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+//
+        Product productFromDb = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        // Upload image to Cloudinary
+        // Upload to Cloudinary only (remove local file upload)
         Map uploadResult = cloudinaryImageService.upload(image);
         String imageUrl = (String) uploadResult.get("secure_url");
 
-        // Set the image URL
-        product.setImage(imageUrl);
+        // Set the Cloudinary URL
+        productFromDb.setImage(imageUrl);
 
-        // Also add to images list if you want to maintain multiple images
-        List<String> images = product.getImages();
+        // Also add to images list for multiple images support
+        List<String> images = productFromDb.getImages();
         if (images == null) {
             images = new ArrayList<>();
         }
         if (!images.contains(imageUrl)) {
             images.add(imageUrl);
         }
-        product.setImages(images);
+        productFromDb.setImages(images);
 
-        Product updatedProduct = productRepository.save(product);
-        return convertToProductDTO(updatedProduct);
+        Product updatedProduct = productRepository.save(productFromDb);
+        return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 
     @Override
@@ -583,14 +595,15 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductDTO adminUpdateProductImage(Long productId, MultipartFile image) throws IOException {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        String imagePath = fileService.uploadImage(image);
-        product.setImage(imagePath);
-
-        Product updatedProduct = productRepository.save(product);
-        return convertToProductDTO(updatedProduct);
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+//
+//        String imagePath = fileService.uploadImage(image);
+//        product.setImage(imagePath);
+//
+//        Product updatedProduct = productRepository.save(product);
+//        return convertToProductDTO(updatedProduct);
+        return updateProductImage(productId, image);
     }
 
     @Override
