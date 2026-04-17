@@ -4,6 +4,7 @@ package Backend.chaubisedhakaBackend.controller;
 import Backend.chaubisedhakaBackend.config.AppConstants;
 import Backend.chaubisedhakaBackend.payload.ProductDTO;
 import Backend.chaubisedhakaBackend.payload.ProductResponse;
+import Backend.chaubisedhakaBackend.repositories.ProductRepository;
 import Backend.chaubisedhakaBackend.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,6 +22,9 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    ProductRepository productRepository;
 
 //    @PostMapping("/admin/categories/{categoryId}/product")
 //    public ResponseEntity<ProductDTO>addProduct(@Valid  @RequestBody ProductDTO productDTO,
@@ -35,6 +40,7 @@ public class ProductController {
             @RequestParam(name="gender",required = false) String gender,
             @RequestParam(name = "size", required = false) Integer size,
             @RequestParam(name = "color", required = false) String color,
+            @RequestParam(name = "brand", required = false) String brand,
             @RequestParam(name = "minPrice", defaultValue = "0", required = false) Double minPrice,
             @RequestParam(name = "maxPrice", defaultValue = "4499", required = false) Double maxPrice,
             @RequestParam(name = "minDiscount", required = false) Integer minDiscount,
@@ -45,7 +51,7 @@ public class ProductController {
             @RequestParam(name="sortOrder",defaultValue = AppConstants.SORT_DIR,required = false) String sortOrder
     ){
         ProductResponse productResponse=productService.getAllProducts(
-                pageNumber,pageSize,sortBy,sortOrder,keyword,category,gender, size, color, minPrice, maxPrice, minDiscount, inStock
+                pageNumber,pageSize,sortBy,sortOrder,keyword,category,gender, size, color,brand, minPrice, maxPrice, minDiscount, inStock
         );
         return new ResponseEntity<>(productResponse,HttpStatus.OK);
     }
@@ -153,4 +159,33 @@ public class ProductController {
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
+    @GetMapping("/public/filters/sizes")
+    public ResponseEntity<List<String>> getAllAvailableSizes() {
+        try {
+            List<String> sizes = productRepository.findAllUniqueSizesNumeric();
+            return ResponseEntity.ok(sizes);
+        } catch (Exception e) {
+
+            List<String> sizes = productRepository.findAllUniqueSizes();
+            return ResponseEntity.ok(sizes);
+        }
+    }
+
+    @GetMapping("/public/filters/colors")
+    public ResponseEntity<List<String>> getAllAvailableColors() {
+        List<String> colors = productRepository.findAllUniqueColors();
+        return ResponseEntity.ok(colors);
+    }
+
+    @GetMapping("/public/filters/brands")
+    public ResponseEntity<List<String>> getAllAvailableBrands() {
+        List<String> brands = productRepository.findAllUniqueBrands();
+        return ResponseEntity.ok(brands);
+    }
+
+    @GetMapping("/public/filters/categories")
+    public ResponseEntity<List<String>> getAllAvailableCategories() {
+        List<String> categories = productRepository.findAllUniqueCategories();
+        return ResponseEntity.ok(categories);
+    }
 }

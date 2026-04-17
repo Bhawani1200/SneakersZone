@@ -59,8 +59,6 @@ public class Product {
 
     private Boolean inStock = true;
 
-//    new added
-
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")

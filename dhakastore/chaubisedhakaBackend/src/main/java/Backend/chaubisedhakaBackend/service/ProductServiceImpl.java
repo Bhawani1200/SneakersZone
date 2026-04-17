@@ -103,49 +103,136 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock) {
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, String brand, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock) {
+//        Sort sortByAndOrder = sortOrder.equals("asc")
+//                ? Sort.by(sortBy).ascending()
+//                : Sort.by(sortBy).descending();
+//        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+//        Specification<Product> spec = Specification.where(null);
+//
+//        if (keyword != null && !keyword.isEmpty()) {
+//            spec = spec.and((root, query, criteriaBuilder) ->
+//                    criteriaBuilder.like(root.get("productName"), "%" + keyword.toLowerCase() + "%"));
+//        }
+//
+//        if (category != null && !category.isEmpty()) {
+//            spec = spec.and((root, query, criteriaBuilder) ->
+//                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")), category));
+//        }
+//
+//        // ✅ gender filter added
+//        if (gender != null && !gender.isEmpty()) {
+//            spec = spec.and((root, query, criteriaBuilder) ->
+//                    criteriaBuilder.equal(root.get("gender"), Gender.valueOf(gender.toUpperCase())));
+//        }
+//
+//        if (size != null) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.equal(root.get("size"), size));
+//        }
+//
+//        if (color != null && !color.isEmpty()) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.equal(cb.lower(root.get("color")), color.toLowerCase()));
+//        }
+//
+//        // Price range filter
+//        spec = spec.and((root, query, cb) ->
+//                cb.between(root.get("specialPrice"), minPrice, maxPrice));
+//
+//        // Discount filter — frontend sends "30", "40" etc.
+//        if (minDiscount != null && minDiscount > 0) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.greaterThanOrEqualTo(root.get("discount"), (double) minDiscount));
+//        }
+//
+//        if (inStock != null && inStock) {
+//            spec = spec.and((root, query, cb) ->
+//                    cb.greaterThan(root.get("quantity"), 0));
+//        }
+//
+//        Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
+//
+//        List<Product> products = pageProducts.getContent();
+//        List<ProductDTO> productDTOS = products.stream()
+//                .map(product -> modelMapper.map(product, ProductDTO.class))
+//                .toList();
+//
+//        ProductResponse productResponse = new ProductResponse();
+//        productResponse.setPageNumber(pageProducts.getNumber());
+//        productResponse.setPageSize(pageProducts.getSize());
+//        productResponse.setTotalElements(pageProducts.getTotalElements());
+//        productResponse.setTotalPages(pageProducts.getTotalPages());
+//        productResponse.setLastPage(pageProducts.isLast());
+//        productResponse.setContent(productDTOS);
+//        return productResponse;
+
         Sort sortByAndOrder = sortOrder.equals("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+
         Specification<Product> spec = Specification.where(null);
 
+        // Keyword search
         if (keyword != null && !keyword.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("productName"), "%" + keyword.toLowerCase() + "%"));
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), "%" + keyword.toLowerCase() + "%"));
         }
 
+        // Category filter - FIXED
         if (category != null && !category.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")), category));
+                    criteriaBuilder.equal(criteriaBuilder.lower(root.get("category").get("categoryName")), category.toLowerCase()));
         }
 
-        // ✅ gender filter added
+        // Gender filter
         if (gender != null && !gender.isEmpty()) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("gender"), Gender.valueOf(gender.toUpperCase())));
+            try {
+                Gender genderEnum = Gender.valueOf(gender.toUpperCase());
+                spec = spec.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get("gender"), genderEnum));
+            } catch (IllegalArgumentException e) {
+                // Invalid gender value, ignore filter
+            }
         }
 
-        if (size != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("size"), size));
+
+        if (size != null && size > 0) {
+            String sizeStr = String.valueOf(size);
+            spec = spec.and((root, query, cb) -> {
+                query.distinct(true); // Important to avoid duplicates
+                return cb.isMember(sizeStr, root.get("sizes"));
+            });
         }
+
 
         if (color != null && !color.isEmpty()) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(cb.lower(root.get("color")), color.toLowerCase()));
+            spec = spec.and((root, query, cb) -> {
+                query.distinct(true); // Important to avoid duplicates
+                return cb.isMember(color.toLowerCase(), root.get("colors"));
+            });
         }
 
-        // Price range filter
-        spec = spec.and((root, query, cb) ->
-                cb.between(root.get("specialPrice"), minPrice, maxPrice));
+        // Brand filter - ADD THIS
+        if (brand != null && !brand.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(criteriaBuilder.lower(root.get("brand")), brand.toLowerCase()));
+        }
 
-        // Discount filter — frontend sends "30", "40" etc.
+        // Price range filter - Using specialPrice
+        Double finalMinPrice = minPrice != null ? minPrice : 0.0;
+        Double finalMaxPrice = maxPrice != null ? maxPrice : 999999.0;
+        spec = spec.and((root, query, cb) ->
+                cb.between(root.get("specialPrice"), finalMinPrice, finalMaxPrice));
+
+        // Discount filter
         if (minDiscount != null && minDiscount > 0) {
             spec = spec.and((root, query, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("discount"), (double) minDiscount));
+                    cb.greaterThanOrEqualTo(root.get("discount"), Double.valueOf(minDiscount)));
         }
 
+        // Stock filter
         if (inStock != null && inStock) {
             spec = spec.and((root, query, cb) ->
                     cb.greaterThan(root.get("quantity"), 0));
