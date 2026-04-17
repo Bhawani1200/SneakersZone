@@ -25,6 +25,46 @@ export const fetchProducts = (queryString) => async (dispatch) => {
   }
 };
 
+// export const fetchProductsByFilter = (filters) => (dispatch) => {
+//   const params = new URLSearchParams();
+//   Object.entries(filters).forEach(([key, value]) => {
+//     if (value !== null && value !== undefined && value !== "") {
+//       if (Array.isArray(value)) {
+//         value.forEach(v => params.append(key, v));
+//       } else {
+//         params.append(key, value);
+//       }
+//     }
+//   });
+//   const queryString = params.toString();
+//   dispatch(fetchProducts(queryString));
+// };
+export const fetchProductsByFilter = (filterParams) => async (dispatch) => {
+  try {
+    dispatch({ type: "IS_FETCHING" });
+    
+    const queryString = new URLSearchParams(filterParams).toString();
+    const { data } = await api.get(`/user/public/products?${queryString}`);
+    
+    dispatch({
+      type: "FETCH_PRODUCTS",
+      payload: data.content,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "IS_SUCCESS" });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    dispatch({
+      type: "IS_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch products",
+    });
+  }
+};
+
 export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch({ type: "CATEGORY_LOADER" });
@@ -899,3 +939,24 @@ export const deleteOrderFromDashboard =
       });
     }
   };
+
+export const fetchFiltersAction = () => async (dispatch) => {
+  try {
+    const [sizesRes, colorsRes, brandsRes] = await Promise.all([
+      api.get("/user/public/filters/sizes"),
+      api.get("/user/public/filters/colors"),
+      api.get("/user/public/filters/brands"),
+    ]);
+
+    dispatch({
+      type: "FETCH_FILTERS",
+      payload: {
+        sizes: sizesRes.data,
+        colors: colorsRes.data,
+        brands: brandsRes.data,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching filters:", error);
+  }
+};
