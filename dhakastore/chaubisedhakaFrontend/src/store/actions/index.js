@@ -560,6 +560,7 @@ export const updateProductFromDashboard =
       setLoader(false);
       setOpen(false);
       await dispatch(dashboardProductsAction());
+      await dispatch(fetchFiltersAction());
     } catch (error) {
       toast.error(
         error?.response?.data?.description || "Product update failed"
@@ -605,6 +606,7 @@ export const addNewProductFromDashboard =
       reset();
       setOpen(false);
       await dispatch(dashboardProductsAction());
+      await dispatch(fetchFiltersAction());
       
     } catch (error) {
       console.error("Product creation error:", error);
@@ -646,6 +648,7 @@ export const deleteProduct =
       setLoader(false);
       setOpenDeleteModal(false);
       await dispatch(dashboardProductsAction());
+      await dispatch(fetchFiltersAction());
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Some Error Occured");
