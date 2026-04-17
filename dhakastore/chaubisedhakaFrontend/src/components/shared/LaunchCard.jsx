@@ -75,13 +75,6 @@ const LaunchCard = ({
     setColorIndex((i) => (i - 1 + colors.length) % colors.length);
   const nextColor = () => setColorIndex((i) => (i + 1) % colors.length);
 
-  const handleCardClick = () => {
-    if (actualId) {
-      navigate(`/product/${actualId}`);
-    } else {
-      toast.error("Product ID not found");
-    }
-  };
 
   const displayImage = image
     ? image.startsWith("http")
@@ -91,8 +84,7 @@ const LaunchCard = ({
 
   return (
     <div
-      onClick={handleCardClick}
-      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative cursor-pointer"
+      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
     >
       {/* New Badge */}
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
@@ -109,22 +101,19 @@ const LaunchCard = ({
       </button>
 
       {/* Product Image */}
-      <div className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden">
-        {/* <img
-          src={image}
-          alt={productName}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-        /> */}
-
+      <Link
+        to={`/product/${actualId}`}
+        className="relative bg-gray-50 flex items-center justify-center h-48 sm:h-60 md:h-72 xl:h-80 2xl:h-96 overflow-hidden"
+      >
         <img
           src={displayImage}
           alt={productName}
           className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           onError={(e) => {
-            e.target.src = "/placeholder-product.png"; // add a placeholder image in your public folder
+            e.target.src = "/placeholder-product.png";
           }}
         />
-      </div>
+      </Link>
 
       {/* Card Body */}
       <div className="p-4 sm:p-5 xl:p-6 flex flex-col gap-2.5 xl:gap-4 flex-1">
@@ -144,10 +133,10 @@ const LaunchCard = ({
         )}
 
         {/* Color Swatches Row */}
-        {colors.length > 0 && (
-          <div className="flex items-center gap-2">
-            {/* Prev Arrow */}
-            <button
+        {/* {colors.length > 0 && (
+          <div className="flex items-center gap-2"> */}
+        {/* Prev Arrow */}
+        {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -157,10 +146,10 @@ const LaunchCard = ({
               aria-label="Previous color"
             >
               <ChevronLeft size={11} />
-            </button>
+            </button> */}
 
-            {/* Swatches */}
-            <div className="flex gap-1.5 xl:gap-2">
+        {/* Swatches */}
+        {/* <div className="flex gap-1.5 xl:gap-2">
               {colors.slice(0, 4).map((color, idx) => (
                 <button
                   key={idx}
@@ -178,10 +167,10 @@ const LaunchCard = ({
                   style={{ backgroundColor: color.hex || color }}
                 />
               ))}
-            </div>
+            </div> */}
 
-            {/* Next Arrow */}
-            <button
+        {/* Next Arrow */}
+        {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -193,7 +182,7 @@ const LaunchCard = ({
               <ChevronRight size={11} />
             </button>
           </div>
-        )}
+        )} */}
 
         {/* Brand */}
         {brand && (
@@ -208,9 +197,12 @@ const LaunchCard = ({
         )}
 
         {/* Product Name */}
-        <p className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-2 hover:underline underline-offset-4">
+        <Link
+          to={`/product/${actualId}`}
+          className="text-sm xl:text-base 2xl:text-lg text-green-700 font-medium leading-tight line-clamp-2 hover:underline underline-offset-4"
+        >
           {productName}
-        </p>
+        </Link>
 
         {/* Price Row */}
         <div className="flex items-baseline gap-2 xl:gap-3 flex-wrap mt-auto">

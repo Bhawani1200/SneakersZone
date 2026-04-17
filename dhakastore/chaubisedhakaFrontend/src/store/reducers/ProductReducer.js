@@ -2,6 +2,11 @@ const initialState = {
   products: null,
   categories: null,
   pagination: {},
+  filters: {
+    colors: [],
+    sizes: [],
+    brands: [],
+  },
 };
 
 export const productReducer = (state = initialState, action) => {
@@ -38,6 +43,15 @@ export const productReducer = (state = initialState, action) => {
       return {
         ...state,
         productDetails: action.payload,
+      };
+    case "FETCH_FILTERS":
+      return {
+        ...state,
+        filters: {
+          colors: action.payload.colors,
+          sizes: action.payload.sizes,
+          brands: action.payload.brands,
+        },
       };
 
     default:

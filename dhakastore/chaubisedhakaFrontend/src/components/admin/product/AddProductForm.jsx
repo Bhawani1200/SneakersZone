@@ -253,6 +253,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addNewProductFromDashboard,
   fetchCategories,
+  fetchFiltersAction,
   updateProductFromDashboard,
 } from "../../../store/actions";
 import toast from "react-hot-toast";
@@ -261,8 +262,8 @@ import ErrorPage from "../../shared/ErrorPage";
 import Skeleton from "../../shared/Skeleton";
 
 const GENDERS = ["MEN", "WOMEN", "KIDS", "UNISEX"];
-const SIZES = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
-const DEFAULT_COLORS = ["Red", "Blue", "Green", "Yellow", "Black", "White"];
+const STANDARD_SIZES = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
+const STANDARD_COLORS = ["Black", "White"];
 
 const AddProductForm = ({ setOpen, product, update = false }) => {
   const [loader, setLoader] = useState(false);
@@ -270,15 +271,36 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
   const [selectedGender, setSelectedGender] = useState("UNISEX");
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
-  const [dynamicColors, setDynamicColors] = useState(DEFAULT_COLORS);
   const [newColorInput, setNewColorInput] = useState("");
   const [inStock, setInStock] = useState(true);
-
   const dispatch = useDispatch();
-  const { categories } = useSelector((state) => state.products);
+  const { categories, filters } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.auth);
   const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
   const { errorMessage, categoryLoader } = useSelector((state) => state.errors);
+
+  const availableColorsFromRedux = filters?.colors || [];
+  const availableSizesFromRedux = filters?.sizes || [];
+
+  const [dynamicColors, setDynamicColors] = useState([]);
+  const [dynamicSizes, setDynamicSizes] = useState([]);
+
+  useEffect(() => {
+    // Combine standard colors with colors from system
+    const mergedColors = [
+      ...new Set([...STANDARD_COLORS, ...availableColorsFromRedux]),
+    ];
+    setDynamicColors(mergedColors);
+  }, [availableColorsFromRedux]);
+
+  useEffect(() => {
+    // Combine standard sizes with sizes from system
+    // Ensure they are numbers for sorting if possible
+    const mergedSizes = [
+      ...new Set([...STANDARD_SIZES, ...availableSizesFromRedux.map(Number)]),
+    ].sort((a, b) => a - b);
+    setDynamicSizes(mergedSizes);
+  }, [availableSizesFromRedux]);
 
   const {
     register,
@@ -466,6 +488,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(fetchFiltersAction());
   }, [dispatch]);
 
   useEffect(() => {
@@ -651,7 +674,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             <span className="text-slate-400 font-normal">(EU)</span>
           </label>
           <div className="flex gap-2 flex-wrap">
-            {SIZES.map((s) => (
+            {dynamicSizes.map((s) => (
               <button
                 key={s}
                 type="button"

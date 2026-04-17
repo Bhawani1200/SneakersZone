@@ -139,7 +139,7 @@ const Category = () => {
         open={openDeleteModal}
         loader={categoryLoader}
         setOpen={setOpenDeleteModal}
-        title="Are you want to delete this category"
+        title="Are you sure you want to delete this category?"
         onDeleteHandler={onDeleteHandler}
       />
     </div>

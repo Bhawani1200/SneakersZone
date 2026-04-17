@@ -13,14 +13,13 @@ import {
 import { addToCart, fetchProductById } from "../../store/actions";
 import toast from "react-hot-toast";
 
-const sizes = ["US 7", "US 8", "US 9", "US 10", "US 11", "US 12"];
-
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
 
   const { product, isLoading, errorMessage } = useSelector((state) => ({
     product: state.products.productDetails,
@@ -36,8 +35,12 @@ const ProductDetails = () => {
   }, [id, dispatch]);
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (!selectedSize && product?.sizes?.length > 0) {
       toast.error("Please select a size");
+      return;
+    }
+    if (!selectedColor && product?.colors?.length > 0) {
+      toast.error("Please select a color");
       return;
     }
     if (!product) return;
@@ -47,6 +50,7 @@ const ProductDetails = () => {
           ...product,
           productId: product.productId || product.id,
           size: selectedSize,
+          color: selectedColor,
         },
         1,
         toast,
@@ -89,17 +93,9 @@ const ProductDetails = () => {
   const mainImage =
     product.image || (product.images && product.images[0]) || "";
 
-  const defaultFeatures = [
-    "Premium leather upper",
-    "Air-Sole unit for cushioning",
-    "Padded collar for support",
-    "Rubber outsole for traction",
-    "Classic Wings logo",
-  ];
-  const features =
-    product.features && product.features.length
-      ? product.features
-      : defaultFeatures;
+  const features = product.description
+    ? product.description.split("\n").filter((line) => line.trim() !== "")
+    : [];
 
   return (
     <div className="pt-[180px] min-h-screen bg-white dark:bg-black">
@@ -178,24 +174,51 @@ const ProductDetails = () => {
             </p>
 
             {/* Size Selection */}
-            <div className="mb-8">
-              <h3 className="font-bold mb-4 dark:text-white">Select Size</h3>
-              <div className="grid grid-cols-6 gap-3">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`py-3 rounded-lg border-2 font-medium transition-all ${
-                      selectedSize === size
-                        ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600"
-                        : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:text-gray-300"
-                    }`}
-                  >
-                    {size.replace("US ", "")}
-                  </button>
-                ))}
+            {product?.sizes?.length > 0 && (
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold dark:text-white">Select Size</h3>
+                  <span className="text-sm text-gray-500">EU Size</span>
+                </div>
+                <div className="grid grid-cols-6 gap-3">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`py-3 rounded-lg border-2 font-medium transition-all ${
+                        selectedSize === size
+                          ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600"
+                          : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:text-gray-300"
+                      }`}
+                    >
+                      {size.toString().replace("US ", "")}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Color Selection */}
+            {product?.colors?.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-bold mb-4 dark:text-white">Select Color</h3>
+                <div className="flex flex-wrap gap-3">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-6 py-3 rounded-lg border-2 font-medium transition-all ${
+                        selectedColor === color
+                          ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-600 shadow-sm"
+                          : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:text-gray-300"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex gap-4 mb-8">
@@ -235,20 +258,23 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Product Features */}
-            <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
-              <h3 className="font-bold mb-4 dark:text-white">
-                Product Features
-              </h3>
-              <ul className="space-y-2">
-                {features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                    <span className="dark:text-gray-300">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {features.length > 0 && (
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
+                <h3 className="font-bold mb-4 dark:text-white uppercase tracking-wider text-sm">
+                  Product Details & Features
+                </h3>
+                <ul className="space-y-3">
+                  {features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

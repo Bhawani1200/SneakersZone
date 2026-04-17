@@ -100,19 +100,6 @@ export const adminProductTableColumn = (
   },
   {
     disableColumnMenu: true,
-    field: "sellerName",
-    headerName: "Seller",
-    align: "center",
-    width: 150,
-    editable: false,
-    sortable: false,
-    headerAlign: "center",
-    headerClassName: "text-black font-semibold border",
-    cellClassName: "text-slate-700 font-normal border text-center",
-    renderHeader: (params) => <span>Seller</span>,
-  },
-  {
-    disableColumnMenu: true,
     field: "inStock",
     headerName: "In Stock",
     align: "center",
@@ -360,6 +347,13 @@ export const categoryTableColumns = (handleEdit, handleDelete) => [
           >
             <FaEdit className="mr-2" />
             Edit
+          </button>
+          <button
+            onClick={() => handleDelete(params.row)}
+            className="flex items-center bg-red-500 text-white px-4 h-9 rounded-md "
+          >
+            <FaTrashAlt className="mr-2" />
+            Delete
           </button>
         </div>
       );
