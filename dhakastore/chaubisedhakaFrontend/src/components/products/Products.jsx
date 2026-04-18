@@ -150,7 +150,7 @@ const Products = () => {
   }, [dispatch]);
 
   return (
-    <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
+    <div className="lg:px-14 sm:px-8 px-4 pt-58 pb-14 2xl:w-[90%] 2xl:mx-auto">
       <div className="flex flex-col lg:flex-row gap-10">
         <div className="lg:w-1/4">
           <ProductSidebar />

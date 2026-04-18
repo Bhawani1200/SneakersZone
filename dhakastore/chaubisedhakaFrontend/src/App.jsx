@@ -19,6 +19,7 @@ import axios from "axios";
 import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
+import NewLaunches from "./components/Category/NewLaunches";
 
 import MainLayout from "./components/layout/MainLayout";
 
@@ -51,6 +52,7 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/shop" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/new-arrivals" element={<NewLaunches />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/cart" element={<Cart />} />

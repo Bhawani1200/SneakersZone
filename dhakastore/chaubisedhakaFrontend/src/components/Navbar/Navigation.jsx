@@ -68,11 +68,11 @@ const Navigation = () => {
   };
 
   const navLinks = [
-    { label: "Men", path: "/category/men" },
-    { label: "Women", path: "/category/women" },
-    { label: "Kids", path: "/category/kids" },
-    { label: "Unisex", path: "/category/unisex" },
-    { label: "New Arrivals", path: "/category/new-arrivals" },
+    { label: "Men", path: "/products?gender=MEN" },
+    { label: "Women", path: "/products?gender=WOMEN" },
+    { label: "Kids", path: "/products?gender=KIDS" },
+    { label: "Unisex", path: "/products?gender=UNISEX" },
+    { label: "New Arrivals", path: "/new-arrivals" },
     { label: "Sale", path: "/category/sale", highlight: true },
     { label: "Brands", path: "/category/brands" },
   ];

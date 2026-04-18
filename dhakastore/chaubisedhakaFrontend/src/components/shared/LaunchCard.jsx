@@ -75,7 +75,6 @@ const LaunchCard = ({
     setColorIndex((i) => (i - 1 + colors.length) % colors.length);
   const nextColor = () => setColorIndex((i) => (i + 1) % colors.length);
 
-
   const displayImage = image
     ? image.startsWith("http")
       ? image
@@ -83,9 +82,7 @@ const LaunchCard = ({
     : "/placeholder-product.png";
 
   return (
-    <div
-      className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
-    >
+    <div className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative">
       {/* New Badge */}
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
         New

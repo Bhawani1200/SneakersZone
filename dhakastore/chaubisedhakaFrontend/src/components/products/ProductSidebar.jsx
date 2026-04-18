@@ -60,7 +60,7 @@ const ProductSidebar = () => {
   useEffect(() => {
     const fetchAllProductsForFilters = async () => {
       try {
-        const response = await api.get("/usuer/public/products", {
+        const response = await api.get("/user/public/products", {
           params: {
             pageNumber: 0,
             pageSize: 100,
@@ -90,55 +90,6 @@ const ProductSidebar = () => {
 
     fetchAllProductsForFilters();
   }, []);
-
-  // Extract unique values from products
-  useEffect(() => {
-    if (!allProducts.length) return;
-
-    // Extract sizes - check different possible field names
-    const sizes = new Set();
-    const colors = new Set();
-    const brands = new Set();
-
-    allProducts.forEach((product) => {
-      // Handle sizes - could be array or single value
-      if (product.sizes && Array.isArray(product.sizes)) {
-        product.sizes.forEach((size) => sizes.add(size));
-      } else if (product.size) {
-        sizes.add(product.size);
-      } else if (product.availableSizes) {
-        if (Array.isArray(product.availableSizes)) {
-          product.availableSizes.forEach((size) => sizes.add(size));
-        } else {
-          sizes.add(product.availableSizes);
-        }
-      }
-
-      // Handle colors
-      if (product.colors && Array.isArray(product.colors)) {
-        product.colors.forEach((color) => colors.add(color));
-      } else if (product.color) {
-        colors.add(product.color);
-      } else if (product.availableColors) {
-        if (Array.isArray(product.availableColors)) {
-          product.availableColors.forEach((color) => colors.add(color));
-        } else {
-          colors.add(product.availableColors);
-        }
-      }
-
-      // Handle brands
-      if (product.brand) {
-        brands.add(product.brand);
-      } else if (product.brandName) {
-        brands.add(product.brandName);
-      }
-    });
-
-    setAvailableSizes(Array.from(sizes).sort());
-    setAvailableColors(Array.from(colors).sort());
-    setAvailableBrands(Array.from(brands).sort());
-  }, [allProducts]);
 
   const handleFilterChange = (type, value) => {
     const params = new URLSearchParams(searchParams);
@@ -179,7 +130,6 @@ const ProductSidebar = () => {
     if (urlMax !== null) setMaxPrice(Number(urlMax));
   }, [searchParams]);
 
-
   const productsList =
     allProducts.length > 0
       ? allProducts
@@ -192,9 +142,7 @@ const ProductSidebar = () => {
 
   // Use filters from Redux with fallbacks
   const sizesToDisplay =
-    filters?.sizes?.length > 0
-      ? filters.sizes
-      : ["S", "M", "L", "XL", "XXL"];
+    filters?.sizes?.length > 0 ? filters.sizes : ["S", "M", "L", "XL", "XXL"];
   const colorsToDisplay =
     filters?.colors?.length > 0
       ? filters.colors
@@ -234,7 +182,7 @@ const ProductSidebar = () => {
 
   if (loading) {
     return (
-      <div className="mt-28 max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center py-20">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center py-20">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading products...</p>
@@ -245,7 +193,7 @@ const ProductSidebar = () => {
 
   if (error) {
     return (
-      <div className="mt-28 max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center text-red-600">
           <p>Error loading products: {error}</p>
         </div>
@@ -254,9 +202,9 @@ const ProductSidebar = () => {
   }
 
   return (
-    <div className="mt-28 max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 py-10">
+    <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-10 py-2">
       {/* Filter Sidebar */}
-      <div className="w-[320px] hidden lg:block pr-8 py-2">
+      <div className="w-[320px] hidden lg:block pr-8">
         <FilterSection title="Gender" defaultOpen={true}>
           <div className="space-y-3">
             {["MEN", "WOMEN", "KIDS", "UNISEX"].map((opt) => (
