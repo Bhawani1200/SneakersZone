@@ -286,7 +286,6 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
   const [dynamicSizes, setDynamicSizes] = useState([]);
 
   useEffect(() => {
-    // Combine standard colors with colors from system
     const mergedColors = [
       ...new Set([...STANDARD_COLORS, ...availableColorsFromRedux]),
     ];
@@ -294,8 +293,6 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
   }, [availableColorsFromRedux]);
 
   useEffect(() => {
-    // Combine standard sizes with sizes from system
-    // Ensure they are numbers for sorting if possible
     const mergedSizes = [
       ...new Set([...STANDARD_SIZES, ...availableSizesFromRedux.map(Number)]),
     ].sort((a, b) => a - b);
@@ -312,43 +309,6 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
   } = useForm({ mode: "onTouched" });
 
   const watchedImage = watch("image");
-
-  // const saveProductHandler = (data) => {
-  //   const baseData = {
-  //     ...data,
-  //     gender: selectedGender,
-  //     size: selectedSizes[0] || null, // Primary size
-  //     color: selectedColors[0] || null, // Primary color
-  //     sizes: selectedSizes,
-  //     colors: selectedColors,
-  //     inStock: inStock,
-  //     categoryId: selectedCategory?.categoryId,
-  //   };
-
-  //   if (!update) {
-  //     dispatch(
-  //       addNewProductFromDashboard(
-  //         baseData,
-  //         toast,
-  //         reset,
-  //         setLoader,
-  //         setOpen,
-  //         isAdmin,
-  //       ),
-  //     );
-  //   } else {
-  //     dispatch(
-  //       updateProductFromDashboard(
-  //         { ...baseData, id: product.id },
-  //         toast,
-  //         reset,
-  //         setLoader,
-  //         setOpen,
-  //         isAdmin,
-  //       ),
-  //     );
-  //   }
-  // };
 
   const saveProductHandler = (data) => {
     if (!selectedCategory?.categoryId) {
