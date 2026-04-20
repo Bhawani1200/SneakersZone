@@ -37,8 +37,8 @@ const useProductFilter = () => {
     if (keyword) params.set("keyword", keyword);
     if (category) params.set("category", category);
     if (gender) params.set("gender", gender);
-    if (size) params.set("size", size);
-    if (color) params.set("color", color);
+    if (size) params.set("sizes", size);     // Send as sizes
+    if (color) params.set("colors", color);  // Send as colors
     if (brand) params.set("brand", brand);
     params.set("minPrice", minPrice);
     params.set("maxPrice", maxPrice);

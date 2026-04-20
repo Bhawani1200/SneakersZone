@@ -142,6 +142,37 @@ const Products = () => {
 
   const genderFilter = searchParams.get("gender");
   const categoryFilter = searchParams.get("category");
+  const colorFilter = searchParams.get("color");
+  const sizeFilter = searchParams.get("size");
+  const brandFilter = searchParams.get("brand");
+
+  const filteredProducts = products?.filter((item) => {
+    let matchesColor = true;
+    if (colorFilter) {
+      const cFilter = colorFilter.toLowerCase();
+      matchesColor = false;
+      if (typeof item.color === "string" && item.color.toLowerCase() === cFilter) matchesColor = true;
+      if (typeof item.color === "object" && item.color?.name?.toLowerCase() === cFilter) matchesColor = true;
+      if (Array.isArray(item.colors) && item.colors.some(c => (typeof c === "string" ? c.toLowerCase() : c.name?.toLowerCase()) === cFilter)) matchesColor = true;
+    }
+
+    let matchesSize = true;
+    if (sizeFilter) {
+      const sFilter = sizeFilter.toString();
+      matchesSize = false;
+      if (Array.isArray(item.sizes) && item.sizes.map(s => s.toString()).includes(sFilter)) matchesSize = true;
+      if (item.size && item.size.toString() === sFilter) matchesSize = true;
+    }
+
+    let matchesBrand = true;
+    if (brandFilter) {
+      if (item.brand?.toLowerCase() !== brandFilter.toLowerCase()) matchesBrand = false;
+    }
+
+    return matchesColor && matchesSize && matchesBrand;
+  });
+
+  const activeFiltersStr = [genderFilter, categoryFilter, colorFilter, sizeFilter, brandFilter].filter(Boolean).join(" | ");
 
   useProductFilter();
 
@@ -157,11 +188,11 @@ const Products = () => {
         </div>
 
         <div className="flex-1">
-          {(genderFilter || categoryFilter) && (
+          {activeFiltersStr && (
             <div className="mb-4 flex items-center gap-2">
               <span className="text-sm text-gray-500">Filtering by:</span>
               <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full uppercase">
-                {genderFilter || categoryFilter}
+                {activeFiltersStr}
               </span>
             </div>
           )}
@@ -179,19 +210,19 @@ const Products = () => {
             </div>
           ) : (
             <div className="min-h-[700px]">
-              {products?.length === 0 ? (
+              {filteredProducts?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[400px] gap-3">
                   <span className="text-5xl">👟</span>
                   <p className="text-gray-500 font-medium text-lg">
                     No products found for{" "}
                     <span className="text-blue-600 font-bold capitalize">
-                      {genderFilter || categoryFilter}
+                      {activeFiltersStr}
                     </span>
                   </p>
                 </div>
               ) : (
                 <div className="pb-6 pt-14 grid xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-2 gap-y-6 gap-x-6">
-                  {products?.map((item, i) => (
+                  {filteredProducts?.map((item, i) => (
                     <LaunchCard key={item.productId || i} {...item} />
                   ))}
                 </div>

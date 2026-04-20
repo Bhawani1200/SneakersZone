@@ -94,18 +94,13 @@ const ProductSidebar = () => {
   const handleFilterChange = (type, value) => {
     const params = new URLSearchParams(searchParams);
 
-    // Handle multiple values for same filter (checkbox behavior)
     const currentValues = params.getAll(type);
-
     if (currentValues.includes(value)) {
-      // Remove the value
+      // Toggle OFF if already selected
       params.delete(type);
-      currentValues
-        .filter((v) => v !== value)
-        .forEach((v) => params.append(type, v));
     } else {
-      // Add the value
-      params.append(type, value);
+      // Replace current selection with the new one
+      params.set(type, value);
     }
 
     // Reset to page 0 when filters change
@@ -140,13 +135,59 @@ const ProductSidebar = () => {
   // Get available categories (using actual categories from API)
   const categoriesToDisplay = categories || [];
 
+  // Extract dynamic colors from all products
+  const dynamicColorsList = Array.from(
+    new Set(
+      allProducts.flatMap((p) => {
+        let cols = [];
+        if (p.color)
+          cols.push(
+            typeof p.color === "object"
+              ? p.color.name || p.color.label
+              : p.color,
+          );
+        if (p.colors && Array.isArray(p.colors)) {
+          cols = cols.concat(
+            p.colors.map((c) =>
+              typeof c === "object" ? c.name || c.label : c,
+            ),
+          );
+        }
+        return cols;
+      }),
+    ),
+  ).filter(Boolean);
+
+  // Extract dynamic sizes from all products
+  const dynamicSizesList = Array.from(
+    new Set(
+      allProducts.flatMap((p) => {
+        let sz = [];
+        if (p.size) sz.push(String(p.size));
+        if (p.sizes && Array.isArray(p.sizes)) {
+          sz = sz.concat(p.sizes.map((s) => String(s)));
+        }
+        return sz;
+      }),
+    ),
+  )
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
   // Use filters from Redux with fallbacks
   const sizesToDisplay =
-    filters?.sizes?.length > 0 ? filters.sizes : ["S", "M", "L", "XL", "XXL"];
+    dynamicSizesList.length > 0
+      ? dynamicSizesList
+      : filters?.sizes?.length > 0
+        ? filters.sizes
+        : ["S", "M", "L", "XL", "XXL"];
+
   const colorsToDisplay =
-    filters?.colors?.length > 0
-      ? filters.colors
-      : ["Red", "Blue", "Green", "Yellow", "Black", "White"];
+    dynamicColorsList.length > 0
+      ? dynamicColorsList
+      : filters?.colors?.length > 0
+        ? filters.colors
+        : ["Red", "Blue", "Green", "Yellow", "Black", "White"];
   const brandsToDisplay = filters?.brands || [];
 
   const getDiscountCount = (minDiscount) => {
@@ -331,9 +372,9 @@ const ProductSidebar = () => {
         <FilterSection title="Price" defaultOpen={true}>
           <div className="space-y-3">
             <div className="flex justify-between text-sm text-gray-500">
-              <span>₹{PRICE_MIN.toLocaleString("en-IN")}</span>
+              <span>Rs. {PRICE_MIN.toLocaleString("en-IN")}</span>
               <span className="font-semibold text-gray-900">
-                up to ₹{maxPrice.toLocaleString("en-IN")}
+                up to Rs. {maxPrice.toLocaleString("en-IN")}
               </span>
             </div>
 
@@ -350,8 +391,8 @@ const ProductSidebar = () => {
             />
 
             <div className="flex justify-between text-xs text-gray-400">
-              <span>₹2,000</span>
-              <span>₹10,000</span>
+              <span>Rs. 2,000</span>
+              <span>Rs. 10,000</span>
             </div>
           </div>
         </FilterSection>
