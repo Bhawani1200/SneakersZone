@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
-import { mockProducts } from "../../components/Featured/mockData";
-import ProductCard from "../shared/ProductCard";
+import { ChevronLeft, ChevronRight, Flame, Loader2 } from "lucide-react";
+import LaunchCard from "../shared/LaunchCard";
+import api from "../../api/api";
 
 const DealsOfTheDay = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -12,6 +12,36 @@ const DealsOfTheDay = () => {
   });
 
   const scrollRef = useRef(null);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOfferProducts = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await api.get(
+          "/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
+        );
+
+        const formattedProducts = (data.content || []).map((product) => ({
+          ...product,
+          productId: product.productId || product.id,
+          image: product.image
+            ? product.image.startsWith("http")
+              ? product.image
+              : `http://localhost:8080/images/${product.image}`
+            : "/placeholder-product.png",
+        }));
+
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Failed to fetch offer products", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchOfferProducts();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -50,7 +80,7 @@ const DealsOfTheDay = () => {
     }
   };
 
-  const dealsProducts = mockProducts.filter((p) => p.discount);
+  const dealsProducts = products;
 
   return (
     <section className="py-20 bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-950 dark:to-zinc-900 overflow-hidden">
@@ -121,30 +151,36 @@ const DealsOfTheDay = () => {
           </button>
 
           {/* Scrollable Products */}
-          <div
-            ref={scrollRef}
-            className="flex overflow-x-auto scrollbar-hide scroll-smooth pb-8 -mx-2 sm:-mx-3"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {dealsProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 px-2 sm:px-3"
-              >
-                <ProductCard
-                  productId={product.id}
-                  productName={product.name}
-                  image={product.image}
-                  description={product.brand}
-                  price={product.originalPrice || product.price}
-                  specialPrice={product.price}
-                  discount={product.discount}
-                  quantity={10}
-                  tag="Limited Deal"
-                />
-              </div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center gap-4 py-20 min-h-[300px]">
+              <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+              <p className="text-zinc-500 font-bold animate-pulse">
+                Fetching Daily Deals...
+              </p>
+            </div>
+          ) : dealsProducts.length > 0 ? (
+            <div
+              ref={scrollRef}
+              className="flex overflow-x-auto scrollbar-hide scroll-smooth pb-8 -mx-2 sm:-mx-3"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {dealsProducts.map((product) => (
+                <div
+                  key={product.productId}
+                  className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 px-2 sm:px-3 pt-6"
+                >
+                  <LaunchCard {...product} tag="Limited Deal" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-zinc-900/50 rounded-3xl border border-dashed border-red-200 dark:border-red-900">
+              <Flame className="w-16 h-16 text-zinc-300 dark:text-zinc-700 mb-4" />
+              <p className="text-zinc-500 font-bold text-xl">
+                No active deals at the moment
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>
