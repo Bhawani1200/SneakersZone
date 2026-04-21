@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Products from "./components/products/Products";
@@ -15,13 +16,13 @@ import AdminProduct from "./components/admin/product/AdminProduct";
 import Sellers from "./components/admin/sellers/Sellers";
 import Category from "./components/admin/categories/Category";
 import Orders from "./components/admin/orders/Orders";
-import axios from "axios";
 import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
 import NewLaunches from "./components/Category/NewLaunches";
 
 import MainLayout from "./components/layout/MainLayout";
+import DealsOfTheDay from "./components/Offer/Offer";
 
 const MyContext = createContext();
 function App() {
@@ -56,12 +57,13 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/category/sale" element={<DealsOfTheDay />} />
 
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/checkout" element={<Checkout />} />
               </Route>
             </Route>
-            {/* PrivateRoute added */}
+
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<PrivateRoute publicPage />}></Route>

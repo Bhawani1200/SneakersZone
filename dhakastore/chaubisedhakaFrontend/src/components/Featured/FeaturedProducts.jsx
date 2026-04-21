@@ -45,9 +45,7 @@ const FeaturedProducts = () => {
           "/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
 
-        const formattedProducts = (data.content || [])
-          .filter((product) => product.sections && product.sections.includes("featured"))
-          .map((product) => ({
+        const formattedProducts = (data.content || []).map((product) => ({
           ...product,
           productId: product.productId || product.id,
           image: product.image

@@ -43,14 +43,12 @@ const NewLaunches = () => {
         // );
         console.log("New Launches raw:", data);
 
-        const formattedProducts = (data.content || [])
-          .filter((product) => product.sections && product.sections.includes("newLaunches"))
-          .map((product) => ({
+        const formattedProducts = (data.content || []).map((product) => ({
           ...product,
-          productId: product.productId || product.id, // Ensure we have an ID for the key
+          productId: product.productId || product.id,
           image: product.image
             ? product.image.startsWith("http")
-              ? product.image // Cloudinary full URL — use directly
+              ? product.image
               : `http://localhost:8080/images/${product.image}`
             : "/placeholder-product.png",
         }));
