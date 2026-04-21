@@ -43,7 +43,9 @@ const NewLaunches = () => {
         // );
         console.log("New Launches raw:", data);
 
-        const formattedProducts = (data.content || []).map((product) => ({
+        const formattedProducts = (data.content || [])
+          .filter((product) => product.sections && product.sections.includes("newLaunches"))
+          .map((product) => ({
           ...product,
           productId: product.productId || product.id, // Ensure we have an ID for the key
           image: product.image

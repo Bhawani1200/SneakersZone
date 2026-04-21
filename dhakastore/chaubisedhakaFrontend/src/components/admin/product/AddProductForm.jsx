@@ -265,6 +265,12 @@ const GENDERS = ["MEN", "WOMEN", "KIDS", "UNISEX"];
 const STANDARD_SIZES = [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45];
 const STANDARD_COLORS = ["Black", "White"];
 
+const PRODUCT_SECTIONS = [
+  { id: "newLaunches", label: "New Launches" },
+  { id: "offer", label: "Offer" },
+  { id: "featured", label: "Featured Products" },
+];
+
 const AddProductForm = ({ setOpen, product, update = false }) => {
   const [loader, setLoader] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(false);
@@ -284,6 +290,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
   const [dynamicColors, setDynamicColors] = useState([]);
   const [dynamicSizes, setDynamicSizes] = useState([]);
+  const [selectedSections, setSelectedSections] = useState([]);
 
   useEffect(() => {
     const mergedColors = [
@@ -333,6 +340,11 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
     const stringSizes = selectedSizes.map((size) => size.toString());
 
+    if (selectedSections.length === 0) {
+      toast.error("Please select at least one section to display the product");
+      return;
+    }
+
     const sendData = {
       productName: data.productName,
       description: data.description,
@@ -350,6 +362,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       categoryId: selectedCategory?.categoryId,
       categoryName: selectedCategory?.categoryName,
       sellerName: data.sellerName || "admin",
+      sections: selectedSections, // 👈 ADD THIS
     };
 
     console.log("Sending product data to backend:", sendData);
@@ -394,6 +407,9 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
     }
     setNewColorInput("");
   };
+  {
+    /* Row 9 — Section Assignment */
+  }
 
   const toggleSize = (s) => {
     if (selectedSizes.includes(s)) {
@@ -435,6 +451,10 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       const newColors = pColors.filter((c) => !dynamicColors.includes(c));
       if (newColors.length > 0) {
         setDynamicColors([...dynamicColors, ...newColors]);
+      }
+
+      if (product.sections && Array.isArray(product.sections)) {
+        setSelectedSections(product.sections);
       }
 
       if (product?.categoryId && categories?.length > 0) {
@@ -486,7 +506,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 2 — Brand + Seller Name */}
+        {/* Row 2 — Brand */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
           <InputField
             label="Brand"
@@ -497,7 +517,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             errors={errors}
           />
-          <InputField
+          {/* <InputField
             label="Seller Name"
             id="sellerName"
             type="text"
@@ -505,10 +525,10 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             placeholder="Seller Name"
             errors={errors}
-          />
+          /> */}
         </div>
 
-        {/* Row 3 — Price + Quantity */}
+        {/* Row 3 — Price + Quantity (commented) & Sections */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
           <InputField
             label="Price"
@@ -520,7 +540,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             errors={errors}
           />
-          <InputField
+          {/* <InputField
             label="Quantity"
             required
             id="quantity"
@@ -529,7 +549,43 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             placeholder="Product Quantity"
             errors={errors}
-          />
+          /> */}
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-semibold text-sm text-slate-800 pt-1">
+              Show Product In <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4 flex-wrap mt-[2px]">
+              {PRODUCT_SECTIONS.map((section) => (
+                <label
+                  key={section.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSections.includes(section.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedSections([...selectedSections, section.id]);
+                      } else {
+                        setSelectedSections(
+                          selectedSections.filter((s) => s !== section.id),
+                        );
+                      }
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">
+                    {section.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {selectedSections.length === 0 && (
+              <p className="text-xs text-red-500 mt-1">
+                Select at least one section
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Row 4 — Discount + Special Price */}
