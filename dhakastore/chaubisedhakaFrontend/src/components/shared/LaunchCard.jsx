@@ -34,8 +34,7 @@ const LaunchCard = ({
     toast.success(isWishlisted ? "Removed from Wishlist" : "Added to Wishlist");
   };
 
-  const isAvailable =
-    inStock !== false && (quantity === undefined || Number(quantity) > 0);
+  const isAvailable = inStock !== false; // && (quantity === undefined || Number(quantity) > 0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ const LaunchCard = ({
           specialPrice,
           productId: actualId,
           price,
-          quantity,
+          // quantity,
           brand,
           sellerName,
           inStock,

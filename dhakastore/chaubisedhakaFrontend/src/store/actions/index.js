@@ -113,11 +113,11 @@ export const addToCart =
     );
 
     const isInStock = getProduct ? getProduct.inStock !== false : data.inStock !== false;
-    const isQuantityExist = getProduct 
-        ? getProduct.quantity >= qty 
-        : (data.quantity === undefined || data.quantity >= qty);
+    // const isQuantityExist = getProduct 
+    //     ? getProduct.quantity >= qty 
+    //     : (data.quantity === undefined || data.quantity >= qty);
 
-    if (isInStock && isQuantityExist) {
+    if (isInStock) { // && isQuantityExist
       dispatch({ type: "ADD_CART", payload: { ...data, quantity: qty } });
       toast.success(`${data?.productName} added to cart successfully`);
       localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
@@ -205,13 +205,13 @@ export const increaseCartQuantity =
     const { products } = getState().products;
     const storeProduct = products?.find(p => p.productId === data.productId);
     
-    if (storeProduct && (storeProduct.inStock === false || storeProduct.quantity < newQuantity)) {
+    if (storeProduct && (storeProduct.inStock === false)) { // || storeProduct.quantity < newQuantity
        toast.error("Requested quantity not available in stock");
        return;
     }
     
     // Check incoming data bounds if not in store
-    if (!storeProduct && (data.inStock === false || (data.quantity !== undefined && data.quantity < newQuantity))) {
+    if (!storeProduct && (data.inStock === false)) { // || (data.quantity !== undefined && data.quantity < newQuantity)
        toast.error("Requested quantity not available");
        return;
     }

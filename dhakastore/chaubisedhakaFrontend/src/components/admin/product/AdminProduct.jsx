@@ -60,6 +60,7 @@ const AdminProduct = () => {
       inStock: item.inStock,
       sizes: item.sizes,
       colors: item.colors,
+      sections: item.sections,
     };
   });
   const handleEdit = (product) => {

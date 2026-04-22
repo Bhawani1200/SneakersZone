@@ -17,10 +17,11 @@ const ProductCard = ({
   price,
   discount,
   specialPrice,
-  about = false,
-  tag = "Best Seller",
+  brand,
+  sellerName,
+  inStock = true,
 }) => {
-  const isAvailable = quantity && Number(quantity) > 0;
+  const isAvailable = inStock !== false;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -125,7 +126,7 @@ const ProductCard = ({
                 specialPrice,
                 productId,
                 price,
-                quantity,
+                // quantity,
               });
             }}
             disabled={!isAvailable}

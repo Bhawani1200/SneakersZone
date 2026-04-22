@@ -333,10 +333,10 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       return;
     }
 
-    if (!data.quantity) {
-      toast.error("Quantity is required");
-      return;
-    }
+    // if (!data.quantity) {
+    //   toast.error("Quantity is required");
+    //   return;
+    // }
 
     const stringSizes = selectedSizes.map((size) => size.toString());
 
@@ -347,10 +347,11 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
     const sendData = {
       productName: data.productName,
-      description: data.description,
-      quantity: parseInt(data.quantity),
-      price: parseFloat(data.price),
+      // quantity: parseInt(data.quantity),
+      quantity: 1, // Defaulting to 1 since quantity field is removed
       discount: parseFloat(data.discount || 0),
+      description: data.description,
+      price: parseFloat(data.price),
       specialPrice: parseFloat(data.specialPrice) || parseFloat(data.price),
       image: data.image || "",
       images: data.image ? [data.image] : [],
@@ -434,7 +435,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       setValue("sellerName", product?.sellerName);
       setValue("image", product?.image);
       setValue("price", product?.price);
-      setValue("quantity", product?.quantity);
+      // setValue("quantity", product?.quantity);
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
@@ -455,6 +456,8 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
       if (product.sections && Array.isArray(product.sections)) {
         setSelectedSections(product.sections);
+      } else {
+        setSelectedSections([]);
       }
 
       if (product?.categoryId && categories?.length > 0) {
@@ -463,8 +466,18 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
         );
         if (pCat) setSelectedCategory(pCat);
       }
+    } else if (!update) {
+      reset();
+      setSelectedSizes([]);
+      setSelectedColors([]);
+      setSelectedSections([]);
+      setSelectedGender("UNISEX");
+      setInStock(true);
+      if (categories?.length > 0) {
+        setSelectedCategory(categories[0]);
+      }
     }
-  }, [product, update, categories]);
+  }, [product, update, categories, reset]);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -508,7 +521,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
         {/* Row 2 — Brand */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
-          <InputField
+          {/* <InputField
             label="Brand"
             id="brand"
             type="text"
@@ -516,7 +529,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             placeholder="Brand Name"
             register={register}
             errors={errors}
-          />
+          /> */}
           {/* <InputField
             label="Seller Name"
             id="sellerName"
@@ -526,6 +539,42 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             placeholder="Seller Name"
             errors={errors}
           /> */}
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-semibold text-lg text-slate-800 pt-1">
+              Show Product In <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4 flex-wrap mt-[2px]">
+              {PRODUCT_SECTIONS.map((section) => (
+                <label
+                  key={section.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSections.includes(section.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedSections([...selectedSections, section.id]);
+                      } else {
+                        setSelectedSections(
+                          selectedSections.filter((s) => s !== section.id),
+                        );
+                      }
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="text-lg text-slate-700">
+                    {section.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {selectedSections.length === 0 && (
+              <p className="text-xs text-red-500 mt-1">
+                Select at least one section
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Row 3 — Price + Quantity (commented) & Sections */}
@@ -550,42 +599,15 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             placeholder="Product Quantity"
             errors={errors}
           /> */}
-          <div className="flex flex-col gap-2 w-full">
-            <label className="font-semibold text-sm text-slate-800 pt-1">
-              Show Product In <span className="text-red-500">*</span>
-            </label>
-            <div className="flex gap-4 flex-wrap mt-[2px]">
-              {PRODUCT_SECTIONS.map((section) => (
-                <label
-                  key={section.id}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedSections.includes(section.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedSections([...selectedSections, section.id]);
-                      } else {
-                        setSelectedSections(
-                          selectedSections.filter((s) => s !== section.id),
-                        );
-                      }
-                    }}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-slate-700">
-                    {section.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-            {selectedSections.length === 0 && (
-              <p className="text-xs text-red-500 mt-1">
-                Select at least one section
-              </p>
-            )}
-          </div>
+          <InputField
+            label="Brand"
+            id="brand"
+            type="text"
+            message="Brand name is required*"
+            placeholder="Brand Name"
+            register={register}
+            errors={errors}
+          />
         </div>
 
         {/* Row 4 — Discount + Special Price */}

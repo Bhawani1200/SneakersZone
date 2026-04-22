@@ -43,15 +43,20 @@ const NewLaunches = () => {
         // );
         console.log("New Launches raw:", data);
 
-        const formattedProducts = (data.content || []).map((product) => ({
-          ...product,
-          productId: product.productId || product.id,
-          image: product.image
-            ? product.image.startsWith("http")
-              ? product.image
-              : `http://localhost:8080/images/${product.image}`
-            : "/placeholder-product.png",
-        }));
+        const formattedProducts = (data.content || [])
+          .filter(
+            (product) =>
+              product.sections && product.sections.includes("newLaunches"),
+          )
+          .map((product) => ({
+            ...product,
+            productId: product.productId || product.id,
+            image: product.image
+              ? product.image.startsWith("http")
+                ? product.image
+                : `http://localhost:8080/images/${product.image}`
+              : "/placeholder-product.png",
+          }));
 
         console.log("New Launches formatted:", formattedProducts);
         setProducts(formattedProducts);

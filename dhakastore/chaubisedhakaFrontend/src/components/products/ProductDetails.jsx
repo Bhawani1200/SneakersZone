@@ -224,12 +224,12 @@ const ProductDetails = () => {
             <div className="flex gap-4 mb-8">
               <button
                 onClick={handleAddToCart}
-                disabled={product.quantity === 0}
+                disabled={product.inStock === false}
                 className="flex-1 bg-blue-600 text-white py-4 rounded-full font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 <ShoppingCart className="w-5 h-5" />
                 <span>
-                  {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+                  {product.inStock !== false ? "Add to Cart" : "Out of Stock"}
                 </span>
               </button>
               <button

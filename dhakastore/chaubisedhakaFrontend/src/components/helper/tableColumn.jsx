@@ -46,18 +46,18 @@ export const adminProductTableColumn = (
     cellClassName: "text-slate-700 font-normal border",
     renderHeader: (params) => <span className="text-center">Price</span>,
   },
-  {
-    disableColumnMenu: true,
-    field: "quantity",
-    headerName: "Quantity",
-    minWidth: 180,
-    headerAlign: "center",
-    align: "center",
-    editable: false,
-    headerClassName: "text-black font-semibold border",
-    cellClassName: "text-slate-700 font-normal border",
-    renderHeader: (params) => <span className="text-center">Quantity</span>,
-  },
+  // {
+  //   disableColumnMenu: true,
+  //   field: "quantity",
+  //   headerName: "Quantity",
+  //   minWidth: 180,
+  //   headerAlign: "center",
+  //   align: "center",
+  //   editable: false,
+  //   headerClassName: "text-black font-semibold border",
+  //   cellClassName: "text-slate-700 font-normal border",
+  //   renderHeader: (params) => <span className="text-center">Quantity</span>,
+  // },
   {
     disableColumnMenu: true,
     field: "specialPrice",
@@ -151,6 +151,44 @@ export const adminProductTableColumn = (
               e.target.src = "/placeholder-product.png";
             }}
           />
+        </div>
+      );
+    },
+  },
+  {
+    disableColumnMenu: true,
+    field: "sections",
+    headerName: "Sections",
+    align: "center",
+    width: 200,
+    editable: false,
+    sortable: false,
+    headerAlign: "center",
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border text-center",
+    renderHeader: (params) => <span>Sections</span>,
+    renderCell: (params) => {
+      const displaySections = {
+        newLaunches: "New Launches",
+        offer: "Offer",
+        featured: "Featured",
+      };
+
+      const sections = params.value;
+      if (!sections || !Array.isArray(sections) || sections.length === 0) {
+        return <span className="text-gray-400 text-xs italic">None</span>;
+      }
+
+      return (
+        <div className="flex flex-wrap items-center justify-center gap-1 h-full py-1">
+          {sections.map((sec, idx) => (
+            <span
+              key={idx}
+              className="bg-blue-50 text-blue-600 text-[10px] px-1.5 py-0.5 rounded-sm font-semibold border border-blue-200"
+            >
+              {displaySections[sec] || sec}
+            </span>
+          ))}
         </div>
       );
     },
