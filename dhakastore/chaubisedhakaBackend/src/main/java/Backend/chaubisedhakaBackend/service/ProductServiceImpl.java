@@ -87,6 +87,7 @@ public class ProductServiceImpl implements ProductService{
                 break;
             }
         }
+
         if (isProductNotPresent) {
             Product product = modelMapper.map(productDTO, Product.class);
             product.setCategory(category);
@@ -559,6 +560,7 @@ public class ProductServiceImpl implements ProductService{
         product.setInStock(adminProductDTO.getInStock() != null ? adminProductDTO.getInStock() : adminProductDTO.getQuantity() > 0);
         product.setBrand(adminProductDTO.getBrand());
         product.setCategory(category);
+        product.setSections(adminProductDTO.getSections() != null ? adminProductDTO.getSections() : new ArrayList<>());
 
         // Set seller if provided
         if (adminProductDTO.getSellerId() != null) {
@@ -632,6 +634,10 @@ public class ProductServiceImpl implements ProductService{
         }
         if (adminProductDTO.getBrand() != null) {
             existingProduct.setBrand(adminProductDTO.getBrand());
+        }
+
+        if (adminProductDTO.getSections() != null) {
+            existingProduct.setSections(adminProductDTO.getSections());
         }
 
         // Update seller if provided
@@ -789,6 +795,9 @@ public class ProductServiceImpl implements ProductService{
         dto.setSize(product.getSize());
         dto.setColor(product.getColor());
         dto.setInStock(product.getInStock());
+        if (product.getCategory() != null) {
+            dto.setCategoryName(product.getCategory().getCategoryName());
+        }
 
         // Set category name
         if (product.getCategory() != null) {

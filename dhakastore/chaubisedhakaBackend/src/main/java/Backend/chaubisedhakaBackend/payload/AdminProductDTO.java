@@ -50,4 +50,6 @@ public class AdminProductDTO {
 
     private Long sellerId;
     private String sellerName;
+
+    private List<String> sections;
 }

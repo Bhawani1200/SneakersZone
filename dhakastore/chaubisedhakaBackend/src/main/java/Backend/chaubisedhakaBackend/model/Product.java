@@ -37,7 +37,14 @@ public class Product {
     private double discount;
     private double specialPrice;
 
-
+    @ElementCollection(fetch=FetchType.EAGER)
+    @CollectionTable(
+            name = "product_sections",
+            joinColumns = @JoinColumn(name = "product_id"),
+            foreignKey = @ForeignKey(name = "fk_product_sections_product")
+    )
+    @Column(name = "section")
+    private List<String> sections = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name="category_id")
     private Category category;

@@ -37,6 +37,7 @@ public class ProductDTO {
     private Gender gender;
     private Integer size;
     private String color;
+    private List<String> sections;
     private Boolean inStock;
     private String categoryName;
     private List<String> images;
