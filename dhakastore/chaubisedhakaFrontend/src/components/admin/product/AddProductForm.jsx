@@ -363,7 +363,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       categoryId: selectedCategory?.categoryId,
       categoryName: selectedCategory?.categoryName,
       sellerName: data.sellerName || "admin",
-      sections: selectedSections, // 👈 ADD THIS
+      sections: selectedSections,
     };
 
     console.log("Sending product data to backend:", sendData);
@@ -454,8 +454,21 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
         setDynamicColors([...dynamicColors, ...newColors]);
       }
 
-      if (product.sections && Array.isArray(product.sections)) {
-        setSelectedSections(product.sections);
+      if (product.sections) {
+        if (Array.isArray(product.sections)) {
+          // Handle both array of strings and array of objects
+          const sectionIds = product.sections.map((sec) =>
+            typeof sec === "object" ? sec.id : sec,
+          );
+          setSelectedSections(sectionIds);
+        } else if (typeof product.sections === "string") {
+          setSelectedSections(
+            product.sections
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+          );
+        }
       } else {
         setSelectedSections([]);
       }

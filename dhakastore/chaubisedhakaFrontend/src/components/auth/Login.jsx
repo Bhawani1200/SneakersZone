@@ -254,7 +254,7 @@ const Login = () => {
         >
           {/* Overlay gradient text area if desired */}
           <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent rounded-b-2xl">
-            <h2 className="text-white text-2xl font-bold mb-2">Exclusive Sneakers</h2>
+            <h2 className="text-white text-2xl font-bold mb-2">Exclusive Collection</h2>
             <p className="text-gray-200 text-sm">Sign in to uncover our latest collection.</p>
           </div>
         </div>

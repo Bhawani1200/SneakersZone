@@ -108,11 +108,6 @@ export const categories = [
     image: "https://images.unsplash.com/photo-1771049873881-45b23a2e9847?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXN1YWwlMjBjYW52YXMlMjBzaG9lc3xlbnwxfHx8fDE3NzU0NjU1ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
   },
   {
-    id: "sneakers",
-    label: "Sneakers",
-    image: "https://images.unsplash.com/photo-1772319713406-6b0ec4772086?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcmVtaXVtJTIwc25lYWtlcnMlMjBzaG93Y2FzZXxlbnwxfHx8fDE3NzU0ODc1NjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  },
-  {
     id: "running",
     label: "Running",
     image: "https://images.unsplash.com/photo-1765914448113-ebf0ce8cb918?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydW5uaW5nJTIwc2hvZXMlMjBhdGhsZXRpY3xlbnwxfHx8fDE3NzUzOTE3Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -148,4 +143,4 @@ export const testimonials = [
   },
 ];
 
-export const brands = ["Nike", "Adidas", "Puma", "Reebok", "New Balance", "Vans", "Converse", "Under Armour", "ASICS", "Timberland"];
+export const brands = ["Nike", "Adidas", "Puma", "Reebok", "New Balance", "Vans", "Converse", "Under Armour", "ASICS"];

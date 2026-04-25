@@ -24,9 +24,14 @@ const DealsOfTheDay = () => {
         );
 
         const formattedProducts = (data.content || [])
-          .filter(
-            (product) => product.sections && product.sections.includes("offer"),
-          )
+          .filter((product) => {
+            const sections = Array.isArray(product.sections)
+              ? product.sections
+              : typeof product.sections === "string"
+                ? product.sections.split(",").map((s) => s.trim())
+                : [];
+            return sections.includes("offer");
+          })
           .map((product) => ({
             ...product,
             productId: product.productId || product.id,

@@ -488,47 +488,76 @@ export const updateOrderStatusFromDashboard =
     }
   };
 
-// export const dashboardProductsAction =
-//   (isAdmin, queryString) => async (dispatch) => {
+// export const dashboardProductsAction = (isAdmin, queryString) => async (dispatch) => {
+//   try {
+//     dispatch({ type: "IS_FETCHING" });
+    
+//     let url;
+//     if (isAdmin) {
+//       url = `/admin/products${queryString ? `?${queryString}` : ""}`;
+//     } else {
+//       url = `/seller/products${queryString ? `?${queryString}` : ""}`;
+//     }
+    
+//     const { data } = await api.get(url);
+    
+//     dispatch({
+//       type: "FETCH_PRODUCTS",
+//       payload: data.content,
+//       pageNumber: data.pageNumber,
+//       pageSize: data.pageSize,
+//       totalElements: data.totalElements,
+//       totalPages: data.totalPages,
+//       lastPage: data.lastPage,
+//     });
+//     dispatch({ type: "IS_SUCCESS" });
+//   } catch (error) {
+//     console.error("Error fetching dashboard products:", error);
+//     dispatch({
+//       type: "IS_ERROR",
+//       payload: error?.response?.data?.message || "Failed to fetch products",
+//     });
+//   }
+// };
+
+// export const updateProductFromDashboard =
+//   (sendData, toast, reset, setLoader, setOpen, isAdmin) => async (dispatch) => {
 //     try {
-//       dispatch({ type: "IS_FETCHING" });
-//       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
-//       const { data } = await api.get(`${endpoint}?${queryString}`);
-//       dispatch({
-//         type: "FETCH_PRODUCTS",
-//         payload: data.content,
-//         pageNumber: data.pageNumber,
-//         pageSize: data.pageSize,
-//         totalElements: data.totalElements,
-//         totalPages: data.totalPages,
-//         lastPage: data.lastPage,
-//       });
-//       dispatch({ type: "IS_SUCCESS" });
+//       setLoader(true);
+//       const endpoint = isAdmin ? "/admin/products/" : "/seller/products/";
+//       await api.put(`${endpoint}${sendData.id}`, sendData);
+//       toast.success("Product update successful");
+//       reset();
+//       setLoader(false);
+//       setOpen(false);
+//       await dispatch(dashboardProductsAction(isAdmin));
+//       await dispatch(fetchFiltersAction());
 //     } catch (error) {
-//       console.log(error);
-//       dispatch({
-//         type: "IS_ERROR",
-//         payload:
-//           error?.response?.data?.message ||
-//           "Failed to fetch dashboard products",
-//       });
+//       toast.error(
+//         error?.response?.data?.description || "Product update failed"
+//       );
 //     }
 //   };
-
-// In your store/actions/index.js
-
 export const dashboardProductsAction = (isAdmin, queryString) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
     
     let url;
     if (isAdmin) {
-      url = `/admin/products?${queryString}`;
+      url = `/admin/products${queryString ? `?${queryString}` : ""}`;
     } else {
-      url = `/seller/products?${queryString}`;
+      url = `/seller/products${queryString ? `?${queryString}` : ""}`;
     }
     
+    console.log("Fetching products from:", url);
+    
     const { data } = await api.get(url);
+    
+    console.log("Products fetched:", data.content);
+    if (data.content && data.content.length > 0) {
+      console.log("First product keys:", Object.keys(data.content[0]));
+      console.log("First product full data:", data.content[0]);
+    }
     
     dispatch({
       type: "FETCH_PRODUCTS",
@@ -554,17 +583,36 @@ export const updateProductFromDashboard =
     try {
       setLoader(true);
       const endpoint = isAdmin ? "/admin/products/" : "/seller/products/";
-      await api.put(`${endpoint}${sendData.id}`, sendData);
+      
+      // Make sure sections is included and properly formatted
+      const updateData = {
+        ...sendData,
+        sections: sendData.sections || [] // Ensure sections is always an array
+      };
+      
+      console.log("Updating product with data:", updateData);
+      
+      const response = await api.put(`${endpoint}${sendData.id}`, updateData);
+      
+      console.log("Update response:", response.data);
+      
       toast.success("Product update successful");
       reset();
       setLoader(false);
       setOpen(false);
-      await dispatch(dashboardProductsAction());
+      
+  
+      await dispatch(dashboardProductsAction(isAdmin, ""));
       await dispatch(fetchFiltersAction());
+      
     } catch (error) {
+      console.error("Update error:", error);
       toast.error(
-        error?.response?.data?.description || "Product update failed"
+        error?.response?.data?.description || 
+        error?.response?.data?.message || 
+        "Product update failed"
       );
+      setLoader(false);
     }
   };
 
@@ -573,22 +621,48 @@ export const updateProductFromDashboard =
 //   async (dispatch, getState) => {
 //     try {
 //       setLoader(true);
-//       const endpoint = isAdmin ? "/admin/categories/" : "/seller/categories/";
-//       await api.post(`${endpoint}${sendData.categoryId}/product`, sendData);
+      
+//       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
+      
+//       console.log("Sending to endpoint:", endpoint);
+//       console.log("Product data:", JSON.stringify(sendData, null, 2));
+      
+//       const response = await api.post(endpoint, sendData);
+      
 //       toast.success("Product created successfully");
 //       reset();
 //       setOpen(false);
-//       await dispatch(dashboardProductsAction());
+//       await dispatch(dashboardProductsAction(isAdmin));
+//       await dispatch(fetchFiltersAction());
+      
 //     } catch (error) {
-//       console.error(error);
-//       toast.error(
-//         error?.response?.data?.description || "Product creation failed"
-//       );
+//       console.error("Product creation error:", error);
+      
+    
+//       if (error.response) {
+//         console.error("Error status:", error.response.status);
+//         console.error("Error data:", error.response.data);
+//         console.error("Error headers:", error.response.headers);
+        
+       
+//         const errorMessage = error.response.data?.description || 
+//                            error.response.data?.message ||
+//                            error.response.data?.error ||
+//                            JSON.stringify(error.response.data) ||
+//                            "Product creation failed";
+//         toast.error(errorMessage);
+//       } else if (error.request) {
+//         console.error("No response received:", error.request);
+//         toast.error("No response from server");
+//       } else {
+//         console.error("Error message:", error.message);
+//         toast.error(error.message);
+//       }
+      
 //     } finally {
 //       setLoader(false);
 //     }
 //   };
-
 export const addNewProductFromDashboard =
   (sendData, toast, reset, setLoader, setOpen, isAdmin) =>
   async (dispatch, getState) => {
@@ -597,31 +671,35 @@ export const addNewProductFromDashboard =
       
       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
       
-      console.log("Sending to endpoint:", endpoint);
-      console.log("Product data:", JSON.stringify(sendData, null, 2));
+      // Ensure sections is an array
+      const productData = {
+        ...sendData,
+        sections: sendData.sections || []
+      };
       
-      const response = await api.post(endpoint, sendData);
+      console.log("Sending to endpoint:", endpoint);
+      console.log("Product data:", JSON.stringify(productData, null, 2));
+      
+      const response = await api.post(endpoint, productData);
+      
+      console.log("Create response:", response.data);
       
       toast.success("Product created successfully");
       reset();
       setOpen(false);
-      await dispatch(dashboardProductsAction());
+      await dispatch(dashboardProductsAction(isAdmin, ""));
       await dispatch(fetchFiltersAction());
       
     } catch (error) {
       console.error("Product creation error:", error);
       
-    
       if (error.response) {
         console.error("Error status:", error.response.status);
         console.error("Error data:", error.response.data);
-        console.error("Error headers:", error.response.headers);
         
-       
         const errorMessage = error.response.data?.description || 
                            error.response.data?.message ||
                            error.response.data?.error ||
-                           JSON.stringify(error.response.data) ||
                            "Product creation failed";
         toast.error(errorMessage);
       } else if (error.request) {
@@ -655,7 +733,7 @@ export const deleteProduct =
     }
   };
 
-// export const updateProductImageFromDashboard =
+
 //   (formData, productId, toast, setLoader, setOpen, isAdmin) =>
 //   async (dispatch) => {
 //     try {

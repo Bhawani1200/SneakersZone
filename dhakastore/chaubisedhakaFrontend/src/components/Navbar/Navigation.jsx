@@ -161,7 +161,7 @@ const Navigation = () => {
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tighter uppercase">
-                SNEAKERS<span className="text-blue-600">ZONE</span>
+                CHAUBISE<span className="text-blue-600">DHAKA</span>
               </h1>
             </Link>
 
@@ -170,7 +170,7 @@ const Navigation = () => {
               <div className="relative w-full">
                 <input
                   type="text"
-                  placeholder="Search for your favorite kicks..."
+                  placeholder="Search for your favorite products..."
                   className="w-full px-5 py-3 pl-12 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
@@ -248,7 +248,7 @@ const Navigation = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search kicks..."
+                placeholder="Search products..."
                 className="w-full px-4 py-3 pl-10 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />

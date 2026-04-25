@@ -93,7 +93,7 @@ const Marketing = () => {
                   Up to
                 </span>
                 <span className="text-5xl font-black text-gray-900">30%</span>
-                <span className="text-sm text-gray-500">off on all shoes!</span>
+                <span className="text-sm text-gray-500">off on all products!</span>
               </div>
               <Link to="/shop">
                 <button className="px-8 py-3 bg-[#1a1a1a] text-white rounded-md font-semibold hover:bg-black transition-colors">
@@ -131,7 +131,7 @@ const Marketing = () => {
             <div className="absolute right-0 top-0 bottom-0 w-1/2 overflow-hidden pointer-events-none">
               <img
                 src="https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=900&q=80"
-                alt="Lifestyle sneakers"
+                alt="Lifestyle fashion"
                 className="w-full h-full object-contain scale-110 -rotate-12 group-hover:rotate-0 transition-transform duration-700"
               />
             </div>

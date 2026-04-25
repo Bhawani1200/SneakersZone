@@ -46,10 +46,21 @@ const FeaturedProducts = () => {
         );
 
         const formattedProducts = (data.content || [])
-          .filter(
-            (product) =>
-              product.sections && product.sections.includes("featured"),
-          )
+          .filter((product) => {
+            const sections = Array.isArray(product.sections)
+              ? product.sections
+              : typeof product.sections === "string"
+                ? product.sections.split(",").map((s) => s.trim())
+                : [];
+
+            const isFeatured = sections.includes("featured");
+            const notSneakers =
+              product.categoryName?.toLowerCase() !== "sneakers";
+            const notTimberland =
+              product.brand?.toLowerCase() !== "timberland";
+
+            return isFeatured && notSneakers && notTimberland;
+          })
           .map((product) => ({
             ...product,
             productId: product.productId || product.id,
@@ -100,12 +111,18 @@ const FeaturedProducts = () => {
       gender: "KIDS",
       icon: <Baby className="w-5 h-5" />,
     },
-    ...(categories || []).map((cat) => ({
-      id: cat.categoryId,
-      label: cat.categoryName,
-      categoryId: cat.categoryId,
-      icon: <Zap className="w-4 h-4" />,
-    })),
+    ...(categories || [])
+      .filter(
+        (cat) =>
+          cat.categoryName.toLowerCase() !== "sneakers" &&
+          cat.categoryName.toLowerCase() !== "timberland",
+      )
+      .map((cat) => ({
+        id: cat.categoryId,
+        label: cat.categoryName,
+        categoryId: cat.categoryId,
+        icon: <Zap className="w-4 h-4" />,
+      })),
   ];
 
   const scroll = (dir) => {
@@ -196,7 +213,7 @@ const FeaturedProducts = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
                   <p className="text-zinc-500 font-bold animate-pulse">
-                    Loading amazing kicks...
+                    Loading amazing products...
                   </p>
                 </div>
               ) : paginatedProducts.length > 0 ? (

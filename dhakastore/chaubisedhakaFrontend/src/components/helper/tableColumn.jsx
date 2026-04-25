@@ -155,6 +155,92 @@ export const adminProductTableColumn = (
       );
     },
   },
+  // {
+  //   disableColumnMenu: true,
+  //   field: "sections",
+  //   headerName: "Sections",
+  //   align: "center",
+  //   width: 200,
+  //   editable: false,
+  //   sortable: false,
+  //   headerAlign: "center",
+  //   headerClassName: "text-black font-semibold border",
+  //   cellClassName: "text-slate-700 font-normal border text-center",
+  //   renderHeader: (params) => <span>Sections</span>,
+  //   renderCell: (params) => {
+  //     let sections = params.row.sections || params.value;
+
+  //     const displaySections = {
+  //       newLaunches: "New Launches",
+  //       NewLaunces: "New Launches",
+  //       NewLaunced: "New Launches",
+  //       "New Launches": "New Launches",
+  //       offer: "Offer",
+  //       Offer: "Offer",
+  //       featured: "Featured Products",
+  //       Featured: "Featured Products",
+  //       "Featured Products": "Featured Products",
+  //     };
+
+  //     if (typeof sections === "number") {
+  //       sections = null;
+  //     }
+
+  //     if (typeof sections === "string") {
+  //       sections = sections
+  //         .split(",")
+  //         .map((s) => s.trim())
+  //         .filter(Boolean);
+  //     }
+
+  //     if (
+  //       sections &&
+  //       !Array.isArray(sections) &&
+  //       typeof sections === "object"
+  //     ) {
+  //       sections = [sections];
+  //     }
+
+  //     if (Array.isArray(sections)) {
+  //       sections = sections.map((sec) =>
+  //         typeof sec === "object"
+  //           ? sec.id || sec.sectionId || sec.sectionName
+  //           : sec,
+  //       );
+  //     }
+
+  //     if (!sections || !Array.isArray(sections) || sections.length === 0) {
+  //       // Fallback: show raw value as string if it exists and isn't empty
+  //       const rawValue = params.row.sections || params.value;
+  //       if (
+  //         rawValue !== null &&
+  //         rawValue !== undefined &&
+  //         rawValue !== "" &&
+  //         (!Array.isArray(rawValue) || rawValue.length > 0)
+  //       ) {
+  //         return (
+  //           <span className="text-xs text-orange-500">
+  //             {JSON.stringify(rawValue)}
+  //           </span>
+  //         );
+  //       }
+  //       return <span className="text-gray-400 text-xs italic">None</span>;
+  //     }
+
+  //     return (
+  //       <div className="flex flex-wrap items-center justify-center gap-1 h-full py-1">
+  //         {sections.map((sec, idx) => (
+  //           <span
+  //             key={idx}
+  //             className="bg-blue-50 text-blue-600 text-[10px] px-1.5 py-0.5 rounded-sm font-semibold border border-blue-200"
+  //           >
+  //             {displaySections[sec] || sec}
+  //           </span>
+  //         ))}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     disableColumnMenu: true,
     field: "sections",
@@ -168,20 +254,63 @@ export const adminProductTableColumn = (
     cellClassName: "text-slate-700 font-normal border text-center",
     renderHeader: (params) => <span>Sections</span>,
     renderCell: (params) => {
+      let sections = params.row.sections || params.value;
+
       const displaySections = {
         newLaunches: "New Launches",
         offer: "Offer",
-        featured: "Featured",
+        featured: "Featured Products",
       };
 
-      const sections = params.value;
-      if (!sections || !Array.isArray(sections) || sections.length === 0) {
+      // Handle different data types
+      if (!sections) {
+        return <span className="text-gray-400 text-xs italic">None</span>;
+      }
+
+      // If it's a string, try to parse it
+      if (typeof sections === "string") {
+        try {
+          sections = JSON.parse(sections);
+        } catch (e) {
+          sections = sections
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+      }
+
+      // If it's a number or other type, convert to array or show as is
+      if (typeof sections === "number") {
+        sections = null;
+      }
+
+      // Ensure it's an array
+      if (!Array.isArray(sections)) {
+        if (sections && typeof sections === "object") {
+          sections = Object.values(sections);
+        } else if (sections) {
+          sections = [sections];
+        } else {
+          sections = [];
+        }
+      }
+
+      // Filter to only valid sections (optional)
+      const validSections = sections.filter(
+        (sec) =>
+          displaySections[sec] ||
+          sec === "newLaunches" ||
+          sec === "offer" ||
+          sec === "featured",
+      );
+
+      if (validSections.length === 0) {
         return <span className="text-gray-400 text-xs italic">None</span>;
       }
 
       return (
         <div className="flex flex-wrap items-center justify-center gap-1 h-full py-1">
-          {sections.map((sec, idx) => (
+          {validSections.map((sec, idx) => (
             <span
               key={idx}
               className="bg-blue-50 text-blue-600 text-[10px] px-1.5 py-0.5 rounded-sm font-semibold border border-blue-200"
@@ -193,7 +322,6 @@ export const adminProductTableColumn = (
       );
     },
   },
-
   {
     field: "action",
     headerName: "Action",
@@ -231,7 +359,7 @@ export const adminProductTableColumn = (
           </button>
           <button
             onClick={() => handleProductView(params.row)}
-            className="flex items-center bg-slate-800 text-white px-4   h-9 rounded-md"
+            className="flex items-center bg-slate-800 text-white px-4 h-9 rounded-md"
           >
             <FaEye className="mr-2" />
             View

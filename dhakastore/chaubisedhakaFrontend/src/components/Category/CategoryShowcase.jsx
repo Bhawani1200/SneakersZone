@@ -46,13 +46,6 @@ const GENDER_METADATA = [
 ];
 
 const CATEGORY_MAP = {
-  SNEAKERS: {
-    label: "Sneakers",
-    description: "Trendy sneakers for your daily adventures.",
-    bg: "from-neutral-800 via-neutral-700 to-neutral-600",
-    gradient: "from-red-600/80 to-transparent",
-    image: "https://images.pexels.com/photos/7500608/pexels-photo-7500608.jpeg",
-  },
   CLOTHING: {
     label: "Clothing",
     description: "Premium apparel for every occasion.",

@@ -11,17 +11,17 @@ export const slides = [
   {
     id: 1,
     title: "Step Into Style",
-    subtitle: "Discover the latest collection of premium footwear",
+    subtitle: "Discover the latest collection of premium apparel",
     cta: "Shop Now",
     link: "/category/new-arrivals",
     img: bannerImgOne,
   },
   {
     id: 2,
-    title: "Limited Edition Sneakers",
-    subtitle: "Exclusive designs from top brands",
+    title: "Exclusive Brand Collection",
+    subtitle: "Premium designs from world-class brands",
     cta: "Explore Collection",
-    link: "/category/sneakers",
+    link: "/products",
     img: bannerImgTwo,
   },
   {
@@ -43,7 +43,7 @@ export const slides = [
   {
     id: 5,
     title: "Comfort Redefined",
-    subtitle: "Step into the future of footwear",
+    subtitle: "Step into the future of fashion",
     cta: "View Latest Drops",
     link: "/category/new-arrivals",
     img: bannerImgFive,
