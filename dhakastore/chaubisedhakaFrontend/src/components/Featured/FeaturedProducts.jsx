@@ -107,12 +107,18 @@ const FeaturedProducts = () => {
       gender: "KIDS",
       icon: <Baby className="w-5 h-5" />,
     },
-    ...(categories || []).map((cat) => ({
-      id: cat.categoryId,
-      label: cat.categoryName,
-      categoryId: cat.categoryId,
-      icon: <Zap className="w-4 h-4" />,
-    })),
+    ...(categories || [])
+      .filter(
+        (cat) =>
+          cat.categoryName.toLowerCase() !== "sneakers" &&
+          cat.categoryName.toLowerCase() !== "timberland",
+      )
+      .map((cat) => ({
+        id: cat.categoryId,
+        label: cat.categoryName,
+        categoryId: cat.categoryId,
+        icon: <Zap className="w-4 h-4" />,
+      })),
   ];
 
   const scroll = (dir) => {

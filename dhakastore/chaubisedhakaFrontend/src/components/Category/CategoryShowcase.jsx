@@ -60,6 +60,14 @@ const CATEGORY_MAP = {
     gradient: "from-gray-600/80 to-transparent",
     image: "https://images.pexels.com/photos/1453008/pexels-photo-1453008.jpeg",
   },
+  "SHOE CLEANERS": {
+    label: "Shoe Cleaners",
+    description: "Premium care for your favorite pairs.",
+    bg: "from-blue-600 via-blue-500 to-blue-400",
+    gradient: "from-blue-600/80 to-transparent",
+    image:
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974&auto=format&fit=crop",
+  },
 };
 
 const DEFAULT_CATEGORY_METADATA = {
@@ -82,20 +90,37 @@ const CategoryShowcase = () => {
 
   const combinedCategories = [
     ...GENDER_METADATA,
-    ...(categories || []).map((cat) => {
-      const metadata =
-        CATEGORY_MAP[cat.categoryName.toUpperCase()] ||
-        DEFAULT_CATEGORY_METADATA;
-      return {
-        key: cat.categoryName,
-        type: "category",
-        label: metadata.label || cat.categoryName,
-        description: metadata.description,
-        bg: metadata.bg,
-        image: metadata.image,
-        gradient: metadata.gradient,
-      };
-    }),
+    ...(categories || [])
+      .filter(
+        (cat) =>
+          !["SNEAKERS", "TIMBERLAND", "SHOE CLEANERS"].includes(
+            cat.categoryName.toUpperCase(),
+          ),
+      )
+      .map((cat) => {
+        const metadata =
+          CATEGORY_MAP[cat.categoryName.toUpperCase()] ||
+          DEFAULT_CATEGORY_METADATA;
+        return {
+          key: cat.categoryName,
+          type: "category",
+          label: metadata.label || cat.categoryName,
+          description: metadata.description,
+          bg: metadata.bg,
+          image: metadata.image,
+          gradient: metadata.gradient,
+        };
+      }),
+    {
+      key: "Shoe Cleaners",
+      type: "category",
+      label: "Shoe Cleaners",
+      description: "Premium care for your favorite pairs.",
+      bg: "from-blue-600 via-blue-500 to-blue-400",
+      image:
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974&auto=format&fit=crop",
+      gradient: "from-blue-600/80 to-transparent",
+    },
   ];
 
   const scroll = (direction) => {

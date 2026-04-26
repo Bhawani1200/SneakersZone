@@ -94,7 +94,7 @@ const DealsOfTheDay = () => {
   const dealsProducts = products;
 
   return (
-    <section className="py-20 bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-950 dark:to-zinc-900 overflow-hidden">
+    <section className="pt-52 pb-20 bg-gradient-to-br from-red-50 to-orange-50 dark:from-zinc-950 dark:to-zinc-900 overflow-hidden">
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

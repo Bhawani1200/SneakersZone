@@ -1,23 +1,26 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function PromotionalBanners() {
+  const navigate = useNavigate();
+
   const banners = [
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1638953173691-671b6c2692fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzaG9lJTIwc3RvcmUlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NzU0ODc1NjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      category: "Men's Collection",
-      discount: "Up to 40% OFF",
-      text: "Premium Leather Shoes",
+        "https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070&auto=format&fit=crop",
+      category: "Elite Performance",
+      discount: "UP TO 50% OFF",
+      text: "Men's Sneaker Collection",
     },
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1621996659490-3275b4d0d951?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21lbnMlMjBmYXNoaW9uJTIwaGVlbHN8ZW58MXx8fHwxNzc1NDg3NTYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      category: "Women's Heels",
-      discount: "Up to 35% OFF",
-      text: "Step Into Elegance",
+        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974&auto=format&fit=crop",
+      category: "Style & Comfort",
+      discount: "UP TO 40% OFF",
+      text: "Women's Streetwear",
     },
   ];
 
@@ -32,6 +35,7 @@ export function PromotionalBanners() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
+              onClick={() => navigate("/category/sale")}
               className="relative h-[250px] md:h-[350px] lg:h-[450px] rounded-[2rem] overflow-hidden group cursor-pointer shadow-2xl"
             >
               {/* Background Image with Parallax Effect */}
