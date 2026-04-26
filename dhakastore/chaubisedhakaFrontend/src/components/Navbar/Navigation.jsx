@@ -75,6 +75,7 @@ const Navigation = () => {
     { label: "New Arrivals", path: "/new-arrivals" },
     { label: "Sale", path: "/category/sale", highlight: true },
     { label: "Brands", path: "/category/brands" },
+    { label: "Contact Us", path: "/contact", isButton: true },
   ];
 
   return (
@@ -265,12 +266,18 @@ const Navigation = () => {
               <li key={link.path}>
                 <Link
                   to={link.path}
-                  className={`text-lg font-bold uppercase tracking-widest hover:text-blue-600 dark:hover:text-blue-400 transition-all relative group ${
-                    link.highlight ? "text-red-500" : ""
-                  }`}
+                  className={
+                    link.isButton
+                      ? "px-6 py-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all hover:scale-105 shadow-lg shadow-blue-600/20 font-black tracking-widest uppercase text-sm"
+                      : `text-lg font-bold uppercase tracking-widest hover:text-blue-600 dark:hover:text-blue-400 transition-all relative group ${
+                          link.highlight ? "text-red-500" : ""
+                        }`
+                  }
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full" />
+                  {!link.isButton && (
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full" />
+                  )}
                 </Link>
               </li>
             ))}
@@ -294,9 +301,13 @@ const Navigation = () => {
                     <Link
                       to={link.path}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block text-2xl font-black uppercase tracking-wider hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
-                        link.highlight ? "text-red-500" : ""
-                      }`}
+                      className={
+                        link.isButton
+                          ? "inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-wider hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
+                          : `block text-2xl font-black uppercase tracking-wider hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${
+                              link.highlight ? "text-red-500" : ""
+                            }`
+                      }
                     >
                       {link.label}
                     </Link>

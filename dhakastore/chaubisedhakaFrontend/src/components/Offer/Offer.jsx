@@ -26,7 +26,9 @@ const DealsOfTheDay = () => {
         const formattedProducts = (data.content || [])
           .filter((product) => {
             const sections = Array.isArray(product.sections)
-              ? product.sections
+              ? product.sections.map((sec) =>
+                  typeof sec === "object" ? sec.id : sec,
+                )
               : typeof product.sections === "string"
                 ? product.sections.split(",").map((s) => s.trim())
                 : [];
@@ -101,17 +103,29 @@ const DealsOfTheDay = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <Flame className="w-10 h-10 text-red-600 animate-pulse" />
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-              Deals of the Day
+          <div className="flex flex-col items-center justify-center mb-10 gap-4">
+            <div className="flex items-center justify-center gap-3">
+              <Flame className="w-8 h-8 text-red-600 animate-pulse" />
+              <span className="text-red-600 font-black uppercase tracking-[0.3em] text-sm">
+                Limited Time Offer
+              </span>
+              <Flame className="w-8 h-8 text-red-600 animate-pulse" />
+            </div>
+            <h2 className="text-4xl md:text-7xl font-black text-gray-900 dark:text-gray-100 uppercase italic tracking-tighter">
+              Deals <span className="text-red-600">Of The Day</span>
             </h2>
-            <Flame className="w-10 h-10 text-red-600 animate-pulse" />
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-3xl mx-auto text-lg md:text-xl leading-relaxed px-4">
+              Unlock{" "}
+              <span className="text-red-600 font-black italic underline decoration-red-600/30 decoration-4 underline-offset-4">
+                unbeatable savings
+              </span>{" "}
+              on our most-wanted items. Don't wait—these{" "}
+              <span className="text-gray-900 dark:text-gray-100 font-black italic">
+                flash deals
+              </span>{" "}
+              are disappearing with every tick of the clock!
+            </p>
           </div>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8 max-w-2xl mx-auto">
-            Hurry! Limited time offers — Don't miss out on these exclusive
-            deals.
-          </p>
 
           {/* Countdown Timer */}
           <div className="flex items-center justify-center gap-4">

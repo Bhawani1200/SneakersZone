@@ -48,18 +48,14 @@ const FeaturedProducts = () => {
         const formattedProducts = (data.content || [])
           .filter((product) => {
             const sections = Array.isArray(product.sections)
-              ? product.sections
+              ? product.sections.map((sec) =>
+                  typeof sec === "object" ? sec.id : sec,
+                )
               : typeof product.sections === "string"
                 ? product.sections.split(",").map((s) => s.trim())
                 : [];
 
-            const isFeatured = sections.includes("featured");
-            const notSneakers =
-              product.categoryName?.toLowerCase() !== "sneakers";
-            const notTimberland =
-              product.brand?.toLowerCase() !== "timberland";
-
-            return isFeatured && notSneakers && notTimberland;
+            return sections.includes("featured");
           })
           .map((product) => ({
             ...product,
@@ -111,18 +107,12 @@ const FeaturedProducts = () => {
       gender: "KIDS",
       icon: <Baby className="w-5 h-5" />,
     },
-    ...(categories || [])
-      .filter(
-        (cat) =>
-          cat.categoryName.toLowerCase() !== "sneakers" &&
-          cat.categoryName.toLowerCase() !== "timberland",
-      )
-      .map((cat) => ({
-        id: cat.categoryId,
-        label: cat.categoryName,
-        categoryId: cat.categoryId,
-        icon: <Zap className="w-4 h-4" />,
-      })),
+    ...(categories || []).map((cat) => ({
+      id: cat.categoryId,
+      label: cat.categoryName,
+      categoryId: cat.categoryId,
+      icon: <Zap className="w-4 h-4" />,
+    })),
   ];
 
   const scroll = (dir) => {
@@ -163,38 +153,52 @@ const FeaturedProducts = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col items-center justify-center mb-12 gap-10">
-            <div className="text-center space-y-3">
-              <h2 className="text-4xl md:text-6xl font-black text-gray-900 dark:text-gray-100 uppercase italic tracking-tighter">
+          {/* Header Section */}
+          <div className="flex flex-col items-center justify-center mb-16 gap-6">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className="flex items-center gap-3">
+                <span className="w-10 h-[2px] bg-blue-600/30 rounded-full" />
+                <span className="text-blue-600 font-black uppercase tracking-[0.4em] text-xs">
+                  Exclusive Selection
+                </span>
+                <span className="w-10 h-[2px] bg-blue-600/30 rounded-full" />
+              </div>
+              <h2 className="text-4xl md:text-7xl font-black text-gray-900 dark:text-gray-100 uppercase italic tracking-tighter">
                 Featured <span className="text-blue-600">Products</span>
               </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl mx-auto text-lg leading-relaxed">
-                Explore our curated selection of premium footwear and
-                accessories, blending performance with cutting-edge design.
-              </p>
             </div>
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-center px-4">
+              Step into the future of footwear. Explore our handpicked
+              collection where{" "}
+              <span className="text-gray-900 dark:text-gray-100 font-bold italic">
+                elite performance
+              </span>{" "}
+              seamlessly blends with{" "}
+              <span className="text-blue-600 font-bold italic">
+                cutting-edge design
+              </span>{" "}
+              for the ultimate street statement.
+            </p>
+          </div>
 
-            {/* Filter Tabs - Centered with Horizontal Scroll on Mobile */}
-            <div className="w-full flex justify-center px-4 md:px-0">
-              <div className="flex overflow-x-auto pb-2 md:pb-0 scrollbar-hide max-w-full">
-                <div className="inline-flex bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1.5 gap-1.5 shadow-inner border border-zinc-200 dark:border-zinc-800">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => handleTabClick(tab)}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all duration-300 ${
-                        activeTab === tab.id
-                          ? "bg-white dark:bg-zinc-800 text-blue-600 shadow-md scale-[1.05]"
-                          : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-800/50"
-                      }`}
-                    >
-                      {tab.icon && (
-                        <span className="opacity-70">{tab.icon}</span>
-                      )}
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
-                </div>
+          {/* Filter Tabs - Centered with Horizontal Scroll on Mobile */}
+          <div className="w-full flex justify-center px-4 md:px-0 mb-12">
+            <div className="flex overflow-x-auto pb-2 md:pb-0 scrollbar-hide max-w-full">
+              <div className="inline-flex bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-1.5 gap-1.5 shadow-inner border border-zinc-200 dark:border-zinc-800">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabClick(tab)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all duration-300 ${
+                      activeTab === tab.id
+                        ? "bg-white dark:bg-zinc-800 text-blue-600 shadow-md scale-[1.05]"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white/50 dark:hover:bg-zinc-800/50"
+                    }`}
+                  >
+                    {tab.icon && <span className="opacity-70">{tab.icon}</span>}
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -283,6 +287,7 @@ const FeaturedProducts = () => {
             </motion.div>
           </AnimatePresence>
 
+          {/* Bottom CTA */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -301,4 +306,5 @@ const FeaturedProducts = () => {
     </section>
   );
 };
+
 export default FeaturedProducts;

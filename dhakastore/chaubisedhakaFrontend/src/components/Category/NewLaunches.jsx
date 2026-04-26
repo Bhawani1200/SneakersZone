@@ -46,7 +46,9 @@ const NewLaunches = () => {
         const formattedProducts = (data.content || [])
           .filter((product) => {
             const sections = Array.isArray(product.sections)
-              ? product.sections
+              ? product.sections.map((sec) =>
+                  typeof sec === "object" ? sec.id : sec,
+                )
               : typeof product.sections === "string"
                 ? product.sections.split(",").map((s) => s.trim())
                 : [];
