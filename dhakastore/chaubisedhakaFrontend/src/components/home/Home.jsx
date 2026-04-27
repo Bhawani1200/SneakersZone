@@ -1,23 +1,26 @@
 import React, { useEffect } from "react";
 import Banner from "../Banner/Banner";
-// import ProductsLayout from "../products/ProductsLayout";
-// import ProductSidebar from "../products/ProductSidebar";
-// import Features from "../Info/Features";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../store/actions";
-
 import Offer from "../Offer/Offer";
 import FeaturedProducts from "../Featured/FeaturedProducts";
 import BrandLogosStrip from "../Banner/Brands";
-import DealsOfTheDay from "../Offer/Offer";
 import { PromotionalBanners } from "../Banner/PromotionalBanner";
 import Testimonials from "../Testimonials/Testimonials";
 
-// import Shop from "../shopInfo/Shop";
-
 const Home = () => {
+  const { products } = useSelector((state) => state.products);
+
+  const newLaunchesProducts = products.filter((p) =>
+    p.sections?.includes("newLaunches"),
+  );
+  const offerProducts = products.filter((p) => p.sections?.includes("offer"));
+  const featuredProducts = products.filter((p) =>
+    p.sections?.includes("featured"),
+  );
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,15 +31,12 @@ const Home = () => {
     <div className="w-full mx-auto">
       <Banner />
       <CategoryShowcase />
-      <NewLaunches />
-      {/* <ProductsLayout />
-      <ProductSidebar />
-      <Features /> */}
+      <NewLaunches products={newLaunchesProducts} />
 
-      <FeaturedProducts />
-      <Offer />
+      <FeaturedProducts products={featuredProducts} />
+      <Offer products={offerProducts} />
       <BrandLogosStrip />
-      {/* <DealsOfTheDay /> */}
+
       <PromotionalBanners />
       <Testimonials />
     </div>

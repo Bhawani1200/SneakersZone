@@ -58,14 +58,14 @@ const FeaturedProducts = () => {
             return sections.includes("featured");
           })
           .map((product) => ({
-            ...product,
-            productId: product.productId || product.id,
-            image: product.image
-              ? product.image.startsWith("http")
-                ? product.image
-                : `http://localhost:8080/images/${product.image}`
-              : "/placeholder-product.png",
-          }));
+          ...product,
+          productId: product.productId || product.id,
+          image: product.image
+            ? product.image.startsWith("http")
+              ? product.image
+              : `http://localhost:8080/images/${product.image}`
+            : "/placeholder-product.png",
+        }));
 
         setProducts(formattedProducts);
       } catch (error) {

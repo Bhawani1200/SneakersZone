@@ -347,8 +347,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
 
     const sendData = {
       productName: data.productName,
-      // quantity: parseInt(data.quantity),
-      quantity: 1, // Defaulting to 1 since quantity field is removed
+      quantity: parseInt(data.quantity),
       discount: parseFloat(data.discount || 0),
       description: data.description,
       price: parseFloat(data.price),
@@ -435,7 +434,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
       setValue("sellerName", product?.sellerName);
       setValue("image", product?.image);
       setValue("price", product?.price);
-      // setValue("quantity", product?.quantity);
+      setValue("quantity", product?.quantity);
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
@@ -602,7 +601,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             errors={errors}
           />
-          {/* <InputField
+          <InputField
             label="Quantity"
             required
             id="quantity"
@@ -611,7 +610,7 @@ const AddProductForm = ({ setOpen, product, update = false }) => {
             register={register}
             placeholder="Product Quantity"
             errors={errors}
-          /> */}
+          />
           <InputField
             label="Brand"
             id="brand"

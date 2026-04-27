@@ -14,10 +14,17 @@ import SelectTextField from "../../shared/SelectTextField";
 import ErrorPage from "../../shared/ErrorPage";
 import Skeleton from "../../shared/Skeleton";
 
+const PRODUCT_SECTIONS = [
+  { id: "newLaunches", label: "New Launches" },
+  { id: "offer", label: "Offer" },
+  { id: "featured", label: "Featured Products" },
+];
+
 const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
   const [loader, setLoader] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [inStock, setInStock] = useState(true);
+  const [selectedSections, setSelectedSections] = useState([]);
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.auth);
@@ -68,7 +75,9 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
       categoryId: selectedCategory?.categoryId,
       categoryName: selectedCategory?.categoryName,
       sellerName: data.sellerName || "admin",
-      sections: [], // Remove from all home page sections
+      sections: selectedSections,
+      rating: parseFloat(data.rating || 0),
+      reviewCount: parseInt(data.reviewCount || 0),
     };
 
     if (update) {
@@ -106,7 +115,24 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
       setValue("discount", product?.discount);
       setValue("specialPrice", product?.specialPrice);
       setValue("description", product?.description);
+      setValue("rating", product?.rating);
+      setValue("reviewCount", product?.reviewCount);
       setInStock(product?.inStock ?? true);
+
+      if (product.sections) {
+        if (Array.isArray(product.sections)) {
+          const sectionIds = product.sections.map((sec) =>
+            typeof sec === "object" ? sec.id : sec,
+          );
+          setSelectedSections(sectionIds);
+        } else if (typeof product.sections === "string") {
+          setSelectedSections(
+            product.sections.split(",").map((s) => s.trim()),
+          );
+        }
+      } else {
+        setSelectedSections([]);
+      }
 
       if (product?.categoryId && categories?.length > 0) {
         const pCat = categories.find(
@@ -117,6 +143,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
     } else if (!update) {
       reset();
       setInStock(true);
+      setSelectedSections([]);
       if (categories && categories.length > 0) {
         const shoeCleanerCat = categories.find((c) =>
           c.categoryName.toLowerCase().includes("shoe cleaner"),
@@ -176,7 +203,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
           />
         </div>
 
-        {/* Row 2 — Price + Brand */}
+        {/* Row 2 — Price + Brand + Sections */}
         <div className="flex md:flex-row flex-col gap-4 w-full">
           <InputField
             label="Price"
@@ -192,11 +219,41 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
             label="Brand"
             id="brand"
             type="text"
-            message="Brand name is required*"
             placeholder="Brand Name"
             register={register}
             errors={errors}
           />
+          <div className="flex flex-col gap-2 w-full">
+            <label className="font-semibold text-sm text-slate-800">
+              Show Product In
+            </label>
+            <div className="flex gap-4 flex-wrap mt-[2px]">
+              {PRODUCT_SECTIONS.map((section) => (
+                <label
+                  key={section.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSections.includes(section.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedSections([...selectedSections, section.id]);
+                      } else {
+                        setSelectedSections(
+                          selectedSections.filter((s) => s !== section.id),
+                        );
+                      }
+                    }}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-slate-700">
+                    {section.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Row 3 — Discount + Special Price */}

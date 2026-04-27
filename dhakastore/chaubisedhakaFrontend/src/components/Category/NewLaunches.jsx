@@ -38,9 +38,6 @@ const NewLaunches = () => {
         const { data } = await api.get(
           "/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
-        // const { data } = await api.get(
-        //   "/api/user/public/products?pageNumber=0&pageSize=50&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
-        // );
         console.log("New Launches raw:", data);
 
         const formattedProducts = (data.content || [])
@@ -55,14 +52,14 @@ const NewLaunches = () => {
             return sections.includes("newLaunches");
           })
           .map((product) => ({
-            ...product,
-            productId: product.productId || product.id,
-            image: product.image
-              ? product.image.startsWith("http")
-                ? product.image
-                : `http://localhost:8080/images/${product.image}`
-              : "/placeholder-product.png",
-          }));
+          ...product,
+          productId: product.productId || product.id,
+          image: product.image
+            ? product.image.startsWith("http")
+              ? product.image
+              : `http://localhost:8080/images/${product.image}`
+            : "/placeholder-product.png",
+        }));
 
         console.log("New Launches formatted:", formattedProducts);
         setProducts(formattedProducts);
