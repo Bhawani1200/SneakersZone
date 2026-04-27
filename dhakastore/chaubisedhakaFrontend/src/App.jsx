@@ -16,6 +16,8 @@ import AdminProduct from "./components/admin/product/AdminProduct";
 import Sellers from "./components/admin/sellers/Sellers";
 import Category from "./components/admin/categories/Category";
 import Orders from "./components/admin/orders/Orders";
+import ShoeCleaner from "./components/admin/shoecleaner/ShoeCleaner";
+import ShoeCleanerCategory from "./components/admin/shoecleaner/ShoeCleanerCategory";
 import Navigation from "./components/Navbar/Navigation";
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
@@ -73,6 +75,8 @@ function App() {
                 <Route path="" element={<DashBoard />} />
                 <Route path="products" element={<AdminProduct />} />
                 <Route path="sellers" element={<Sellers />} />
+                <Route path="shoe-cleaner" element={<ShoeCleaner />} />
+                <Route path="shoe-cleaner-category" element={<ShoeCleanerCategory />} />
                 <Route path="orders" element={<Orders />} />
                 <Route path="categories" element={<Category />} />
               </Route>

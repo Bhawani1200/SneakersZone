@@ -45,74 +45,26 @@ const GENDER_METADATA = [
   },
 ];
 
-const CATEGORY_MAP = {
-  CLOTHING: {
-    label: "Clothing",
-    description: "Premium apparel for every occasion.",
-    bg: "from-blue-800 via-blue-700 to-blue-600",
-    gradient: "from-cyan-600/80 to-transparent",
-    image: "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg",
-  },
-  ACCESSORIES: {
-    label: "Accessories",
-    description: "Complement your look with our curated extras.",
-    bg: "from-stone-700 via-stone-600 to-stone-500",
-    gradient: "from-gray-600/80 to-transparent",
-    image: "https://images.pexels.com/photos/1453008/pexels-photo-1453008.jpeg",
-  },
-  "SHOE CLEANERS": {
-    label: "Shoe Cleaners",
-    description: "Premium care for your favorite pairs.",
-    bg: "from-blue-600 via-blue-500 to-blue-400",
-    gradient: "from-blue-600/80 to-transparent",
-    image:
-      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974&auto=format&fit=crop",
-  },
-};
-
-const DEFAULT_CATEGORY_METADATA = {
-  description: "Explore our latest collections and specialized fits.",
-  bg: "from-gray-800 via-gray-700 to-gray-600",
-  gradient: "from-green-600/80 to-transparent",
-  image: "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg",
-};
-
 const CategoryShowcase = () => {
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.products);
 
   useEffect(() => {
-    if (!categories) {
+    if (!categories || categories.length === 0) {
       dispatch(fetchCategories());
     }
   }, [dispatch, categories]);
 
+  const shoeCleanerCat = categories?.find((c) =>
+    c.categoryName.toLowerCase().includes("shoe cleaner"),
+  );
+  const shoeCleanerKey = shoeCleanerCat?.categoryName || "Shoe Cleaners";
+
   const combinedCategories = [
     ...GENDER_METADATA,
-    ...(categories || [])
-      .filter(
-        (cat) =>
-          !["SNEAKERS", "TIMBERLAND", "SHOE CLEANERS"].includes(
-            cat.categoryName.toUpperCase(),
-          ),
-      )
-      .map((cat) => {
-        const metadata =
-          CATEGORY_MAP[cat.categoryName.toUpperCase()] ||
-          DEFAULT_CATEGORY_METADATA;
-        return {
-          key: cat.categoryName,
-          type: "category",
-          label: metadata.label || cat.categoryName,
-          description: metadata.description,
-          bg: metadata.bg,
-          image: metadata.image,
-          gradient: metadata.gradient,
-        };
-      }),
     {
-      key: "Shoe Cleaners",
+      key: shoeCleanerKey,
       type: "category",
       label: "Shoe Cleaners",
       description: "Premium care for your favorite pairs.",

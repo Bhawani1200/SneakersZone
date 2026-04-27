@@ -8,7 +8,7 @@ import {
 } from "../../../store/actions";
 import InputField from "../../shared/InputField";
 
-const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
+const AddShoeCleanerCategoryForm = ({ setOpen, open, category, update = false }) => {
   const dispatch = useDispatch();
 
   const {
@@ -30,26 +30,27 @@ const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
       );
     }
   };
+
   useEffect(() => {
     if (update && category) {
       setValue("categoryName", category?.categoryName);
     }
-  }, [update, category]);
+  }, [update, category, setValue]);
 
   return (
-    <div className="py-5 relative h-full ">
+    <div className="py-5 relative h-full">
       <form
-        className="space-y-4 "
+        className="space-y-4"
         onSubmit={handleSubmit(addNewCategoryHandler)}
       >
-        <div className="flex md:flex-row flex-col gap-4 w-full ">
+        <div className="flex flex-col gap-4 w-full">
           <InputField
-            label="Category Name"
+            label="Shoe Cleaner Category Name"
             required
             id="categoryName"
             type="text"
             message="This field is required*"
-            placeholder="Category Name"
+            placeholder="e.g. Brushes, Kits, Sprays"
             register={register}
             errors={errors}
           />
@@ -60,16 +61,16 @@ const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
             disabled={open}
             onClick={() => setOpen(false)}
             type="button"
-            className="border border-borderColor rounded-[5px] font-metropolis text-textColor py-2.5 px-6 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="border border-gray-300 rounded-[5px] text-gray-700 py-2.5 px-6 text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
           <button
             disabled={open}
             type="submit"
-            className="font-metropolis rounded-[5px] bg-blue-700 hover:bg-blue-800 text-white py-2.5 px-8 text-sm font-medium shadow-md transition-colors"
+            className="rounded-[5px] bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-8 text-sm font-medium shadow-md transition-colors"
           >
-            {open ? "Loading.." : update ? "Update" : "Save"}
+            {open ? "Loading.." : update ? "Update Category" : "Save Category"}
           </button>
         </div>
       </form>
@@ -77,4 +78,4 @@ const AddCategoryForm = ({ setOpen, open, category, update = false }) => {
   );
 };
 
-export default AddCategoryForm;
+export default AddShoeCleanerCategoryForm;

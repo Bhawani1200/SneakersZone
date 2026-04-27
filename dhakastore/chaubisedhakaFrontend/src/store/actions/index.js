@@ -5,7 +5,9 @@ import { useSelector } from "react-redux";
 export const fetchProducts = (queryString) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
+    console.log("Fetching products with query:", queryString);
     const { data } = await api.get(`/user/public/products?${queryString}`);
+    console.log("Products API response:", data);
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,

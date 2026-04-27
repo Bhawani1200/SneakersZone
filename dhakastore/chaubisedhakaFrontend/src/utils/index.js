@@ -46,11 +46,6 @@ export const adminNavigation = [
     icon: FaShoppingCart,
   },
   {
-    name: "Products",
-    href: "/admin/products",
-    icon: FaBoxOpen,
-  },
-  {
     name: "Categories",
     href: "/admin/categories",
     icon: FaThList,
@@ -59,6 +54,16 @@ export const adminNavigation = [
     name: "Sellers",
     href: "/admin/sellers",
     icon: FaStore,
+  },
+  {
+    name: "Shoe Cleaner",
+    href: "/admin/shoe-cleaner",
+    icon: FaBoxOpen,
+  },
+  {
+    name: "Shoe Cleaner Category",
+    href: "/admin/shoe-cleaner-category",
+    icon: FaThList,
   },
 ];
 
@@ -70,8 +75,8 @@ export const sellerNavigation = [
     current: true,
   },
   {
-    name: "Products",
-    href: "/admin/products",
+    name: "Shoe Cleaner",
+    href: "/admin/shoe-cleaner",
     icon: FaBoxOpen,
   },
 ];

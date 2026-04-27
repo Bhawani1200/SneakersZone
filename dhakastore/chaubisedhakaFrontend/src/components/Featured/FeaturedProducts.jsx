@@ -80,45 +80,60 @@ const FeaturedProducts = () => {
   const filteredProducts =
     activeTab === "All"
       ? products
-      : products.filter((p) => p.category === activeTab);
+      : activeTab === "SHOE CLEANERS"
+        ? products.filter((p) =>
+            p.categoryName?.toLowerCase().includes("shoe cleaner"),
+          )
+        : products.filter(
+            (p) =>
+              p.category === activeTab ||
+              p.gender === activeTab ||
+              p.categoryName === activeTab,
+          );
 
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
 
+  // Find the actual Shoe Cleaners category name from the database (robust search)
+  const shoeCleanerCat = categories?.find((c) =>
+    c.categoryName.toLowerCase().includes("shoe cleaner"),
+  );
+  const shoeCleanerKey = shoeCleanerCat?.categoryName || "Shoe Cleaners";
+
   const tabs = [
     { id: "All", label: "All", icon: <LayoutGrid className="w-5 h-5" /> },
     {
-      id: "Men",
+      id: "MEN",
       label: "Men",
       gender: "MEN",
       icon: <User className="w-5 h-5" />,
     },
     {
-      id: "Women",
+      id: "WOMEN",
       label: "Women",
       gender: "WOMEN",
       icon: <User className="w-5 h-5" />,
     },
     {
-      id: "Kids",
+      id: "KIDS",
       label: "Kids",
       gender: "KIDS",
       icon: <Baby className="w-5 h-5" />,
     },
-    ...(categories || [])
-      .filter(
-        (cat) =>
-          cat.categoryName.toLowerCase() !== "sneakers" &&
-          cat.categoryName.toLowerCase() !== "timberland",
-      )
-      .map((cat) => ({
-        id: cat.categoryId,
-        label: cat.categoryName,
-        categoryId: cat.categoryId,
-        icon: <Zap className="w-4 h-4" />,
-      })),
+    {
+      id: "UNISEX",
+      label: "Unisex",
+      gender: "UNISEX",
+      icon: <Users className="w-5 h-5" />,
+    },
+    {
+      id: "SHOE CLEANERS",
+      label: "Shoe Cleaners",
+      categoryName: shoeCleanerKey,
+      icon: <Zap className="w-4 h-4" />,
+    },
   ];
 
   const scroll = (dir) => {
@@ -142,7 +157,7 @@ const FeaturedProducts = () => {
       setActiveTab(tab.id);
       const path = tab.gender
         ? `/products?gender=${tab.gender}`
-        : `/products?category=${tab.label}`;
+        : `/products?category=${tab.categoryName || tab.label}`;
       navigate(path);
     }
   };
