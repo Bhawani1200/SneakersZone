@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -77,5 +78,24 @@ public class CategoryServiceImpl implements CategoryService {
         return modelMapper.map(savedCategory, CategoryDTO.class);
 
     }
+
+    @Override
+    public List<CategoryDTO> getCategoriesByType(String categoryType) {
+        List<Category> categories = categoryRepository.findByCategoryType(categoryType);
+        return categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CategoryDTO> getShoeCleanerCategories() {
+        return getCategoriesByType("SHOE_CLEANER");
+    }
+
+    @Override
+    public List<CategoryDTO> getRegularCategories() {
+        return getCategoriesByType("REGULAR");
+    }
+
 
 }

@@ -22,6 +22,9 @@ public class Category {
     @Size(min = 4,message = "Characters must be greater than 4")
     private String categoryName;
 
+    @Column(name = "category_type", nullable = false)
+    private String categoryType = "REGULAR";
+
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     private List<Product> products;
 }

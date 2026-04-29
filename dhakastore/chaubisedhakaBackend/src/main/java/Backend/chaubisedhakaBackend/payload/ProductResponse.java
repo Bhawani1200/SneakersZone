@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductResponse {
+public class ProductResponse<T> {
     List<ProductDTO>content;
     private Integer pageNumber;
     private Integer pageSize;

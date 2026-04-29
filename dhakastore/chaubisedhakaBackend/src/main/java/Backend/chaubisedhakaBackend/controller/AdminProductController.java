@@ -2,12 +2,12 @@ package Backend.chaubisedhakaBackend.controller;
 
 import Backend.chaubisedhakaBackend.config.AppConstants;
 import Backend.chaubisedhakaBackend.payload.AdminProductDTO;
-import Backend.chaubisedhakaBackend.payload.CategoryDTO;
 import Backend.chaubisedhakaBackend.payload.ProductDTO;
 import Backend.chaubisedhakaBackend.payload.ProductResponse;
-import Backend.chaubisedhakaBackend.service.CategoryService;
+import Backend.chaubisedhakaBackend.payload.ShoeCleanerProductDTO;
 import Backend.chaubisedhakaBackend.service.ProductService;
 
+import Backend.chaubisedhakaBackend.service.ShoeCleanerProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,9 @@ public class AdminProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShoeCleanerProductService shoeCleanerProductService;
 
     // Create a single product
     @PostMapping("/products")
@@ -42,15 +45,12 @@ public class AdminProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
-
-
     // Get single product by ID
     @GetMapping("/products/{productId}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId) {
         ProductDTO product = productService.getSingleProductById(productId);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
-
 
 
     // Get products by category
@@ -115,5 +115,88 @@ public class AdminProductController {
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId) {
         ProductDTO deletedProduct = productService.adminDeleteProduct(productId);
         return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
+    }
+
+//    category handler
+   @PostMapping("/shoe-cleaner/product")
+   public ResponseEntity<ShoeCleanerProductDTO> createShoeCleanerProduct(@Valid @RequestBody ShoeCleanerProductDTO productDTO) {
+    ShoeCleanerProductDTO createdProduct = shoeCleanerProductService.createProduct(productDTO);
+    return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+   }
+
+    @GetMapping("/shoe-cleaner/products")
+    public ResponseEntity<ProductResponse> getAllShoeCleanerProductsForAdmin(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+
+        ProductResponse productResponse = shoeCleanerProductService.adminGetAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/shoe-cleaner/products/{productId}")
+    public ResponseEntity<ShoeCleanerProductDTO> getShoeCleanerProductById(@PathVariable Long productId) {
+        ShoeCleanerProductDTO product = shoeCleanerProductService.getProductById(productId);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+    @GetMapping("/shoe-cleaner/products/category/{categoryId}")
+    public ResponseEntity<ProductResponse> getShoeCleanerProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+
+        ProductResponse productResponse = shoeCleanerProductService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/shoe-cleaner/products/brand/{brand}")
+    public ResponseEntity<ProductResponse> getShoeCleanerProductsByBrand(
+            @PathVariable String brand,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+
+        ProductResponse productResponse = shoeCleanerProductService.getProductsByBrand(brand, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/shoe-cleaner/products/discounted")
+    public ResponseEntity<ProductResponse> getShoeCleanerDiscountedProducts(
+            @RequestParam(name = "minDiscount", defaultValue = "0") Integer minDiscount,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "productId", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+
+        ProductResponse productResponse = shoeCleanerProductService.getDiscountedProducts(minDiscount, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/shoe-cleaner/products/{productId}")
+    public ResponseEntity<ShoeCleanerProductDTO> updateShoeCleanerProduct(
+            @PathVariable Long productId,
+            @Valid @RequestBody ShoeCleanerProductDTO productDTO) {
+
+        ShoeCleanerProductDTO updatedProduct = shoeCleanerProductService.updateProduct(productId, productDTO);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
+    @PutMapping("/shoe-cleaner/products/{productId}/image")
+    public ResponseEntity<ShoeCleanerProductDTO> updateShoeCleanerProductImage(
+            @PathVariable Long productId,
+            @RequestParam("image") MultipartFile image) throws IOException {
+        ShoeCleanerProductDTO updatedProduct = shoeCleanerProductService.adminUpdateProductImage(productId, image);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/shoe-cleaner/products/{productId}")
+    public ResponseEntity<String> deleteShoeCleanerProduct(@PathVariable Long productId) {
+        shoeCleanerProductService.deleteProduct(productId);
+        return new ResponseEntity<>("Product deleted successfully", HttpStatus.OK);
     }
 }
