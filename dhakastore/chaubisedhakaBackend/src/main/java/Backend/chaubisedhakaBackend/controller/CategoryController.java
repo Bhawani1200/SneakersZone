@@ -24,9 +24,9 @@ public class CategoryController {
     @Autowired
     private ShoeCleanerCategoryService shoeCleanerCategoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+//    public CategoryController(CategoryService categoryService) {
+//        this.categoryService = categoryService;
+//    }
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getAllCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -38,16 +38,23 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories/shoe-cleaner")
-    public ResponseEntity<List<CategoryDTO>> getShoeCleanerCategories() {
-        List<CategoryDTO> categories = categoryService.getShoeCleanerCategories();
+    public ResponseEntity<List<ShoeCleanerCategoryDTO>> getShoeCleanerCategories() {
+        // Use shoeCleanerCategoryService directly instead of categoryService
+        List<ShoeCleanerCategoryDTO> categories = shoeCleanerCategoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping("/public/categories/regular")
-    public ResponseEntity<List<CategoryDTO>> getRegularCategories() {
-        List<CategoryDTO> categories = categoryService.getRegularCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
-    }
+//    @GetMapping("/public/categories/shoe-cleaner")
+//    public ResponseEntity<List<CategoryDTO>> getShoeCleanerCategories() {
+//        List<CategoryDTO> categories = categoryService.getShoeCleanerCategories();
+//        return new ResponseEntity<>(categories, HttpStatus.OK);
+//    }
+
+//    @GetMapping("/public/categories/regular")
+//    public ResponseEntity<List<CategoryDTO>> getRegularCategories() {
+//        List<CategoryDTO> categories = categoryService.getRegularCategories();
+//        return new ResponseEntity<>(categories, HttpStatus.OK);
+//    }
 
     // Admin endpoints - require admin role
     @PostMapping("/admin/categories")

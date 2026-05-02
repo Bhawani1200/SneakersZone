@@ -3,8 +3,11 @@ package Backend.chaubisedhakaBackend.service;
 import Backend.chaubisedhakaBackend.exceptions.APIException;
 import Backend.chaubisedhakaBackend.exceptions.ResourceNotFoundException;
 import Backend.chaubisedhakaBackend.model.ShoeCleanerCategory;
+import Backend.chaubisedhakaBackend.model.ShoeCleanerProduct;
 import Backend.chaubisedhakaBackend.payload.ShoeCleanerCategoryDTO;
+import Backend.chaubisedhakaBackend.repositories.ProductRepository;
 import Backend.chaubisedhakaBackend.repositories.ShoeCleanerCategoryRepository;
+import Backend.chaubisedhakaBackend.repositories.ShoeCleanerProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,12 @@ public class ShoeCleanerCategoryServiceImpl implements  ShoeCleanerCategoryServi
 
     @Autowired
     private ShoeCleanerCategoryRepository categoryRepository;
+
+    @Autowired
+    private ShoeCleanerProductRepository shoeCleanerProductRepository;
+
+   @Autowired
+    private ProductRepository  productRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -84,9 +93,13 @@ public class ShoeCleanerCategoryServiceImpl implements  ShoeCleanerCategoryServi
         ShoeCleanerCategory category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("ShoeCleanerCategory", "categoryId", categoryId));
 
-        // Check if category has products
+
+        // Before categoryRepository.delete(category)
         if (category.getProducts() != null && !category.getProducts().isEmpty()) {
-            throw new APIException("Cannot delete category as it has associated products!");
+            for (ShoeCleanerProduct product : category.getProducts()) {
+                product.setShoeCleanerCategory(null);
+                shoeCleanerProductRepository.save(product);
+            }
         }
 
         categoryRepository.delete(category);

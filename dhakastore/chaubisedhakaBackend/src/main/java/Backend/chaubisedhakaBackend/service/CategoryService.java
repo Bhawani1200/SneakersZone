@@ -16,7 +16,9 @@ public interface CategoryService {
 
      CategoryDTO updateCategory(CategoryDTO categoryDTO,Long categoryId);
 
-    List<CategoryDTO> getCategoriesByType(String categoryType);
-    List<CategoryDTO> getShoeCleanerCategories();
-    List<CategoryDTO> getRegularCategories();
+//    List<CategoryDTO> getCategoriesByType(String categoryType);
+//
+//    List<CategoryDTO> getShoeCleanerCategories();
+
+//    List<CategoryDTO> getRegularCategories();
 }
