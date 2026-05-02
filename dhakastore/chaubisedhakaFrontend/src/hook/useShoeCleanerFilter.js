@@ -1,32 +1,23 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
-import { dashboardProductsAction } from "../store/actions";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { fetchShoeCleanerProducts } from "../store/actions";
 
 export const useShoeCleanerFilter = () => {
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
 
-  const [searchParams] = useSearchParams();
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    const params = new URLSearchParams();
+    if (!isAdmin) return;
 
-    const currentPage = searchParams.get("page")
-      ? Number(searchParams.get("page"))
-      : 1;
-    const pageSize = searchParams.get("pageSize")
-      ? Number(searchParams.get("pageSize"))
-      : 10;
+    const params = new URLSearchParams(searchParams);
+    const page = params.get("page") || "1";
+    const pageSize = params.get("pageSize") || "10";
 
-    params.set("pageNumber", currentPage - 1);
-    params.set("pageSize", pageSize);
-    
-    // Specifically filter for Shoe Cleaners category
-    params.set("category", "Shoe Cleaners");
-
-    const queryString = params.toString();
-    dispatch(dashboardProductsAction(isAdmin, queryString));
-  }, [dispatch, searchParams, isAdmin]);
+    const queryString = `pageNumber=${parseInt(page) - 1}&pageSize=${pageSize}`;
+    dispatch(fetchShoeCleanerProducts(queryString));
+  }, [dispatch, location.search, isAdmin]);
 };

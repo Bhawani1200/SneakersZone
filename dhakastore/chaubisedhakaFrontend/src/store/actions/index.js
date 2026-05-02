@@ -857,7 +857,10 @@ export const createCategoryDashboardAction =
   (sendData, setOpen, reset, toast) => async (dispatch, getState) => {
     try {
       dispatch({ type: "CATEGORY_LOADER" });
-      await api.post("/admin/categories", sendData);
+      await api.post("/admin/categories", {
+        ...sendData,
+        categoryType: sendData.categoryType || "REGULAR",
+      });
       dispatch({ type: "CATEGORY_SUCCESS" });
       reset();
       toast.success("Category Created Successful");
@@ -882,7 +885,10 @@ export const updateCategoryDashboardAction =
     try {
       dispatch({ type: "CATEGORY_LOADER" });
 
-      await api.put(`/admin/categories/${categoryID}`, sendData);
+      await api.put(`/admin/categories/${categoryID}`, {
+        ...sendData,
+        categoryType: sendData.categoryType || "REGULAR",
+      });
 
       dispatch({ type: "CATEGORY_SUCCESS" });
 
@@ -1041,5 +1047,128 @@ export const fetchFiltersAction = () => async (dispatch) => {
     });
   } catch (error) {
     console.error("Error fetching filters:", error);
+  }
+};
+
+// Shoe Cleaner Category Actions
+export const fetchShoeCleanerCategories = (queryString = "") => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+    const { data } = await api.get(`/admin/shoe-cleaner/categories?${queryString}`);
+    dispatch({
+      type: "FETCH_SHOE_CLEANER_CATEGORIES",
+      payload: data.content || data,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({ 
+      type: "SHOE_CLEANER_CATEGORY_ERROR", 
+      payload: error?.response?.data?.message || "Failed to fetch shoe cleaner categories" 
+    });
+  }
+};
+
+export const createShoeCleanerCategory = (sendData, setOpen, reset, toast) => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+    await api.post("/admin/shoe-cleaner/categories", sendData);
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+    reset();
+    toast.success("Shoe Cleaner Category Created Successfully");
+    setOpen(false);
+    await dispatch(fetchShoeCleanerCategories());
+  } catch (err) {
+    console.log(err);
+    toast.error(err?.response?.data?.message || "Failed to create shoe cleaner category");
+    dispatch({
+      type: "SHOE_CLEANER_CATEGORY_ERROR",
+      payload: err?.response?.data?.message || "Internal Server Error",
+    });
+  }
+};
+
+export const updateShoeCleanerCategory = (sendData, setOpen, categoryId, reset, toast) => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+    await api.put(`/admin/shoe-cleaner/categories/${categoryId}`, sendData);
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+    reset();
+    toast.success("Shoe Cleaner Category Updated Successfully");
+    setOpen(false);
+    await dispatch(fetchShoeCleanerCategories());
+  } catch (err) {
+    console.log(err);
+    toast.error(err?.response?.data?.message || "Failed to update shoe cleaner category");
+    dispatch({
+      type: "SHOE_CLEANER_CATEGORY_ERROR",
+      payload: err?.response?.data?.message || "Internal Server Error",
+    });
+  }
+};
+
+export const deleteShoeCleanerCategory = (setOpen, categoryId, toast) => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+    await api.delete(`/admin/shoe-cleaner/categories/${categoryId}`);
+    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+    toast.success("Shoe Cleaner Category Deleted Successfully");
+    setOpen(false);
+    await dispatch(fetchShoeCleanerCategories());
+  } catch (err) {
+    console.log(err);
+    toast.error(err?.response?.data?.message || "Failed to delete shoe cleaner category");
+    dispatch({
+      type: "SHOE_CLEANER_CATEGORY_ERROR",
+      payload: err?.response?.data?.message || "Internal Server Error",
+    });
+  }
+};
+
+// Shoe Cleaner Products Actions
+export const fetchShoeCleanerProducts = (queryString = "") => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
+    const { data } = await api.get(`/admin/shoe-cleaner/products?${queryString}`);
+    dispatch({
+      type: "FETCH_SHOE_CLEANER_PRODUCTS",
+      payload: data.content || data,
+      pageNumber: data.pageNumber,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+      lastPage: data.lastPage,
+    });
+    dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: "SHOE_CLEANER_PRODUCTS_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch shoe cleaner products",
+    });
+  }
+};
+
+export const createShoeCleanerProduct = (sendData, setOpen, reset, toast) => async (dispatch) => {
+  try {
+    dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
+    await api.post("/admin/shoe-cleaner/products", sendData);
+    dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
+    reset();
+    toast.success("Shoe Cleaner Product Created Successfully");
+    setOpen(false);
+    await dispatch(fetchShoeCleanerProducts());
+  } catch (err) {
+    console.log(err);
+    toast.error(err?.response?.data?.message || "Failed to create shoe cleaner product");
+    dispatch({
+      type: "SHOE_CLEANER_PRODUCTS_ERROR",
+      payload: err?.response?.data?.message || "Internal Server Error",
+    });
   }
 };

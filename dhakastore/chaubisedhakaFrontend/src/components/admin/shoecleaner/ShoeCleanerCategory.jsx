@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 import {
   categoryTableColumns,
 } from "../../helper/tableColumn";
-import useCategoryFilter from "../../../hook/useCategoryFilter";
-import { deleteCategoryDashboardAction } from "../../../store/actions";
+import useShoeCleanerCategoryFilter from "../../../hook/useShoeCleanerCategoryFilter";
+import { deleteShoeCleanerCategory } from "../../../store/actions";
 import ErrorPage from "../../shared/ErrorPage";
 import Loader from "../../shared/Loader";
 import AddShoeCleanerCategoryForm from "./AddShoeCleanerCategoryForm";
@@ -28,18 +28,13 @@ const ShoeCleanerCategory = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const { categoryLoader, errorMessage } = useSelector((state) => state.errors);
-  const { categories, pagination } = useSelector((state) => state.products);
-  const [currentPage, setCurrentPage] = useState(
-    pagination?.pageNumber + 1 || 1,
-  );
+  const { shoeCleanerCategories, pagination, loading, error } = useSelector((state) => state.shoeCleaner);
 
-  useCategoryFilter();
+  useShoeCleanerCategoryFilter();
 
-  const tableRecords = categories?.map((item) => ({
+  const tableRecords = shoeCleanerCategories?.map((item) => ({
+    ...item,
     id: item.categoryId,
-    categoryName: item.categoryName,
-    version: item.version,
   }));
 
   const handleEdit = (category) => {
@@ -54,9 +49,9 @@ const ShoeCleanerCategory = () => {
 
   const onDeleteHandler = () => {
     dispatch(
-      deleteCategoryDashboardAction(
+      deleteShoeCleanerCategory(
         setOpenDeleteModal,
-        selectedCategory?.id,
+        selectedCategory?.categoryId || selectedCategory?.id,
         toast,
       ),
     );
@@ -68,7 +63,7 @@ const ShoeCleanerCategory = () => {
     navigate(`${pathname}?${params}`);
   };
 
-  const emptyCategories = !categories || categories?.length === 0;
+  const emptyCategories = !shoeCleanerCategories || shoeCleanerCategories?.length === 0;
 
   return (
     <div>
@@ -82,9 +77,9 @@ const ShoeCleanerCategory = () => {
         </button>
       </div>
 
-      {errorMessage ? (
-        <ErrorPage message={errorMessage} />
-      ) : categoryLoader ? (
+      {error ? (
+        <ErrorPage message={error} />
+      ) : loading ? (
         <Loader />
       ) : (
         <>
@@ -123,7 +118,7 @@ const ShoeCleanerCategory = () => {
       >
         <AddShoeCleanerCategoryForm
           setOpen={openUpdateModal ? setOpenUpdateModal : setOpenModal}
-          open={categoryLoader}
+          open={loading}
           category={selectedCategory}
           update={openUpdateModal}
         />
@@ -131,7 +126,7 @@ const ShoeCleanerCategory = () => {
 
       <DeleteModal
         open={openDeleteModal}
-        loader={categoryLoader}
+        loader={loading}
         setOpen={setOpenDeleteModal}
         title="Are you sure you want to delete this category?"
         onDeleteHandler={onDeleteHandler}

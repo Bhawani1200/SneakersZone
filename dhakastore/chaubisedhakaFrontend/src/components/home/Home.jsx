@@ -9,34 +9,64 @@ import FeaturedProducts from "../Featured/FeaturedProducts";
 import BrandLogosStrip from "../Banner/Brands";
 import { PromotionalBanners } from "../Banner/PromotionalBanner";
 import Testimonials from "../Testimonials/Testimonials";
+import Spinners from "../shared/Spinners";
 
 const Home = () => {
-  const { products } = useSelector((state) => state.products);
-
-  const newLaunchesProducts = products.filter((p) =>
-    p.sections?.includes("newLaunches"),
-  );
-  const offerProducts = products.filter((p) => p.sections?.includes("offer"));
-  const featuredProducts = products.filter((p) =>
-    p.sections?.includes("featured"),
-  );
-
+  const { products, loading, error } = useSelector((state) => state.products);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Show loading spinner while fetching data
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinners />
+      </div>
+    );
+  }
+
+  // Show error message if fetch failed
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-red-600 text-center">
+          <p>Error loading products: {error}</p>
+          <button
+            onClick={() => dispatch(fetchProducts())}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure products is an array before filtering (fallback to empty array)
+  const productList = products || [];
+
+  // Safe filtering with optional chaining
+  const newLaunchesProducts = (products || []).filter((p) =>
+    p.sections?.includes("newLaunches"),
+  );
+  const offerProducts = (products || []).filter((p) =>
+    p.sections?.includes("offer"),
+  );
+  const featuredProducts = (products || []).filter((p) =>
+    p.sections?.includes("featured"),
+  );
+
   return (
     <div className="w-full mx-auto">
       <Banner />
       <CategoryShowcase />
       <NewLaunches products={newLaunchesProducts} />
-
       <FeaturedProducts products={featuredProducts} />
       <Offer products={offerProducts} />
       <BrandLogosStrip />
-
       <PromotionalBanners />
       <Testimonials />
     </div>
