@@ -5,9 +5,9 @@ import Button from "@mui/material/Button";
 import Spinners from "../../shared/Spinners";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addNewProductFromDashboard,
-  fetchCategories,
-  updateProductFromDashboard,
+  createShoeCleanerProduct,
+  fetchShoeCleanerCategories,
+  updateShoeCleanerProduct,
 } from "../../../store/actions";
 import toast from "react-hot-toast";
 import SelectTextField from "../../shared/SelectTextField";
@@ -26,10 +26,13 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
   const [inStock, setInStock] = useState(true);
   const [selectedSections, setSelectedSections] = useState([]);
   const dispatch = useDispatch();
-  const { categories } = useSelector((state) => state.products);
+  const {
+    shoeCleanerCategories,
+    loading: categoryLoader,
+    error: errorMessage,
+  } = useSelector((state) => state.shoeCleaner);
   const { user } = useSelector((state) => state.auth);
   const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
-  const { errorMessage, categoryLoader } = useSelector((state) => state.errors);
 
   const {
     register,
@@ -82,25 +85,17 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
 
     if (update) {
       dispatch(
-        updateProductFromDashboard(
+        updateShoeCleanerProduct(
           { ...sendData, id: product?.id || product?.productId },
-          toast,
-          reset,
-          setLoader,
           setOpen,
-          isAdmin,
+          reset,
+          toast,
+          setLoader,
         ),
       );
     } else {
       dispatch(
-        addNewProductFromDashboard(
-          sendData,
-          toast,
-          reset,
-          setLoader,
-          setOpen,
-          isAdmin,
-        ),
+        createShoeCleanerProduct(sendData, setOpen, reset, toast, setLoader),
       );
     }
   };
@@ -126,16 +121,14 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
           );
           setSelectedSections(sectionIds);
         } else if (typeof product.sections === "string") {
-          setSelectedSections(
-            product.sections.split(",").map((s) => s.trim()),
-          );
+          setSelectedSections(product.sections.split(",").map((s) => s.trim()));
         }
       } else {
         setSelectedSections([]);
       }
 
-      if (product?.categoryId && categories?.length > 0) {
-        const pCat = categories.find(
+      if (product?.categoryId && shoeCleanerCategories?.length > 0) {
+        const pCat = shoeCleanerCategories.find(
           (c) => c.categoryId === product.categoryId,
         );
         if (pCat) setSelectedCategory(pCat);
@@ -144,37 +137,29 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
       reset();
       setInStock(true);
       setSelectedSections([]);
-      if (categories && categories.length > 0) {
-        const shoeCleanerCat = categories.find((c) =>
-          c.categoryName.toLowerCase().includes("shoe cleaner"),
-        );
-        if (shoeCleanerCat) {
-          setSelectedCategory(shoeCleanerCat);
-        } else {
-          setSelectedCategory(categories[0]);
-        }
+      if (shoeCleanerCategories && shoeCleanerCategories.length > 0) {
+        setSelectedCategory(shoeCleanerCategories[0]);
       }
     }
-  }, [product, update, categories, reset, setValue]);
+  }, [product, update, shoeCleanerCategories, reset, setValue]);
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchShoeCleanerCategories());
   }, [dispatch]);
 
   useEffect(() => {
-    if (!categoryLoader && categories?.length > 0) {
+    if (!categoryLoader && shoeCleanerCategories?.length > 0) {
       if (!selectedCategory && (!update || !product?.categoryId)) {
-        const shoeCleanerCat = categories.find(
-          (c) => c.categoryName.toUpperCase() === "SHOE CLEANERS",
-        );
-        if (shoeCleanerCat) {
-          setSelectedCategory(shoeCleanerCat);
-        } else {
-          setSelectedCategory(categories[0]);
-        }
+        setSelectedCategory(shoeCleanerCategories[0]);
       }
     }
-  }, [categories, categoryLoader, update, product, selectedCategory]);
+  }, [
+    shoeCleanerCategories,
+    categoryLoader,
+    update,
+    product,
+    selectedCategory,
+  ]);
 
   if (categoryLoader) return <Skeleton />;
   if (errorMessage) return <ErrorPage />;
@@ -198,7 +183,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
             label="Select Categories"
             select={selectedCategory}
             setSelect={setSelectedCategory}
-            lists={categories || []}
+            lists={shoeCleanerCategories || []}
             loading={categoryLoader}
           />
         </div>
@@ -223,7 +208,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
             register={register}
             errors={errors}
           />
-          <div className="flex flex-col gap-2 w-full">
+          {/* <div className="flex flex-col gap-2 w-full">
             <label className="font-semibold text-sm text-slate-800">
               Show Product In
             </label>
@@ -253,7 +238,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Row 3 — Discount + Special Price */}

@@ -44,10 +44,10 @@ export const fetchProducts = (queryString) => async (dispatch) => {
 export const fetchProductsByFilter = (filterParams) => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
-    
+
     const queryString = new URLSearchParams(filterParams).toString();
     const { data } = await api.get(`/user/public/products?${queryString}`);
-    
+
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,
@@ -83,7 +83,10 @@ export const fetchCategories = () => async (dispatch) => {
     dispatch({ type: "CATEGORY_SUCCESS" });
   } catch (error) {
     console.log(error);
-    dispatch({ type: "IS_ERROR", payload: error?.response?.data?.message || "Failed to fetch categories ", });
+    dispatch({
+      type: "IS_ERROR",
+      payload: error?.response?.data?.message || "Failed to fetch categories ",
+    });
   }
 };
 
@@ -100,7 +103,8 @@ export const fetchProductById = (productId) => async (dispatch) => {
     console.log(error);
     dispatch({
       type: "IS_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch product details",
+      payload:
+        error?.response?.data?.message || "Failed to fetch product details",
     });
   }
 };
@@ -111,15 +115,18 @@ export const addToCart =
     const { products } = getState().products; // ✅ get from state
 
     const getProduct = products?.find(
-      (item) => item.productId === data.productId
+      (item) => item.productId === data.productId,
     );
 
-    const isInStock = getProduct ? getProduct.inStock !== false : data.inStock !== false;
-    // const isQuantityExist = getProduct 
-    //     ? getProduct.quantity >= qty 
+    const isInStock = getProduct
+      ? getProduct.inStock !== false
+      : data.inStock !== false;
+    // const isQuantityExist = getProduct
+    //     ? getProduct.quantity >= qty
     //     : (data.quantity === undefined || data.quantity >= qty);
 
-    if (isInStock) { // && isQuantityExist
+    if (isInStock) {
+      // && isQuantityExist
       dispatch({ type: "ADD_CART", payload: { ...data, quantity: qty } });
       toast.success(`${data?.productName} added to cart successfully`);
       localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
@@ -128,7 +135,6 @@ export const addToCart =
     }
   };
 
-  
 // export const addToCart =
 //   (data, qty = 1, toast) =>
 //   (dispatch, getState) => {
@@ -193,7 +199,7 @@ export const increaseCartQuantity =
 
     // Find the product in cart
     const getProduct = cartItems.find(
-      (item) => item.productId === data.productId
+      (item) => item.productId === data.productId,
     );
 
     if (!getProduct) {
@@ -205,17 +211,19 @@ export const increaseCartQuantity =
 
     // Check store for actual stock bounds
     const { products } = getState().products;
-    const storeProduct = products?.find(p => p.productId === data.productId);
-    
-    if (storeProduct && (storeProduct.inStock === false)) { // || storeProduct.quantity < newQuantity
-       toast.error("Requested quantity not available in stock");
-       return;
+    const storeProduct = products?.find((p) => p.productId === data.productId);
+
+    if (storeProduct && storeProduct.inStock === false) {
+      // || storeProduct.quantity < newQuantity
+      toast.error("Requested quantity not available in stock");
+      return;
     }
-    
+
     // Check incoming data bounds if not in store
-    if (!storeProduct && (data.inStock === false)) { // || (data.quantity !== undefined && data.quantity < newQuantity)
-       toast.error("Requested quantity not available");
-       return;
+    if (!storeProduct && data.inStock === false) {
+      // || (data.quantity !== undefined && data.quantity < newQuantity)
+      toast.error("Requested quantity not available");
+      return;
     }
 
     // Set a reasonable limit
@@ -290,7 +298,7 @@ export const registerNewUser =
       toast.error(
         error?.response?.data?.message ||
           error?.response?.data?.password ||
-          "Internal server error"
+          "Internal server error",
       );
     } finally {
       setLoader(false);
@@ -493,16 +501,16 @@ export const updateOrderStatusFromDashboard =
 // export const dashboardProductsAction = (isAdmin, queryString) => async (dispatch) => {
 //   try {
 //     dispatch({ type: "IS_FETCHING" });
-    
+
 //     let url;
 //     if (isAdmin) {
 //       url = `/admin/products${queryString ? `?${queryString}` : ""}`;
 //     } else {
 //       url = `/seller/products${queryString ? `?${queryString}` : ""}`;
 //     }
-    
+
 //     const { data } = await api.get(url);
-    
+
 //     dispatch({
 //       type: "FETCH_PRODUCTS",
 //       payload: data.content,
@@ -540,79 +548,78 @@ export const updateOrderStatusFromDashboard =
 //       );
 //     }
 //   };
-export const dashboardProductsAction = (isAdmin, queryString) => async (dispatch) => {
-  try {
-    dispatch({ type: "IS_FETCHING" });
-    
-    let url;
-    if (isAdmin) {
-      url = `/admin/products${queryString ? `?${queryString}` : ""}`;
-    } else {
-      url = `/seller/products${queryString ? `?${queryString}` : ""}`;
+export const dashboardProductsAction =
+  (isAdmin, queryString) => async (dispatch) => {
+    try {
+      dispatch({ type: "IS_FETCHING" });
+
+      let url;
+      if (isAdmin) {
+        url = `/admin/products${queryString ? `?${queryString}` : ""}`;
+      } else {
+        url = `/seller/products${queryString ? `?${queryString}` : ""}`;
+      }
+
+      console.log("Fetching products from:", url);
+
+      const { data } = await api.get(url);
+
+      console.log("Products fetched:", data.content);
+      if (data.content && data.content.length > 0) {
+        console.log("First product keys:", Object.keys(data.content[0]));
+        console.log("First product full data:", data.content[0]);
+      }
+
+      dispatch({
+        type: "FETCH_PRODUCTS",
+        payload: data.content,
+        pageNumber: data.pageNumber,
+        pageSize: data.pageSize,
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        lastPage: data.lastPage,
+      });
+      dispatch({ type: "IS_SUCCESS" });
+    } catch (error) {
+      console.error("Error fetching dashboard products:", error);
+      dispatch({
+        type: "IS_ERROR",
+        payload: error?.response?.data?.message || "Failed to fetch products",
+      });
     }
-    
-    console.log("Fetching products from:", url);
-    
-    const { data } = await api.get(url);
-    
-    console.log("Products fetched:", data.content);
-    if (data.content && data.content.length > 0) {
-      console.log("First product keys:", Object.keys(data.content[0]));
-      console.log("First product full data:", data.content[0]);
-    }
-    
-    dispatch({
-      type: "FETCH_PRODUCTS",
-      payload: data.content,
-      pageNumber: data.pageNumber,
-      pageSize: data.pageSize,
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-      lastPage: data.lastPage,
-    });
-    dispatch({ type: "IS_SUCCESS" });
-  } catch (error) {
-    console.error("Error fetching dashboard products:", error);
-    dispatch({
-      type: "IS_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch products",
-    });
-  }
-};
+  };
 
 export const updateProductFromDashboard =
   (sendData, toast, reset, setLoader, setOpen, isAdmin) => async (dispatch) => {
     try {
       setLoader(true);
       const endpoint = isAdmin ? "/admin/products/" : "/seller/products/";
-      
+
       // Make sure sections is included and properly formatted
       const updateData = {
         ...sendData,
-        sections: sendData.sections || [] // Ensure sections is always an array
+        sections: sendData.sections || [], // Ensure sections is always an array
       };
-      
+
       console.log("Updating product with data:", updateData);
-      
+
       const response = await api.put(`${endpoint}${sendData.id}`, updateData);
-      
+
       console.log("Update response:", response.data);
-      
+
       toast.success("Product update successful");
       reset();
       setLoader(false);
       setOpen(false);
-      
-  
+
       await dispatch(dashboardProductsAction(isAdmin, ""));
       await dispatch(fetchFiltersAction());
-      
     } catch (error) {
       console.error("Update error:", error);
       toast.error(
-        error?.response?.data?.description || 
-        error?.response?.data?.message || 
-        "Product update failed"
+        error?.response?.data?.description ||
+          error?.response?.data?.message ||
+          "Product update failed",
       );
       setLoader(false);
     }
@@ -623,31 +630,29 @@ export const updateProductFromDashboard =
 //   async (dispatch, getState) => {
 //     try {
 //       setLoader(true);
-      
+
 //       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
-      
+
 //       console.log("Sending to endpoint:", endpoint);
 //       console.log("Product data:", JSON.stringify(sendData, null, 2));
-      
+
 //       const response = await api.post(endpoint, sendData);
-      
+
 //       toast.success("Product created successfully");
 //       reset();
 //       setOpen(false);
 //       await dispatch(dashboardProductsAction(isAdmin));
 //       await dispatch(fetchFiltersAction());
-      
+
 //     } catch (error) {
 //       console.error("Product creation error:", error);
-      
-    
+
 //       if (error.response) {
 //         console.error("Error status:", error.response.status);
 //         console.error("Error data:", error.response.data);
 //         console.error("Error headers:", error.response.headers);
-        
-       
-//         const errorMessage = error.response.data?.description || 
+
+//         const errorMessage = error.response.data?.description ||
 //                            error.response.data?.message ||
 //                            error.response.data?.error ||
 //                            JSON.stringify(error.response.data) ||
@@ -660,7 +665,7 @@ export const updateProductFromDashboard =
 //         console.error("Error message:", error.message);
 //         toast.error(error.message);
 //       }
-      
+
 //     } finally {
 //       setLoader(false);
 //     }
@@ -670,39 +675,39 @@ export const addNewProductFromDashboard =
   async (dispatch, getState) => {
     try {
       setLoader(true);
-      
+
       const endpoint = isAdmin ? "/admin/products" : "/seller/products";
-      
+
       // Ensure sections is an array
       const productData = {
         ...sendData,
-        sections: sendData.sections || []
+        sections: sendData.sections || [],
       };
-      
+
       console.log("Sending to endpoint:", endpoint);
       console.log("Product data:", JSON.stringify(productData, null, 2));
-      
+
       const response = await api.post(endpoint, productData);
-      
+
       console.log("Create response:", response.data);
-      
+
       toast.success("Product created successfully");
       reset();
       setOpen(false);
       await dispatch(dashboardProductsAction(isAdmin, ""));
       await dispatch(fetchFiltersAction());
-      
     } catch (error) {
       console.error("Product creation error:", error);
-      
+
       if (error.response) {
         console.error("Error status:", error.response.status);
         console.error("Error data:", error.response.data);
-        
-        const errorMessage = error.response.data?.description || 
-                           error.response.data?.message ||
-                           error.response.data?.error ||
-                           "Product creation failed";
+
+        const errorMessage =
+          error.response.data?.description ||
+          error.response.data?.message ||
+          error.response.data?.error ||
+          "Product creation failed";
         toast.error(errorMessage);
       } else if (error.request) {
         console.error("No response received:", error.request);
@@ -711,7 +716,6 @@ export const addNewProductFromDashboard =
         console.error("Error message:", error.message);
         toast.error(error.message);
       }
-      
     } finally {
       setLoader(false);
     }
@@ -734,7 +738,6 @@ export const deleteProduct =
       toast.error(error?.response?.data?.message || "Some Error Occured");
     }
   };
-
 
 //   (formData, productId, toast, setLoader, setOpen, isAdmin) =>
 //   async (dispatch) => {
@@ -766,20 +769,20 @@ export const deleteProduct =
 //           'Content-Type': 'multipart/form-data',
 //         },
 //       });
-      
+
 //       toast.success("Image upload successful");
 //       setLoader(false);
 //       setOpen(false);
-      
+
 //       // Refresh the products list
 //       await dispatch(dashboardProductsAction());
-      
+
 //       return response.data;
 //     } catch (error) {
 //       console.error("Image upload error:", error);
 //       toast.error(
-//         error?.response?.data?.description || 
-//         error?.response?.data?.message || 
+//         error?.response?.data?.description ||
+//         error?.response?.data?.message ||
 //         "Product Image upload failed"
 //       );
 //       setLoader(false);
@@ -790,44 +793,42 @@ export const updateProductImageFromDashboard =
   async (dispatch) => {
     try {
       setLoader(true);
-      
+
       // Construct URL correctly - no extra slash issues
       const baseUrl = isAdmin ? "/admin/products" : "/api/seller/products";
       const url = `${baseUrl}/${productId}/image`;
-      
+
       console.log("Uploading to URL:", url);
       console.log("Product ID:", productId);
       console.log("FormData:", formData);
-      
+
       const response = await api.put(url, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-      
+
       console.log("Upload response:", response.data);
-      
+
       toast.success("Image upload successful");
       setLoader(false);
       setOpen(false);
-      
+
       // Refresh the dashboard products
       await dispatch(dashboardProductsAction(isAdmin, queryString));
-      
     } catch (error) {
       console.error("Image upload error:", error);
       console.error("Error response:", error.response?.data);
-      
+
       toast.error(
-        error?.response?.data?.description || 
-        error?.response?.data?.message || 
-        "Product Image upload failed"
+        error?.response?.data?.description ||
+          error?.response?.data?.message ||
+          "Product Image upload failed",
       );
       setLoader(false);
     }
   };
 
-  
 export const getAllCategoriesDashboard = (queryString) => async (dispatch) => {
   dispatch({ type: "CATEGORY_LOADER" });
   try {
@@ -869,7 +870,7 @@ export const createCategoryDashboardAction =
     } catch (err) {
       console.log(err);
       toast.error(
-        err?.response?.data?.categoryName || "Failed to create new category"
+        err?.response?.data?.categoryName || "Failed to create new category",
       );
 
       dispatch({
@@ -899,7 +900,7 @@ export const updateCategoryDashboardAction =
     } catch (err) {
       console.log(err);
       toast.error(
-        err?.response?.data?.categoryName || "Failed to update category"
+        err?.response?.data?.categoryName || "Failed to update category",
       );
 
       dispatch({
@@ -971,7 +972,7 @@ export const addNewDashboardSeller =
       toast.error(
         err?.response?.data?.message ||
           err?.response?.data?.password ||
-          "Internal Server Error"
+          "Internal Server Error",
       );
     } finally {
       setLoader(false);
@@ -1001,14 +1002,13 @@ export const deleteOrderFromDashboard =
     }
   };
 
-
-  export const fetchProductsByGender =
+export const fetchProductsByGender =
   (gender, pageNumber = 0, pageSize = 10) =>
   async (dispatch) => {
     try {
       dispatch({ type: "IS_FETCHING" });
       const { data } = await api.get(
-        `/public/products/gender/${gender}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+        `/public/products/gender/${gender}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
       );
       dispatch({ type: "FETCH_PRODUCTS", payload: data.content });
       dispatch({
@@ -1051,124 +1051,196 @@ export const fetchFiltersAction = () => async (dispatch) => {
 };
 
 // Shoe Cleaner Category Actions
-export const fetchShoeCleanerCategories = (queryString = "") => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
-    const { data } = await api.get(`/admin/shoe-cleaner/categories?${queryString}`);
-    dispatch({
-      type: "FETCH_SHOE_CLEANER_CATEGORIES",
-      payload: data.content || data,
-      pageNumber: data.pageNumber,
-      pageSize: data.pageSize,
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-      lastPage: data.lastPage,
-    });
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
-  } catch (error) {
-    console.log(error);
-    dispatch({ 
-      type: "SHOE_CLEANER_CATEGORY_ERROR", 
-      payload: error?.response?.data?.message || "Failed to fetch shoe cleaner categories" 
-    });
-  }
-};
+export const fetchShoeCleanerCategories =
+  (queryString = "") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+      const { data } = await api.get(
+        `/admin/shoe-cleaner/categories?${queryString}`,
+      );
+      dispatch({
+        type: "FETCH_SHOE_CLEANER_CATEGORIES",
+        payload: data.content || data,
+      });
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: "SHOE_CLEANER_CATEGORY_ERROR",
+        payload:
+          error?.response?.data?.message ||
+          "Failed to fetch shoe cleaner categories",
+      });
+    }
+  };
 
-export const createShoeCleanerCategory = (sendData, setOpen, reset, toast) => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
-    await api.post("/admin/shoe-cleaner/categories", sendData);
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
-    reset();
-    toast.success("Shoe Cleaner Category Created Successfully");
-    setOpen(false);
-    await dispatch(fetchShoeCleanerCategories());
-  } catch (err) {
-    console.log(err);
-    toast.error(err?.response?.data?.message || "Failed to create shoe cleaner category");
-    dispatch({
-      type: "SHOE_CLEANER_CATEGORY_ERROR",
-      payload: err?.response?.data?.message || "Internal Server Error",
-    });
-  }
-};
+export const createShoeCleanerCategory =
+  (sendData, setOpen, reset, toast) => async (dispatch) => {
+    try {
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+      await api.post("/admin/shoe-cleaner/categories", sendData);
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+      reset();
+      toast.success("Shoe Cleaner Category Created Successfully");
+      setOpen(false);
+      await dispatch(fetchShoeCleanerCategories());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to create shoe cleaner category",
+      );
+      dispatch({
+        type: "SHOE_CLEANER_CATEGORY_ERROR",
+        payload: err?.response?.data?.message || "Internal Server Error",
+      });
+    }
+  };
 
-export const updateShoeCleanerCategory = (sendData, setOpen, categoryId, reset, toast) => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
-    await api.put(`/admin/shoe-cleaner/categories/${categoryId}`, sendData);
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
-    reset();
-    toast.success("Shoe Cleaner Category Updated Successfully");
-    setOpen(false);
-    await dispatch(fetchShoeCleanerCategories());
-  } catch (err) {
-    console.log(err);
-    toast.error(err?.response?.data?.message || "Failed to update shoe cleaner category");
-    dispatch({
-      type: "SHOE_CLEANER_CATEGORY_ERROR",
-      payload: err?.response?.data?.message || "Internal Server Error",
-    });
-  }
-};
+export const updateShoeCleanerCategory =
+  (sendData, setOpen, categoryId, reset, toast) => async (dispatch) => {
+    try {
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+      await api.put(`/admin/shoe-cleaner/categories/${categoryId}`, sendData);
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+      reset();
+      toast.success("Shoe Cleaner Category Updated Successfully");
+      setOpen(false);
+      await dispatch(fetchShoeCleanerCategories());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to update shoe cleaner category",
+      );
+      dispatch({
+        type: "SHOE_CLEANER_CATEGORY_ERROR",
+        payload: err?.response?.data?.message || "Internal Server Error",
+      });
+    }
+  };
 
-export const deleteShoeCleanerCategory = (setOpen, categoryId, toast) => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
-    await api.delete(`/admin/shoe-cleaner/categories/${categoryId}`);
-    dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
-    toast.success("Shoe Cleaner Category Deleted Successfully");
-    setOpen(false);
-    await dispatch(fetchShoeCleanerCategories());
-  } catch (err) {
-    console.log(err);
-    toast.error(err?.response?.data?.message || "Failed to delete shoe cleaner category");
-    dispatch({
-      type: "SHOE_CLEANER_CATEGORY_ERROR",
-      payload: err?.response?.data?.message || "Internal Server Error",
-    });
-  }
-};
+export const deleteShoeCleanerCategory =
+  (setOpen, categoryId, toast) => async (dispatch) => {
+    try {
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_LOADER" });
+      await api.delete(`/admin/shoe-cleaner/categories/${categoryId}`);
+      dispatch({ type: "SHOE_CLEANER_CATEGORY_SUCCESS" });
+      toast.success("Shoe Cleaner Category Deleted Successfully");
+      setOpen(false);
+      await dispatch(fetchShoeCleanerCategories());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to delete shoe cleaner category",
+      );
+      dispatch({
+        type: "SHOE_CLEANER_CATEGORY_ERROR",
+        payload: err?.response?.data?.message || "Internal Server Error",
+      });
+    }
+  };
 
 // Shoe Cleaner Products Actions
-export const fetchShoeCleanerProducts = (queryString = "") => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
-    const { data } = await api.get(`/admin/shoe-cleaner/products?${queryString}`);
-    dispatch({
-      type: "FETCH_SHOE_CLEANER_PRODUCTS",
-      payload: data.content || data,
-      pageNumber: data.pageNumber,
-      pageSize: data.pageSize,
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-      lastPage: data.lastPage,
-    });
-    dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
-  } catch (error) {
-    console.log(error);
-    dispatch({
-      type: "SHOE_CLEANER_PRODUCTS_ERROR",
-      payload: error?.response?.data?.message || "Failed to fetch shoe cleaner products",
-    });
-  }
-};
+export const fetchShoeCleanerProducts =
+  (queryString = "") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
+      const { data } = await api.get(
+        `/admin/shoe-cleaner/products?${queryString}`,
+      );
+      dispatch({
+        type: "FETCH_SHOE_CLEANER_PRODUCTS",
+        payload: data.content || data,
+        pageNumber: data.pageNumber,
+        pageSize: data.pageSize,
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        lastPage: data.lastPage,
+      });
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: "SHOE_CLEANER_PRODUCTS_ERROR",
+        payload:
+          error?.response?.data?.message ||
+          "Failed to fetch shoe cleaner products",
+      });
+    }
+  };
 
-export const createShoeCleanerProduct = (sendData, setOpen, reset, toast) => async (dispatch) => {
-  try {
-    dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
-    await api.post("/admin/shoe-cleaner/products", sendData);
-    dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
-    reset();
-    toast.success("Shoe Cleaner Product Created Successfully");
-    setOpen(false);
-    await dispatch(fetchShoeCleanerProducts());
-  } catch (err) {
-    console.log(err);
-    toast.error(err?.response?.data?.message || "Failed to create shoe cleaner product");
-    dispatch({
-      type: "SHOE_CLEANER_PRODUCTS_ERROR",
-      payload: err?.response?.data?.message || "Internal Server Error",
-    });
-  }
-};
+export const createShoeCleanerProduct =
+  (sendData, setOpen, reset, toast, setLoader) => async (dispatch) => {
+    try {
+      if (setLoader) setLoader(true);
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
+      // Use the specific singular endpoint provided by the user
+      await api.post("/admin/shoe-cleaner/product", sendData);
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
+      reset();
+      toast.success("Shoe Cleaner Product Created Successfully");
+      setOpen(false);
+      await dispatch(fetchShoeCleanerProducts());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message || "Failed to create shoe cleaner product",
+      );
+      dispatch({
+        type: "SHOE_CLEANER_PRODUCTS_ERROR",
+        payload: err?.response?.data?.message || "Internal Server Error",
+      });
+    } finally {
+      if (setLoader) setLoader(false);
+    }
+  };
+
+export const updateShoeCleanerProduct =
+  (sendData, setOpen, reset, toast, setLoader) => async (dispatch) => {
+    try {
+      if (setLoader) setLoader(true);
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
+      const productId = sendData.id || sendData.productId;
+      // Use the regular product update endpoint
+      await api.put(`/admin/products/${productId}`, sendData);
+      dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
+      reset();
+      toast.success("Shoe Cleaner Product Updated Successfully");
+      setOpen(false);
+      await dispatch(fetchShoeCleanerProducts());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message || "Failed to update shoe cleaner product",
+      );
+      dispatch({
+        type: "SHOE_CLEANER_PRODUCTS_ERROR",
+        payload: err?.response?.data?.message || "Internal Server Error",
+      });
+    } finally {
+      if (setLoader) setLoader(false);
+    }
+  };
+
+export const deleteShoeCleanerProduct =
+  (setLoader, productId, toast, setOpenDeleteModal) => async (dispatch) => {
+    try {
+      setLoader(true);
+      // Use the regular product delete endpoint
+      await api.delete(`/admin/products/${productId}`);
+      toast.success("Shoe Cleaner Product Deleted Successfully");
+      setOpenDeleteModal(false);
+      await dispatch(fetchShoeCleanerProducts());
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err?.response?.data?.message || "Failed to delete shoe cleaner product",
+      );
+    } finally {
+      setLoader(false);
+    }
+  };

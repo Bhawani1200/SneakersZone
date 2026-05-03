@@ -34,9 +34,17 @@ export const shoeCleanerReducer = (state = initialState, action) => {
         loading: false,
       };
     
+    case "SHOE_CLEANER_CATEGORY_LOADER":
+    case "SHOE_CLEANER_PRODUCTS_LOADER":
     case "SHOE_CLEANER_LOADING":
       return { ...state, loading: true, error: null };
     
+    case "SHOE_CLEANER_CATEGORY_SUCCESS":
+    case "SHOE_CLEANER_PRODUCTS_SUCCESS":
+      return { ...state, loading: false, error: null };
+
+    case "SHOE_CLEANER_CATEGORY_ERROR":
+    case "SHOE_CLEANER_PRODUCTS_ERROR":
     case "SHOE_CLEANER_ERROR":
       return { ...state, loading: false, error: action.payload };
     

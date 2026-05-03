@@ -10,13 +10,13 @@ import { useShoeCleanerFilter } from "../../../hook/useShoeCleanerFilter";
 import AddShoeCleanerForm from "./AddShoeCleanerForm";
 import Modal from "../../shared/Modal";
 import DeleteModal from "../../shared/DeleteModal";
-import { deleteProduct } from "../../../store/actions";
+import { deleteShoeCleanerProduct } from "../../../store/actions";
 import toast from "react-hot-toast";
 import ImageUploadForm from "./ImageUploadForm";
 import ProductViewModal from "../../shared/ProductViewModal";
 
 const ShoeCleaner = () => {
-  const { products, pagination } = useSelector((state) => state.products);
+  const { shoeCleanerProducts: products, pagination } = useSelector((state) => state.shoeCleaner);
   const { isLoading, errorMessage } = useSelector((state) => state.errors);
   const { user } = useSelector((state) => state.auth);
   const isAdmin = user && user?.roles?.includes("ROLE_ADMIN");
@@ -65,12 +65,11 @@ const ShoeCleaner = () => {
 
   const onDeleteHandler = () => {
     dispatch(
-      deleteProduct(
+      deleteShoeCleanerProduct(
         setLoader,
-        selectedProduct?.id,
+        selectedProduct?.id || selectedProduct?.productId,
         toast,
         setOpenDeleteModal,
-        isAdmin,
       ),
     );
   };
