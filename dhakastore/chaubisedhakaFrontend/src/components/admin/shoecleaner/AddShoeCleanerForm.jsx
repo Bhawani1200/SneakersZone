@@ -208,7 +208,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
             register={register}
             errors={errors}
           />
-          {/* <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full">
             <label className="font-semibold text-sm text-slate-800">
               Show Product In
             </label>
@@ -238,7 +238,7 @@ const AddShoeCleanerForm = ({ setOpen, product, update = false }) => {
                 </label>
               ))}
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Row 3 — Discount + Special Price */}

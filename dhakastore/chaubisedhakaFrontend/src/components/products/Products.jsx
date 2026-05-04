@@ -135,13 +135,24 @@ import ProductSidebar from "./ProductSidebar";
 const Products = () => {
   const [searchParams] = useSearchParams();
   const { isLoading, errorMessage } = useSelector((state) => state.errors);
-  const { products, categories, pagination } = useSelector(
+  
+  const categoryFilter = searchParams.get("category");
+  const isShoeCleaner = categoryFilter === "Shoe Cleaners" || (categoryFilter && categoryFilter.toLowerCase().includes("shoe cleaner"));
+
+  const { products: regularProducts, categories, pagination: regularPagination } = useSelector(
     (state) => state.products,
   );
+
+  const { shoeCleanerProducts, pagination: shoeCleanerPagination } = useSelector(
+    (state) => state.shoeCleaner
+  );
+
+  const products = isShoeCleaner ? shoeCleanerProducts : regularProducts;
+  const pagination = isShoeCleaner ? shoeCleanerPagination : regularPagination;
+
   const dispatch = useDispatch();
 
   const genderFilter = searchParams.get("gender");
-  const categoryFilter = searchParams.get("category");
   const colorFilter = searchParams.get("color");
   const sizeFilter = searchParams.get("size");
   const brandFilter = searchParams.get("brand");

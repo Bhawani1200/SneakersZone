@@ -72,6 +72,7 @@ const Navigation = () => {
     { label: "Women", path: "/products?gender=WOMEN" },
     { label: "Kids", path: "/products?gender=KIDS" },
     { label: "Unisex", path: "/products?gender=UNISEX" },
+    { label: "Shoe Cleaners", path: "/products?category=Shoe+Cleaners" },
     { label: "New Arrivals", path: "/new-arrivals" },
     { label: "Sale", path: "/category/sale", highlight: true },
     { label: "Brands", path: "/category/brands" },

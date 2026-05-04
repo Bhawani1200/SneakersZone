@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Spinners from "../../shared/Spinners";
-import { updateProductImageFromDashboard } from "../../../store/actions";
+import { updateShoeCleanerImageFromDashboard } from "../../../store/actions";
 
 const ImageUploadForm = ({ setOpen, product }) => {
   const [loader, setLoader] = useState(false);
@@ -46,10 +46,10 @@ const ImageUploadForm = ({ setOpen, product }) => {
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    console.log("Uploading image for shoe cleaner ID:", product?.id);
+    console.log("Uploading shoe cleaner image for ID:", product?.id);
 
     dispatch(
-      updateProductImageFromDashboard(
+      updateShoeCleanerImageFromDashboard(
         formData,
         product?.id,
         toast,

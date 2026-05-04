@@ -3,7 +3,7 @@ import Banner from "../Banner/Banner";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../../store/actions";
+import { fetchProducts, fetchShoeCleanerProducts } from "../../store/actions";
 import Offer from "../Offer/Offer";
 import FeaturedProducts from "../Featured/FeaturedProducts";
 import BrandLogosStrip from "../Banner/Brands";
@@ -12,11 +12,13 @@ import Testimonials from "../Testimonials/Testimonials";
 import Spinners from "../shared/Spinners";
 
 const Home = () => {
-  const { products, loading, error } = useSelector((state) => state.products);
+  const { products: regularProducts, loading, error } = useSelector((state) => state.products);
+  const { shoeCleanerProducts } = useSelector((state) => state.shoeCleaner);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchProducts());
+    dispatch(fetchShoeCleanerProducts());
   }, [dispatch]);
 
   // Show loading spinner while fetching data
@@ -46,16 +48,16 @@ const Home = () => {
   }
 
   // Ensure products is an array before filtering (fallback to empty array)
-  const productList = products || [];
+  const productList = [...(regularProducts || []), ...(shoeCleanerProducts || [])];
 
   // Safe filtering with optional chaining
-  const newLaunchesProducts = (products || []).filter((p) =>
+  const newLaunchesProducts = productList.filter((p) =>
     p.sections?.includes("newLaunches"),
   );
-  const offerProducts = (products || []).filter((p) =>
+  const offerProducts = productList.filter((p) =>
     p.sections?.includes("offer"),
   );
-  const featuredProducts = (products || []).filter((p) =>
+  const featuredProducts = productList.filter((p) =>
     p.sections?.includes("featured"),
   );
 

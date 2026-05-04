@@ -56,15 +56,10 @@ const CategoryShowcase = () => {
     }
   }, [dispatch, categories]);
 
-  const shoeCleanerCat = categories?.find((c) =>
-    c.categoryName.toLowerCase().includes("shoe cleaner"),
-  );
-  const shoeCleanerKey = shoeCleanerCat?.categoryName || "Shoe Cleaners";
-
   const combinedCategories = [
     ...GENDER_METADATA,
     {
-      key: shoeCleanerKey,
+      key: "Shoe Cleaners",
       type: "category",
       label: "Shoe Cleaners",
       description: "Premium care for your favorite pairs.",

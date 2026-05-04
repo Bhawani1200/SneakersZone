@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { dashboardProductsAction ,fetchProducts} from "../store/actions";
+import { dashboardProductsAction, fetchProducts, fetchShoeCleanerProducts } from "../store/actions";
 import api from "../api/api";
 
 const useProductFilter = () => {
@@ -49,7 +49,13 @@ const useProductFilter = () => {
 
     const queryString = params.toString();
     console.log("Filtered Query String:", queryString);
-    dispatch(fetchProducts(queryString));
+
+    // If the category is Shoe Cleaners, fetch from the shoe cleaner endpoint
+    if (category === "Shoe Cleaners" || (category && category.toLowerCase().includes("shoe cleaner"))) {
+      dispatch(fetchShoeCleanerProducts(queryString));
+    } else {
+      dispatch(fetchProducts(queryString));
+    }
   }, [searchParams, dispatch]);
 };
 

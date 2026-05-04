@@ -1205,8 +1205,8 @@ export const updateShoeCleanerProduct =
       if (setLoader) setLoader(true);
       dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
       const productId = sendData.id || sendData.productId;
-      // Use the regular product update endpoint
-      await api.put(`/admin/products/${productId}`, sendData);
+      // Use the shoe cleaner specific update endpoint
+      await api.put(`/admin/shoe-cleaner/product/${productId}`, sendData);
       dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
       reset();
       toast.success("Shoe Cleaner Product Updated Successfully");
@@ -1230,8 +1230,8 @@ export const deleteShoeCleanerProduct =
   (setLoader, productId, toast, setOpenDeleteModal) => async (dispatch) => {
     try {
       setLoader(true);
-      // Use the regular product delete endpoint
-      await api.delete(`/admin/products/${productId}`);
+      // Use the shoe cleaner specific delete endpoint
+      await api.delete(`/admin/shoe-cleaner/product/${productId}`);
       toast.success("Shoe Cleaner Product Deleted Successfully");
       setOpenDeleteModal(false);
       await dispatch(fetchShoeCleanerProducts());
@@ -1241,6 +1241,42 @@ export const deleteShoeCleanerProduct =
         err?.response?.data?.message || "Failed to delete shoe cleaner product",
       );
     } finally {
+      setLoader(false);
+    }
+  };
+
+export const updateShoeCleanerImageFromDashboard =
+  (formData, productId, toast, setLoader, setOpen, isAdmin) =>
+  async (dispatch) => {
+    try {
+      setLoader(true);
+      // For shoe cleaner, the base path is /admin/shoe-cleaner
+      // and the endpoint is /products/{productId}/image
+      const url = `/admin/shoe-cleaner/products/${productId}/image`;
+
+      console.log("Uploading shoe cleaner image to URL:", url);
+
+      const response = await api.put(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Upload response:", response.data);
+
+      toast.success("Shoe cleaner image upload successful");
+      setLoader(false);
+      setOpen(false);
+
+      // Refresh the shoe cleaner products list
+      await dispatch(fetchShoeCleanerProducts());
+    } catch (error) {
+      console.error("Shoe cleaner image upload error:", error);
+      console.error("Error response:", error.response?.data);
+
+      toast.error(
+        error?.response?.data?.message || "Shoe cleaner image upload failed",
+      );
       setLoader(false);
     }
   };
