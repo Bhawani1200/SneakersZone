@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import LaunchCard from "../shared/LaunchCard";
 import api from "../../api/api";
 
 const NewLaunches = () => {
+  const location = useLocation();
+  const isNewArrivalsPage = location.pathname === "/new-arrivals";
   const scrollRef = useRef(null);
   const [products, setProducts] = useState([]);
 
@@ -84,7 +86,7 @@ const NewLaunches = () => {
   };
 
   return (
-    <section className="w-full bg-[#e8ebe4] py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <section className={`w-full bg-[#e8ebe4] py-8 md:py-12 px-4 sm:px-6 lg:px-8 ${isNewArrivalsPage ? "mt-[200px] md:mt-[240px]" : ""}`}>
       <div className="max-w-full mx-auto">
         {/* ── Header ── */}
         <div className="flex items-center justify-between mb-6 md:mb-8">

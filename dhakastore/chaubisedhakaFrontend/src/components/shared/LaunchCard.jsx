@@ -203,12 +203,12 @@ const LaunchCard = ({
         {/* Price Row */}
         <div className="flex items-baseline gap-2 xl:gap-3 flex-wrap mt-auto">
           <span className="text-base xl:text-lg 2xl:text-xl font-bold text-gray-800">
-            ₹{Number(displayPrice).toLocaleString("en-IN")}
+            रु{Number(displayPrice).toLocaleString("en-IN")}
           </span>
           {specialPrice && price && (
             <>
               <span className="text-sm xl:text-base text-gray-400 line-through">
-                ₹{Number(price).toLocaleString("en-IN")}
+                रु{Number(price).toLocaleString("en-IN")}
               </span>
               {discountPct && (
                 <span className="text-sm xl:text-base text-green-600 font-semibold">
