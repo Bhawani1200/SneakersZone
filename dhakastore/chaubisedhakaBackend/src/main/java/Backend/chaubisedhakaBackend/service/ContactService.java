@@ -10,7 +10,6 @@ public interface ContactService {
 
     void processContactForm(ContactRequestDTO contactRequest);
 
-
     Page<Contact> getAllContacts(Pageable pageable);
 
     Contact getContactById(Long id);
