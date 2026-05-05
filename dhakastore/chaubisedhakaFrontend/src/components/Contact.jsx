@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../api/api";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -76,42 +77,30 @@ const Contact = () => {
 
     try {
       // Send to your backend API
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/contact`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle backend validation errors
-        if (data.errors) {
-          const backendErrors = {};
-          data.errors.forEach((error) => {
-            backendErrors[error.field] = error.message;
-          });
-          setErrors(backendErrors);
-          toast.error("Please check your inputs");
-        } else {
-          throw new Error(data.message || "Failed to send message");
-        }
-        return;
-      }
+      const response = await api.post("/contact", formData);
 
       toast.success("Thank you! Your message has been sent.");
       setFormData({ name: "", email: "", message: "" });
       setErrors({});
     } catch (error) {
       console.error("Contact form error:", error);
-      toast.error(
-        error.message || "Something went wrong. Please try again later.",
-      );
+
+      // Handle backend validation errors (axios puts them in error.response.data)
+      const errorData = error.response?.data;
+      if (errorData?.errors) {
+        const backendErrors = {};
+        errorData.errors.forEach((err) => {
+          backendErrors[err.field] = err.message;
+        });
+        setErrors(backendErrors);
+        toast.error("Please check your inputs");
+      } else {
+        toast.error(
+          errorData?.message ||
+            error.message ||
+            "Something went wrong. Please try again later.",
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -131,10 +120,6 @@ const Contact = () => {
           <h2 className="text-4xl md:text-7xl font-black text-gray-900 dark:text-gray-100 uppercase italic tracking-tighter mb-4">
             Reach Out <span className="text-blue-600">To Us</span>
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
-            Ready to grow your style? Let's connect and build something
-            exceptional together.
-          </p>
         </motion.div>
 
         <div className="flex flex-col gap-16 max-w-4xl mx-auto">

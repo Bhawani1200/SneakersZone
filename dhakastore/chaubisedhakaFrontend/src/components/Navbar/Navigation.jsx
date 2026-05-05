@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import {
   Search,
   ShoppingCart,
-  Heart,
   User,
   Phone,
   Mail,
@@ -33,7 +32,6 @@ const Navigation = () => {
 
   const user = useSelector((state) => state.auth?.user);
   const { cart } = useSelector((state) => state.carts);
-  const wishlistItems = useSelector((state) => state.wishlist?.items || []);
 
   const cartCount =
     cart?.reduce((acc, cur) => acc + Number(cur?.quantity), 0) || 0;
@@ -210,22 +208,6 @@ const Navigation = () => {
                   </span>
                 </Link>
               )}
-
-              {/* Wishlist */}
-              <Link
-                to="/wishlist"
-                className="relative flex flex-col items-center hover:text-blue-600 transition-all hover:scale-105"
-              >
-                <Heart className="w-7 h-7" />
-                <span className="hidden sm:block text-xs font-bold mt-1 uppercase">
-                  Wishlist
-                </span>
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1.5 bg-red-500 text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center border-2 border-white dark:border-zinc-900 shadow-lg">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </Link>
 
               {/* Cart */}
               <Link
