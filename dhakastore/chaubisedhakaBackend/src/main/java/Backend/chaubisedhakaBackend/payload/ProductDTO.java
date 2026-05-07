@@ -12,19 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
-//    private Long productId;
-//    private String productName;
-//    private String description;
-//    private Integer quantity;
-//    private String image;
-//    private double price;
-//    private double specialPrice;
-//    private double discount;
-//    private Gender gender;
-//    private Integer size;
-//    private String color;
-//    private Boolean inStock;
-//    private String categoryName;
 
     private Long productId;
     private String productName;

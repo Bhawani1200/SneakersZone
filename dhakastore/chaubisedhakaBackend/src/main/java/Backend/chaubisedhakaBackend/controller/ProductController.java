@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -32,6 +34,62 @@ public class ProductController {
 //     ProductDTO savedProductDTO=productService.addProduct(productDTO, categoryId);
 //     return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
 //    }
+
+//    @GetMapping("/public/search")
+//    public ResponseEntity<ProductResponse> searchProducts(
+//            @RequestParam(name = "keyword", required = true) String keyword,
+//            @RequestParam(name = "page", defaultValue = "0") Integer page,
+//            @RequestParam(name = "size", defaultValue = "20") Integer size,
+//            @RequestParam(name = "sortBy", defaultValue = "productName") String sortBy,
+//            @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder) {
+//
+//        ProductResponse response = productService.searchProductByKeyword(keyword, page, size, sortBy, sortOrder);
+//        return ResponseEntity.ok(response);
+//    }
+
+    @GetMapping("/public/search")
+    public ResponseEntity<ProductResponse> searchProducts(
+            @RequestParam(name = "keyword", required = true) String keyword,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "productName") String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "asc") String sortOrder) {
+
+        ProductResponse response = productService.searchProductByKeyword(keyword, page, size, sortBy, sortOrder);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/public/search/advanced")
+    public ResponseEntity<ProductResponse> advancedSearch(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "brand", required = false) String brand,
+            @RequestParam(name = "minPrice", required = false) Double minPrice,
+            @RequestParam(name = "maxPrice", required = false) Double maxPrice,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder) {
+
+        ProductResponse response = productService.advancedSearch(keyword, category, brand, minPrice, maxPrice,
+                pageNumber, pageSize, sortBy, sortOrder);
+        return ResponseEntity.ok(response);
+    }
+
+    // Auto-complete suggestions
+    @GetMapping("/public/search/suggestions")
+    public ResponseEntity<Map<String, List<String>>> getSearchSuggestions(
+            @RequestParam(name = "keyword", required = true) String keyword,
+            @RequestParam(name = "limit", defaultValue = "5") int limit) {
+
+        List<String> suggestions = productService.getSearchSuggestions(keyword, limit);
+        Map<String, List<String>> response = new HashMap<>();
+        response.put("suggestions", suggestions);
+        return ResponseEntity.ok(response);
+    }
+
+
 
     @GetMapping("/public/products")
     public ResponseEntity<ProductResponse>getAllProducts(
@@ -89,6 +147,8 @@ public class ProductController {
         return  new ResponseEntity<>(productResponse,HttpStatus.OK);
 
     }
+
+
 
 //    @DeleteMapping("/admin/product/{productId}")
 //    public ResponseEntity<ProductDTO>deleteProduct(@PathVariable Long productId){

@@ -105,68 +105,6 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, String brand, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock) {
-//        Sort sortByAndOrder = sortOrder.equals("asc")
-//                ? Sort.by(sortBy).ascending()
-//                : Sort.by(sortBy).descending();
-//        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-//        Specification<Product> spec = Specification.where(null);
-//
-//        if (keyword != null && !keyword.isEmpty()) {
-//            spec = spec.and((root, query, criteriaBuilder) ->
-//                    criteriaBuilder.like(root.get("productName"), "%" + keyword.toLowerCase() + "%"));
-//        }
-//
-//        if (category != null && !category.isEmpty()) {
-//            spec = spec.and((root, query, criteriaBuilder) ->
-//                    criteriaBuilder.like(criteriaBuilder.lower(root.get("category").get("categoryName")), category));
-//        }
-//
-//        // ✅ gender filter added
-//        if (gender != null && !gender.isEmpty()) {
-//            spec = spec.and((root, query, criteriaBuilder) ->
-//                    criteriaBuilder.equal(root.get("gender"), Gender.valueOf(gender.toUpperCase())));
-//        }
-//
-//        if (size != null) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.equal(root.get("size"), size));
-//        }
-//
-//        if (color != null && !color.isEmpty()) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.equal(cb.lower(root.get("color")), color.toLowerCase()));
-//        }
-//
-//        // Price range filter
-//        spec = spec.and((root, query, cb) ->
-//                cb.between(root.get("specialPrice"), minPrice, maxPrice));
-//
-//        // Discount filter — frontend sends "30", "40" etc.
-//        if (minDiscount != null && minDiscount > 0) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.greaterThanOrEqualTo(root.get("discount"), (double) minDiscount));
-//        }
-//
-//        if (inStock != null && inStock) {
-//            spec = spec.and((root, query, cb) ->
-//                    cb.greaterThan(root.get("quantity"), 0));
-//        }
-//
-//        Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
-//
-//        List<Product> products = pageProducts.getContent();
-//        List<ProductDTO> productDTOS = products.stream()
-//                .map(product -> modelMapper.map(product, ProductDTO.class))
-//                .toList();
-//
-//        ProductResponse productResponse = new ProductResponse();
-//        productResponse.setPageNumber(pageProducts.getNumber());
-//        productResponse.setPageSize(pageProducts.getSize());
-//        productResponse.setTotalElements(pageProducts.getTotalElements());
-//        productResponse.setTotalPages(pageProducts.getTotalPages());
-//        productResponse.setLastPage(pageProducts.isLast());
-//        productResponse.setContent(productDTOS);
-//        return productResponse;
 
         Sort sortByAndOrder = sortOrder.equals("asc")
                 ? Sort.by(sortBy).ascending()
@@ -308,6 +246,49 @@ public class ProductServiceImpl implements ProductService{
         ProductResponse productResponse=new ProductResponse();
         productResponse.setContent(productDTOS);
         return productResponse;
+    }
+
+    @Override
+    public ProductResponse advancedSearch(String keyword, String category, String brand, Double minPrice, Double maxPrice, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        // Set default price range if not provided
+        Double finalMinPrice = minPrice != null ? minPrice : 0.0;
+        Double finalMaxPrice = maxPrice != null ? maxPrice : Double.MAX_VALUE;
+
+        Page<Product> pageProducts = productRepository.searchWithFilters(
+                keyword, category, finalMinPrice, finalMaxPrice, pageable);
+
+        List<ProductDTO> productDTOs = pageProducts.getContent().stream()
+                .map(product -> {
+                    ProductDTO dto = modelMapper.map(product, ProductDTO.class);
+                    dto.setImage(constructImageUrl(product.getImage()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        ProductResponse response = new ProductResponse();
+        response.setContent(productDTOs);
+        response.setPageNumber(pageProducts.getNumber());
+        response.setPageSize(pageProducts.getSize());
+        response.setTotalElements(pageProducts.getTotalElements());
+        response.setTotalPages(pageProducts.getTotalPages());
+        response.setLastPage(pageProducts.isLast());
+
+        return response;
+    }
+
+    @Override
+    public List<String> getSearchSuggestions(String keyword, int limit) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Pageable pageable = PageRequest.of(0, limit);
+        return productRepository.findProductNameSuggestions(keyword.trim(), pageable);
     }
 
     @Override

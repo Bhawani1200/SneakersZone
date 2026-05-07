@@ -7,6 +7,7 @@ import Backend.chaubisedhakaBackend.payload.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface ProductService {
 
@@ -15,8 +16,19 @@ public interface ProductService {
     ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category, String gender, Integer size, String color, String brand, Double minPrice, Double maxPrice, Integer minDiscount, Boolean inStock);
 
     ProductResponse searchCategoryById(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+//
+//    ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize,
+                                           String sortBy, String sortOrder);
+
+    // New method for advanced search
+    ProductResponse advancedSearch(String keyword, String category, String brand,
+                                   Double minPrice, Double maxPrice, Integer pageNumber,
+                                   Integer pageSize, String sortBy, String sortOrder);
+
+    // New method for search suggestions
+    List<String> getSearchSuggestions(String keyword, int limit);
 
     ProductDTO updateProduct(Long productId, ProductDTO productDTO);
 
@@ -32,7 +44,7 @@ public interface ProductService {
 
     ProductResponse getProductsByGender(String gender, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    
+
     // Admin: Create new product
     ProductDTO adminCreateProduct(AdminProductDTO adminProductDTO);
 
@@ -61,4 +73,6 @@ public interface ProductService {
                                                Integer pageSize, String sortBy, String sortOrder);
 
     ProductDTO getSingleProductById(Long productId);
+
+
 }

@@ -29,8 +29,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> , JpaSpec
     // Admin specific methods
     boolean existsByProductName(String productName);
 
-    @Query("SELECT p FROM Product p WHERE p.productName LIKE %:keyword% OR p.description LIKE %:keyword%")
-    Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+//    @Query("SELECT p FROM Product p WHERE p.productName LIKE %:keyword% OR p.description LIKE %:keyword%")
+//    Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.category.categoryName = :categoryName")
     Page<Product> findByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
@@ -48,9 +48,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> , JpaSpec
     @Query(value = "SELECT DISTINCT size_value FROM product_sizes WHERE size_value IS NOT NULL AND size_value != '' ORDER BY size_value::INTEGER", nativeQuery = true)
     List<String> findAllUniqueSizesNumeric();
 
-
-    @Query(value = "SELECT DISTINCT size_value FROM product_sizes WHERE size_value IS NOT NULL AND size_value != '' ORDER BY CAST(size_value AS INTEGER)", nativeQuery = true)
-    List<String> findAllUniqueSizesNumericAlt();
 
     // Get unique colors
     @Query("SELECT DISTINCT c FROM Product p JOIN p.colors c WHERE c IS NOT NULL AND c != '' ORDER BY c")
@@ -71,5 +68,46 @@ public interface ProductRepository extends JpaRepository<Product,Long> , JpaSpec
     // Get products by color (using collection)
     @Query("SELECT DISTINCT p FROM Product p JOIN p.colors c WHERE LOWER(c) = LOWER(:color)")
     Page<Product> findByColor(@Param("color") String color, Pageable pageable);
+
+
+//    Searching bars
+
+    @Query("SELECT p FROM Product p WHERE " +
+        "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+        "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+        "LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+        "LOWER(p.category.categoryName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+     Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+//    search by additional filters
+     @Query("SELECT p FROM Product p WHERE " +
+        "(:keyword IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+        "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+        "LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
+        "(:category IS NULL OR LOWER(p.category.categoryName) = LOWER(:category)) AND " +
+        "(:minPrice IS NULL OR p.specialPrice >= :minPrice) AND " +
+        "(:maxPrice IS NULL OR p.specialPrice <= :maxPrice)")
+     Page<Product> searchWithFilters(@Param("keyword") String keyword,
+                                @Param("category") String category,
+                                @Param("minPrice") Double minPrice,
+                                @Param("maxPrice") Double maxPrice,
+                                Pageable pageable);
+
+//     Auto complete suggestions
+    @Query("SELECT DISTINCT p.productName FROM Product p WHERE " +
+            "LOWER(p.productName) LIKE LOWER(CONCAT(:keyword, '%')) AND " +
+            "LOWER(p.productName) != LOWER(:keyword) " +
+            "ORDER BY p.productName")
+    List<String> findProductNameSuggestions(@Param("keyword") String keyword, Pageable pageable);
+
+    // Search by exact match or partial
+    @Query("SELECT p FROM Product p WHERE " +
+            "(:keyword IS NULL OR " +
+            "LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(p.category.categoryName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Product> findAllWithKeywordSearch(@Param("keyword") String keyword, Pageable pageable);
+
 
 }
