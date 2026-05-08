@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import LaunchCard from "../shared/LaunchCard";
 import api from "../../api/api";
+import { formatImageUrl } from "../../utils/formatImageUrl";
 
 const FeaturedProducts = () => {
   const scrollRef = useRef(null);
@@ -58,14 +59,10 @@ const FeaturedProducts = () => {
             return sections.includes("featured");
           })
           .map((product) => ({
-          ...product,
-          productId: product.productId || product.id,
-          image: product.image
-            ? product.image.startsWith("http")
-              ? product.image
-              : `http://localhost:8080/images/${product.image}`
-            : "/placeholder-product.png",
-        }));
+            ...product,
+            productId: product.productId || product.id,
+            image: formatImageUrl(product.image),
+          }));
 
         setProducts(formattedProducts);
       } catch (error) {

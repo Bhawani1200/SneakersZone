@@ -6,6 +6,8 @@ import { addToCart } from "../../store/actions";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
+import { formatImageUrl } from "../../utils/formatImageUrl";
+
 const LaunchCard = ({
   productId,
   id,
@@ -42,7 +44,7 @@ const LaunchCard = ({
     dispatch(
       addToCart(
         {
-          image,
+          image: formatImageUrl(image),
           productName,
           description,
           specialPrice,
@@ -74,11 +76,7 @@ const LaunchCard = ({
     setColorIndex((i) => (i - 1 + colors.length) % colors.length);
   const nextColor = () => setColorIndex((i) => (i + 1) % colors.length);
 
-  const displayImage = image
-    ? image.startsWith("http")
-      ? image
-      : `http://localhost:8080/images/${image}`
-    : "/placeholder-product.png";
+  const displayImage = formatImageUrl(image);
 
   return (
     <div className="h-full bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative">

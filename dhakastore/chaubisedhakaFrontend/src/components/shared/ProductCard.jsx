@@ -8,6 +8,8 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/actions";
 import toast from "react-hot-toast";
 
+import { formatImageUrl } from "../../utils/formatImageUrl";
+
 const ProductCard = ({
   productId,
   productName,
@@ -20,6 +22,7 @@ const ProductCard = ({
   brand,
   sellerName,
   inStock = true,
+  tag, // Add tag to destructured props if it was used below
 }) => {
   const isAvailable = inStock !== false;
   const dispatch = useDispatch();
@@ -42,7 +45,7 @@ const ProductCard = ({
           handleProductView({
             productId,
             productName,
-            image,
+            image: formatImageUrl(image),
             description,
             quantity,
             price,
@@ -54,7 +57,7 @@ const ProductCard = ({
       >
         <img
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-          src={image}
+          src={formatImageUrl(image)}
           alt={productName}
         />
         {/* Tag / Badge */}

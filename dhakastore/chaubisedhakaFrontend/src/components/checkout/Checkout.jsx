@@ -9,7 +9,7 @@ import ErrorPage from "../shared/ErrorPage";
 import OrderSummary from "./OrderSummary";
 import PaymentMethod from "./PaymentMethod";
 import StripePayment from "./StripePayment";
-import PaypalPayment from "./PaypalPayment";
+import PaypalPayment from "./Esewa";
 
 const steps = ["Address", "Payment Method", "Order Summary", "Payment"];
 
@@ -18,7 +18,7 @@ const Checkout = () => {
   const dispatch = useDispatch();
 
   const { address, selectedUserCheckoutAddress } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const { cart, totalPrice } = useSelector((state) => state.carts);
@@ -49,8 +49,8 @@ const Checkout = () => {
   };
 
   return (
-    <div className="py-14 min-h-[calc(100vh-100px)]">
-      <Stepper activeStep={activeStep} alternativeLabel>
+    <div className="pt-60 pb-14 min-h-[calc(100vh-100px)]">
+      <Stepper activeStep={activeStep} alternativeLabel className="mt-10">
         {steps.map((label, index) => (
           <Step key={index}>
             <StepLabel>{label}</StepLabel>
@@ -85,8 +85,8 @@ const Checkout = () => {
         </div>
       )}
       <div
-        className="flex justify-between items-center px-4 fixed z-50 h-24 bottom-0 bg-white left-0 w-full py-4 border-slate-200"
-        style={{ boxShadow: "0 -2px 4px rgba(100, 100, 100, 0.15)" }}
+        className="flex justify-between items-center px-4 sticky z-50 h-24 bottom-0 bg-white w-full py-4 border-t border-slate-200"
+        style={{ boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)" }}
       >
         <Button
           variant="outlined"
@@ -103,8 +103,8 @@ const Checkout = () => {
               (activeStep === 0
                 ? !selectedUserCheckoutAddress
                 : activeStep === 1
-                ? !paymentMethod
-                : false)
+                  ? !paymentMethod
+                  : false)
             }
             className={`bg-blue-500 px-6 font-semibold h-10 rounded-md text-white
             ${

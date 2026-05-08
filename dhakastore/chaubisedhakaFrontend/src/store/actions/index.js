@@ -794,7 +794,6 @@ export const updateProductImageFromDashboard =
     try {
       setLoader(true);
 
-      // Construct URL correctly - no extra slash issues
       const baseUrl = isAdmin ? "/admin/products" : "/api/seller/products";
       const url = `${baseUrl}/${productId}/image`;
 
@@ -813,8 +812,7 @@ export const updateProductImageFromDashboard =
       toast.success("Image upload successful");
       setLoader(false);
       setOpen(false);
-
-      // Refresh the dashboard products
+      s;
       await dispatch(dashboardProductsAction(isAdmin, queryString));
     } catch (error) {
       console.error("Image upload error:", error);
@@ -991,7 +989,6 @@ export const deleteOrderFromDashboard =
 
       toast.success("Order deleted successfully");
 
-      // re-fetch orders after deletion
       await dispatch(getOrdersForDashboard("", isAdmin));
     } catch (error) {
       console.log(error);
@@ -1050,7 +1047,6 @@ export const fetchFiltersAction = () => async (dispatch) => {
   }
 };
 
-// Shoe Cleaner Category Actions
 export const fetchShoeCleanerCategories =
   (queryString = "") =>
   async (dispatch) => {
@@ -1143,7 +1139,6 @@ export const deleteShoeCleanerCategory =
     }
   };
 
-// Shoe Cleaner Products Actions
 export const fetchShoeCleanerProducts =
   (queryString = "") =>
   async (dispatch) => {
@@ -1178,7 +1173,7 @@ export const createShoeCleanerProduct =
     try {
       if (setLoader) setLoader(true);
       dispatch({ type: "SHOE_CLEANER_PRODUCTS_LOADER" });
-      // Use the specific singular endpoint provided by the user
+
       await api.post("/admin/shoe-cleaner/product", sendData);
       dispatch({ type: "SHOE_CLEANER_PRODUCTS_SUCCESS" });
       reset();

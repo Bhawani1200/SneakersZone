@@ -1,9 +1,10 @@
 import React from "react";
 import { formatPrice, formatPriceCalculation } from "../../utils/formatPrice";
+import { formatImageUrl } from "../../utils/formatImageUrl";
 
 const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
   return (
-    <div className="container mx-auto px-4 mb-8">
+    <div className="container mx-auto px-4 mt-14 mb-8">
       <div className="flex flex-wrap">
         <div className="w-full lg:w-8/12 pr-4">
           <div className="space-y-4">
@@ -55,9 +56,7 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
                 {cart?.map((item) => (
                   <div key={item?.productId} className="flex items-center">
                     <img
-                      src={`${import.meta.env.VITE_BACK_END_URL}/images/${
-                        item?.image
-                      }`}
+                      src={formatImageUrl(item?.image)}
                       // alt="Product"
                       className="w-12 h-12 rounded-sm"
                     ></img>
@@ -66,7 +65,8 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
                       <p>
                         {item?.quantity} x रु.{item?.specialPrice}=रु.
                         {formatPriceCalculation(
-                          item?.quantity,item?.specialPrice
+                          item?.quantity,
+                          item?.specialPrice,
                         )}
                       </p>
                     </div>
