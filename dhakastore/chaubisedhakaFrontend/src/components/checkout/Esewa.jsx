@@ -7,19 +7,18 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
   const [loading, setLoading] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState(null);
 
-  // Generate and download receipt image
   const downloadReceipt = async (transactionId) => {
     try {
-      const response = await axios.get(`/api/payments/esewa/receipt/${transactionId}`);
+      const response = await axios.get(
+        `/api/payments/esewa/receipt/${transactionId}`,
+      );
       const receiptData = response.data;
-      
-      // Create receipt HTML
+
       const receiptHtml = generateReceiptHTML(receiptData);
-      
-      // Create blob and download
-      const blob = new Blob([receiptHtml], { type: 'text/html' });
+
+      const blob = new Blob([receiptHtml], { type: "text/html" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `receipt_${transactionId}.html`;
       document.body.appendChild(link);
@@ -142,14 +141,14 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
         orderId: orderId,
         productName: productName,
         returnUrl: `${window.location.origin}/payment/success`,
-        failureUrl: `${window.location.origin}/payment/failure`
+        failureUrl: `${window.location.origin}/payment/failure`,
       });
 
       if (response.data.paymentUrl) {
         window.location.href = response.data.paymentUrl;
         setPaymentUrl(response.data.paymentUrl);
       }
-      
+
       onSuccess && onSuccess(response.data);
     } catch (error) {
       console.error("Payment initiation failed:", error);
@@ -168,7 +167,7 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
       totalAmount: amount || 1000,
       paymentMethod: "ESEWA",
       paymentStatus: "COMPLETED",
-      paymentDate: new Date().toISOString()
+      paymentDate: new Date().toISOString(),
     };
     downloadReceipt(demoReceipt.transactionId);
   };
@@ -188,9 +187,9 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
         {/* Header with Esewa Logo */}
         <div className="bg-green-600 p-6 text-white text-center">
           <div className="flex justify-center mb-4">
-            <img 
-              src="/images/esewa-logo.svg" 
-              alt="Esewa" 
+            <img
+              src="/images/esewa-logo.svg"
+              alt="Esewa"
               className="h-16 w-auto bg-white rounded-lg p-2"
               onError={(e) => {
                 e.target.src = "https://via.placeholder.com/80?text=Esewa";
@@ -205,13 +204,17 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
         <div className="p-6">
           <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-6">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-gray-600 dark:text-gray-400">Order Amount:</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                Order Amount:
+              </span>
               <span className="text-2xl font-bold text-green-600">
                 Rs. {amount?.toFixed(2) || "0.00"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Payment Method:</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                Payment Method:
+              </span>
               <span className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4" />
                 Esewa Wallet
@@ -219,11 +222,44 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
             </div>
           </div>
 
+          {/* QR Code Section */}
+          <div className="mb-6 p-4 border-2 border-dashed border-green-200 dark:border-green-900 rounded-2xl bg-white dark:bg-zinc-800 flex flex-col items-center">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
+              Scan to Pay Directly
+            </h3>
+            <div className="relative group">
+              <img
+                src="/images/esewa-qr.png"
+                alt="Esewa QR Code"
+                className="w-48 h-48 object-contain rounded-lg shadow-sm mb-3"
+                onError={(e) => {
+                  e.target.src =
+                    "https://via.placeholder.com/200?text=Scan+to+Pay";
+                }}
+              />
+              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none"></div>
+            </div>
+            <button
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = "/images/esewa-qr.png";
+                link.download = "esewa-qr-code.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              className="flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold text-sm transition-colors py-2 px-4 rounded-full bg-green-50 hover:bg-green-100"
+            >
+              <Download className="w-4 h-4" />
+              Download QR Code
+            </button>
+          </div>
+
           {/* Payment Instructions */}
           <Alert severity="info" className="mb-4">
             <AlertTitle>How to pay with Esewa?</AlertTitle>
             <ul className="text-sm list-disc list-inside mt-2 space-y-1">
-              <li>Click on "Pay with Esewa" button</li>
+              <li>Scan the QR code above or click "Pay with Esewa"</li>
               <li>You'll be redirected to Esewa payment page</li>
               <li>Enter your Esewa registered mobile number</li>
               <li>Confirm payment using OTP/MPIN</li>
@@ -267,9 +303,9 @@ const Esewa = ({ orderId, amount, productName, onSuccess, onFailure }) => {
               Download Esewa Logo
             </button>
 
-            <Alert variant="outlined" severity="warning" className="mt-4">
-              <AlertTitle>Test Mode</AlertTitle>
-              Use test credentials: <strong>9806800001</strong> (OTP: 123456)
+            <Alert variant="outlined" severity="info" className="mt-4">
+              <AlertTitle>Esewa Number</AlertTitle>
+              Use esewa number: <strong>9806800001</strong>
             </Alert>
           </div>
         </div>
