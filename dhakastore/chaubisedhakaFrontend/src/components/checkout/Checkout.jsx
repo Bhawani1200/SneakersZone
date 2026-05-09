@@ -49,41 +49,47 @@ const Checkout = () => {
   };
 
   return (
-    <div className="pt-60 pb-14 min-h-[calc(100vh-100px)]">
-      <Stepper activeStep={activeStep} alternativeLabel className="mt-10">
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      {isLoading ? (
-        <div className="w-[80%] mx-auto py-5">
-          <Skeleton />
-        </div>
-      ) : (
-        <div className="lg:w-[80%] mx-auto py-5">
-          {activeStep === 0 && <AddressInfo address={address} />}
-          {activeStep === 1 && <PaymentMethod />}
-          {activeStep === 2 && (
-            <OrderSummary
-              totalPrice={totalPrice}
-              cart={cart}
-              address={selectedUserCheckoutAddress}
-              paymentMethod={paymentMethod}
-            />
-          )}
-          {activeStep == 3 && (
-            <>
-              {paymentMethod === "Stripe" ? (
-                <StripePayment />
-              ) : (
-                <PaypalPayment />
-              )}
-            </>
-          )}
-        </div>
-      )}
+    <div className="pt-32 pb-14 min-h-[calc(100vh-100px)] flex flex-col">
+      <div className="w-full max-w-7xl mx-auto px-4">
+        <Stepper activeStep={activeStep} alternativeLabel className="mt-10">
+          {steps.map((label, index) => (
+            <Step key={index}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center w-full py-10">
+        {isLoading ? (
+          <div className="w-full max-w-5xl px-4">
+            <Skeleton />
+          </div>
+        ) : (
+          <div className="w-full px-4 flex justify-center">
+            {activeStep === 0 && <AddressInfo address={address} />}
+            {activeStep === 1 && <PaymentMethod />}
+            {activeStep === 2 && (
+              <OrderSummary
+                totalPrice={totalPrice}
+                cart={cart}
+                address={selectedUserCheckoutAddress}
+                paymentMethod={paymentMethod}
+              />
+            )}
+            {activeStep == 3 && (
+              <>
+                {paymentMethod === "Stripe" ? (
+                  <StripePayment />
+                ) : (
+                  <PaypalPayment />
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       <div
         className="flex justify-between items-center px-4 sticky z-50 h-24 bottom-0 bg-white w-full py-4 border-t border-slate-200"
         style={{ boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)" }}

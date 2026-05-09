@@ -23,7 +23,7 @@ const AddressInfo = ({ address }) => {
 
   const deleteAddressHandler = () => {
     dispatch(
-      deleteUserAddress(toast, selectedAddress?.addressId, setOpenDeleteModal)
+      deleteUserAddress(toast, selectedAddress?.addressId, setOpenDeleteModal),
     );
   };
 
@@ -31,9 +31,9 @@ const AddressInfo = ({ address }) => {
   const { isLoading, btnLoader } = useSelector((state) => state.auth);
 
   return (
-    <div className="pt-4 ">
+    <div className="w-full">
       {noAddressExist ? (
-        <div className="p-6 rounded-lg max-w-md mx-auto flex flex-col items-center justify-center">
+        <div className="p-6 rounded-lg max-w-3xl mx-auto flex flex-col items-center justify-center">
           <FaAddressBook size={50} className="text-gray-500 mb-4" />
           <h1 className="mb-2 text-slate-900 text-center font-semibold text-2xl">
             No Address Added Yet.
@@ -50,17 +50,17 @@ const AddressInfo = ({ address }) => {
           </button>
         </div>
       ) : (
-        <div className="relative p-6 rounded-lg max-w-md mx-auto">
-          <h1 className="text-slate-800 text-center font-bold text-2xl">
+        <div className="relative p-6 rounded-lg max-w-3xl mx-auto">
+          <h1 className="w-full text-slate-800 text-center font-bold text-3xl mb-10">
             Select Address
           </h1>
           {isLoading ? (
-            <div className="px-8 py-4">
+            <div className="w-full max-w-md mx-auto py-8">
               <Skeleton />
             </div>
           ) : (
             <>
-              <div className="space-y-4 pt-6">
+              <div className="flex flex-col items-center space-y-8 pt-6 w-full">
                 <AddressList
                   addresses={address}
                   setSelectedAddress={setSelectedAddress}

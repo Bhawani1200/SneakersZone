@@ -54,13 +54,13 @@ const AddressList = ({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div className="flex flex-wrap justify-center gap-6 w-full">
       {addresses.map((address) => (
         <div
           key={address.addressId}
           onClick={() => handleAddressSelection(address)}
           onDoubleClick={handleAddressDeselection}
-          className={`group relative rounded-xl transition-all duration-200 cursor-pointer overflow-hidden
+          className={`group relative rounded-xl transition-all duration-200 cursor-pointer overflow-hidden w-full max-w-md
             ${
               selectedUserCheckoutAddress?.addressId === address.addressId
                 ? "ring-2 ring-green-500 shadow-lg"
