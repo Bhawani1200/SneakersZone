@@ -105,7 +105,7 @@ const SearchBar = ({ isMobile = false }) => {
     saveToHistory(searchTerm);
     setKeyword(searchTerm);
     setShowDropdown(false);
-    navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
+    navigate(`/products?keyword=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -115,6 +115,12 @@ const SearchBar = ({ isMobile = false }) => {
   const handleResultClick = (productId) => {
     setShowDropdown(false);
     navigate(`/product/${productId}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(keyword);
+    }
   };
 
   const clearSearch = () => {
@@ -145,6 +151,7 @@ const SearchBar = ({ isMobile = false }) => {
           type="text"
           value={keyword}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onFocus={() => keyword && setShowDropdown(true)}
           placeholder={
             isMobile

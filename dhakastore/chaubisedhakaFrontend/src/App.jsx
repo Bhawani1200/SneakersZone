@@ -11,6 +11,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Checkout from "./components/checkout/Checkout";
 import AdminLayout from "./components/admin/AdminLayout";
+import PaymentSuccess from "./components/checkout/PaymentSuccess";
 import DashBoard from "./components/admin/dashboard/DashBoard";
 import AdminProduct from "./components/admin/product/AdminProduct";
 import Sellers from "./components/admin/sellers/Sellers";
@@ -63,6 +64,15 @@ function App() {
 
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
+                <Route
+                  path="/payment/failure"
+                  element={
+                    <div className="flex justify-center items-center h-screen">
+                      Payment Failed
+                    </div>
+                  }
+                />
               </Route>
             </Route>
 

@@ -100,9 +100,11 @@ export const useDashboardProductFilter = () => {
     const pageSize = searchParams.get("pageSize")
       ? Number(searchParams.get("pageSize"))
       : 10;
+    const keyword = searchParams.get("keyword") || "";
 
     params.set("pageNumber", currentPage - 1);
     params.set("pageSize", pageSize);
+    if (keyword) params.set("keyword", keyword);
 
     const queryString = params.toString();
     dispatch(dashboardProductsAction(isAdmin, queryString));

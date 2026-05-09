@@ -101,15 +101,87 @@ const AdminProduct = () => {
     );
   };
 
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("keyword") || "");
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      params.set("keyword", searchTerm);
+    } else {
+      params.delete("keyword");
+    }
+    params.set("page", "1"); // Reset to first page on search
+    navigate(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div>
-      <div className="pt-6 pb-10 flex justify-end">
+      <div className="pt-6 pb-10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="relative w-full max-w-md group"
+        >
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search products by name, brand or category..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-300"
+          />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchTerm("");
+                params.delete("keyword");
+                navigate(`${pathname}?${params.toString()}`);
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </form>
+
         <button
           onClick={() => setOpenAddModal(true)}
-          className="bg-blue-600 hover:bg-blue-800 text-white font-semibold py-2 px-4 flex items-center gap-2 rounded-md shadow-md transition-colors hover:text-slate-300 duration-300"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 flex items-center gap-2 rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
         >
           <MdAddShoppingCart className="text-xl" />
-          Add Product
+          <span>Add New Product</span>
         </button>
       </div>
 

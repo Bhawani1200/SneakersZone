@@ -156,6 +156,7 @@ const Products = () => {
   const colorFilter = searchParams.get("color");
   const sizeFilter = searchParams.get("size");
   const brandFilter = searchParams.get("brand");
+  const keyword = searchParams.get("keyword");
 
   const filteredProducts = products?.filter((item) => {
     let matchesColor = true;
@@ -183,7 +184,16 @@ const Products = () => {
     return matchesColor && matchesSize && matchesBrand;
   });
 
-  const activeFiltersStr = [genderFilter, categoryFilter, colorFilter, sizeFilter, brandFilter].filter(Boolean).join(" | ");
+  const activeFiltersStr = [
+    keyword ? `Search: ${keyword}` : null,
+    genderFilter,
+    categoryFilter,
+    colorFilter,
+    sizeFilter,
+    brandFilter,
+  ]
+    .filter(Boolean)
+    .join(" | ");
 
   useProductFilter();
 
