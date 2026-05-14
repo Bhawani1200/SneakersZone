@@ -1,5 +1,12 @@
 import React from "react";
-import { ShoppingCart, User, Hash, Calendar, Smartphone } from "lucide-react";
+import {
+  ShoppingCart,
+  User,
+  Hash,
+  Calendar,
+  Smartphone,
+  Receipt,
+} from "lucide-react";
 
 const ReceiptPreview = ({ cart, amount, orderId, user, paymentMethod }) => {
   return (
