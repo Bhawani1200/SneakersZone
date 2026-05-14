@@ -10,9 +10,15 @@ import BrandLogosStrip from "../Banner/Brands";
 import { PromotionalBanners } from "../Banner/PromotionalBanner";
 import Testimonials from "../Testimonials/Testimonials";
 import Spinners from "../shared/Spinners";
+import ServiceFeatures from "../Banner/ServiceFeatures";
+import OfferBanners from "../Banner/OfferBanners";
 
 const Home = () => {
-  const { products: regularProducts, loading, error } = useSelector((state) => state.products);
+  const {
+    products: regularProducts,
+    loading,
+    error,
+  } = useSelector((state) => state.products);
   const { shoeCleanerProducts } = useSelector((state) => state.shoeCleaner);
   const dispatch = useDispatch();
 
@@ -48,7 +54,10 @@ const Home = () => {
   }
 
   // Ensure products is an array before filtering (fallback to empty array)
-  const productList = [...(regularProducts || []), ...(shoeCleanerProducts || [])];
+  const productList = [
+    ...(regularProducts || []),
+    ...(shoeCleanerProducts || []),
+  ];
 
   // Safe filtering with optional chaining
   const newLaunchesProducts = productList.filter((p) =>
@@ -64,8 +73,10 @@ const Home = () => {
   return (
     <div className="w-full mx-auto">
       <Banner />
-      <CategoryShowcase />
+      {/* <CategoryShowcase /> */}
+      <ServiceFeatures />
       <NewLaunches products={newLaunchesProducts} />
+      <OfferBanners />
       <FeaturedProducts products={featuredProducts} />
       <Offer products={offerProducts} />
       <BrandLogosStrip />

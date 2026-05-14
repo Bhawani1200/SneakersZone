@@ -114,17 +114,6 @@ const DealsOfTheDay = () => {
             <h2 className="text-4xl md:text-7xl font-black text-gray-900 dark:text-gray-100 uppercase italic tracking-tighter">
               Deals <span className="text-red-600">Of The Day</span>
             </h2>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-3xl mx-auto text-lg md:text-xl leading-relaxed px-4">
-              Unlock{" "}
-              <span className="text-red-600 font-black italic underline decoration-red-600/30 decoration-4 underline-offset-4">
-                unbeatable savings
-              </span>{" "}
-              on our most-wanted items. Don't wait—these{" "}
-              <span className="text-gray-900 dark:text-gray-100 font-black italic">
-                flash deals
-              </span>{" "}
-              are disappearing with every tick of the clock!
-            </p>
           </div>
 
           {/* Countdown Timer */}

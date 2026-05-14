@@ -104,14 +104,7 @@ const Checkout = () => {
 
         {activeStep !== steps.length - 1 && (
           <button
-            disabled={
-              errorMessage ||
-              (activeStep === 0
-                ? !selectedUserCheckoutAddress
-                : activeStep === 1
-                  ? !paymentMethod
-                  : false)
-            }
+            disabled={!!errorMessage}
             className={`bg-blue-500 px-6 font-semibold h-10 rounded-md text-white
             ${
               errorMessage ||

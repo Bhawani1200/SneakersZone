@@ -185,18 +185,6 @@ const FeaturedProducts = () => {
                 Featured <span className="text-blue-600">Products</span>
               </h2>
             </div>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-center px-4">
-              Step into the future of footwear. Explore our handpicked
-              collection where{" "}
-              <span className="text-gray-900 dark:text-gray-100 font-bold italic">
-                elite performance
-              </span>{" "}
-              seamlessly blends with{" "}
-              <span className="text-blue-600 font-bold italic">
-                cutting-edge design
-              </span>{" "}
-              for the ultimate street statement.
-            </p>
           </div>
 
           {/* Filter Tabs - Centered with Horizontal Scroll on Mobile */}
