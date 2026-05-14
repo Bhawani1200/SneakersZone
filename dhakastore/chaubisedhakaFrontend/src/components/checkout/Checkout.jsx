@@ -8,7 +8,7 @@ import Skeleton from "../shared/Skeleton";
 import ErrorPage from "../shared/ErrorPage";
 import OrderSummary from "./OrderSummary";
 import PaymentMethod from "./PaymentMethod";
-import StripePayment from "./StripePayment";
+import StripePayment from "./Khalti";
 import PaypalPayment from "./Esewa";
 
 const steps = ["Address", "Payment Method", "Order Summary", "Payment"];
@@ -51,7 +51,7 @@ const Checkout = () => {
   return (
     <div className="pt-32 pb-14 min-h-[calc(100vh-100px)] flex flex-col">
       <div className="w-full max-w-7xl mx-auto px-4">
-        <Stepper activeStep={activeStep} alternativeLabel className="mt-10">
+        <Stepper activeStep={activeStep} alternativeLabel className="mt-20">
           {steps.map((label, index) => (
             <Step key={index}>
               <StepLabel>{label}</StepLabel>

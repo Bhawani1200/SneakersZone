@@ -2,7 +2,7 @@ import { Alert } from "@mui/material";
 import { CheckIcon } from "lucide-react";
 import React from "react";
 
-const StripePayment = () => {
+const KhaliPayment = () => {
   return (
     <div>
       <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
@@ -12,4 +12,4 @@ const StripePayment = () => {
   );
 };
 
-export default StripePayment;
+export default KhaliPayment;
