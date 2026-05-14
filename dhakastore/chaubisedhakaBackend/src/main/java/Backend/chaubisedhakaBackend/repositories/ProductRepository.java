@@ -25,7 +25,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> , JpaSpec
 
     Page<Product> findByGender(Gender gender, Pageable pageable);
 
-
     // Admin specific methods
     boolean existsByProductName(String productName);
 
