@@ -1,37 +1,39 @@
 import React from "react";
-import { Recycle, ShieldCheck, Truck, Leaf } from "lucide-react";
+import { ShieldCheck, Truck, Award, Headphones } from "lucide-react";
 
 const ServiceFeatures = () => {
   const features = [
     {
       icon: (
-        <Recycle className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-blue-600 dark:text-blue-500" />
+        <Truck className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300" />
       ),
-      title: "Sustainable Materials",
-      description:
-        "We believe great style shouldn't come at the planet's expense.",
+      title: "Fast Delivery",
+      description: "Quick shipping with safe doorstep delivery.",
+      bgClass: "bg-blue-50/50 hover:bg-blue-100 dark:bg-blue-900/10 dark:hover:bg-blue-900/30 border-blue-100 dark:border-blue-800/50",
     },
     {
       icon: (
-        <ShieldCheck className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-blue-600 dark:text-blue-500" />
+        <ShieldCheck className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
       ),
-      title: "Warranty Included",
-      description: "Every pair comes with a hassle-free 6-month warranty.",
+      title: "Easy Returns",
+      description: "Simple 7-day return and exchange policy.",
+      bgClass: "bg-emerald-50/50 hover:bg-emerald-100 dark:bg-emerald-900/10 dark:hover:bg-emerald-900/30 border-emerald-100 dark:border-emerald-800/50",
     },
     {
       icon: (
-        <Truck className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-blue-600 dark:text-blue-500" />
+        <Award className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform duration-300" />
       ),
-      title: "Delivery & Shipping",
-      description: "Your shoes will be dispatched within 1-2 business days.",
+      title: "Premium Quality",
+      description: "Comfortable shoes made with durable materials.",
+      bgClass: "bg-amber-50/50 hover:bg-amber-100 dark:bg-amber-900/10 dark:hover:bg-amber-900/30 border-amber-100 dark:border-amber-800/50",
     },
     {
       icon: (
-        <Leaf className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-blue-600 dark:text-blue-500" />
+        <Headphones className="w-10 h-10 md:w-14 md:h-14 mb-4 md:mb-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300" />
       ),
-      title: "Eco-Friendly Fabrics",
-      description:
-        "Crafted with sustainability in mind, our shoes feature eco-friendly fabrics.",
+      title: "24/7 Support",
+      description: "Friendly customer support whenever you need help.",
+      bgClass: "bg-purple-50/50 hover:bg-purple-100 dark:bg-purple-900/10 dark:hover:bg-purple-900/30 border-purple-100 dark:border-purple-800/50",
     },
   ];
 
@@ -42,13 +44,13 @@ const ServiceFeatures = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex flex-col items-center sm:items-start text-center sm:text-left p-4 sm:p-6 rounded-2xl hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors duration-300"
+              className={`group flex flex-col items-center sm:items-start text-center sm:text-left p-6 sm:p-8 rounded-2xl border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${feature.bgClass}`}
             >
               {feature.icon}
               <h3 className="text-xl md:text-2xl font-black text-gray-900 dark:text-gray-100 mb-3 tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-base md:text-lg text-rose-400 dark:text-gray-400 leading-relaxed font-large">
+              <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                 {feature.description}
               </p>
             </div>
