@@ -29,12 +29,12 @@ const OfferBanners = () => {
                 <h3 className="text-white text-3xl font-bold mb-4 max-w-xs leading-tight">
                   Explore All <br /> Formal Shoes
                 </h3>
-                <Link
-                  to="/products"
+                <button
+                  onClick={() => document.getElementById("offer-section")?.scrollIntoView({ behavior: "smooth" })}
                   className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-md font-medium hover:bg-gray-100 transition-colors"
                 >
                   Shop Now <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -61,12 +61,12 @@ const OfferBanners = () => {
                 <h3 className="text-white text-3xl font-bold mb-4 max-w-xs leading-tight">
                   Grab The Latest <br /> Running Shoes
                 </h3>
-                <Link
-                  to="/products"
+                <button
+                  onClick={() => document.getElementById("offer-section")?.scrollIntoView({ behavior: "smooth" })}
                   className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-md font-medium hover:bg-gray-100 transition-colors"
                 >
                   Shop Now <ArrowRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             </div>
           </div>

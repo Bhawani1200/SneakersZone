@@ -269,6 +269,7 @@ const PRODUCT_SECTIONS = [
   { id: "newLaunches", label: "New Launches" },
   { id: "offer", label: "Offer" },
   { id: "featured", label: "Featured Products" },
+  { id: "bestSeller", label: "Best Seller" },
 ];
 
 const AddProductForm = ({ setOpen, product, update = false }) => {

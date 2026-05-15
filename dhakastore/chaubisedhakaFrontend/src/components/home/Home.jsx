@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Banner from "../Banner/Banner";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
+import BestSeller from "../Offer/BestSeller";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, fetchShoeCleanerProducts } from "../../store/actions";
 import Offer from "../Offer/Offer";
@@ -80,7 +81,9 @@ const Home = () => {
       <FeaturedProducts products={featuredProducts} />
       <Offer products={offerProducts} />
       <BrandLogosStrip />
+
       <PromotionalBanners />
+      <BestSeller />
       <Testimonials />
     </div>
   );

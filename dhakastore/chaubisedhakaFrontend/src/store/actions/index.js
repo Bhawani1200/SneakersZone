@@ -812,7 +812,6 @@ export const updateProductImageFromDashboard =
       toast.success("Image upload successful");
       setLoader(false);
       setOpen(false);
-      s;
       await dispatch(dashboardProductsAction(isAdmin, queryString));
     } catch (error) {
       console.error("Image upload error:", error);
