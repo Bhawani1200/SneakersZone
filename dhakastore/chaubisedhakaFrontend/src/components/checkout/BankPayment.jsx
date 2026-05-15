@@ -8,10 +8,11 @@ import {
   Receipt,
   Download,
   ShoppingCart,
+  Landmark,
 } from "lucide-react";
 import ReceiptPreview from "./ReceiptPreview";
 
-const KhaltiPayment = ({
+const BankPayment = ({
   orderId,
   amount,
   productName,
@@ -22,7 +23,7 @@ const KhaltiPayment = ({
   const [paymentUrl, setPaymentUrl] = useState(null);
   const [step, setStep] = useState(1);
   const [recentTransactions, setRecentTransactions] = useState(() => {
-    const saved = localStorage.getItem("khalti_transactions");
+    const saved = localStorage.getItem("bank_transactions");
     return saved ? JSON.parse(saved) : [];
   });
 
@@ -42,10 +43,7 @@ const KhaltiPayment = ({
   const trackTransaction = (details) => {
     const newTransactions = [details, ...recentTransactions].slice(0, 5);
     setRecentTransactions(newTransactions);
-    localStorage.setItem(
-      "khalti_transactions",
-      JSON.stringify(newTransactions),
-    );
+    localStorage.setItem("bank_transactions", JSON.stringify(newTransactions));
   };
 
   const downloadReceipt = async (transactionId, localData = null) => {
@@ -53,7 +51,7 @@ const KhaltiPayment = ({
       let receiptData = localData;
       if (!receiptData) {
         const response = await axios.get(
-          `/api/payments/khalti/receipt/${transactionId}`,
+          `/api/payments/bank/receipt/${transactionId}`,
         );
         receiptData = response.data;
       }
@@ -109,14 +107,14 @@ const KhaltiPayment = ({
           }
           .header {
             text-align: center;
-            border-bottom: 2px solid #5c2d91;
+            border-bottom: 2px solid #2563eb;
             padding-bottom: 20px;
             margin-bottom: 20px;
           }
           .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #5c2d91;
+            color: #2563eb;
           }
           .details {
             margin: 20px 0;
@@ -131,16 +129,16 @@ const KhaltiPayment = ({
             font-weight: bold;
             margin-top: 20px;
             padding-bottom: 5px;
-            border-bottom: 1px solid #5c2d91;
-            color: #5c2d91;
+            border-bottom: 1px solid #2563eb;
+            color: #2563eb;
           }
           .total {
             font-size: 18px;
             font-weight: bold;
-            color: #5c2d91;
+            color: #2563eb;
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px solid #5c2d91;
+            border-top: 2px solid #2563eb;
           }
           .footer {
             text-align: center;
@@ -215,7 +213,7 @@ const KhaltiPayment = ({
       customerName: user?.username || "Guest",
       customerEmail: user?.email || "N/A",
       totalAmount: dynamicAmount,
-      paymentMethod: "KHALTI (Pending)",
+      paymentMethod: "BANK TRANSFER (Pending)",
       paymentStatus: "INITIATED",
       paymentDate: new Date().toISOString(),
       items: cart,
@@ -225,8 +223,8 @@ const KhaltiPayment = ({
 
   const downloadLogo = () => {
     const link = document.createElement("a");
-    link.href = "/images/khalti-qr-code.png";
-    link.download = "khalti-qr-code.png";
+    link.href = "/images/bank-qr-code.png";
+    link.download = "bank-qr-code.png";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -235,20 +233,15 @@ const KhaltiPayment = ({
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-6">
       <div className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-xl overflow-hidden">
-        {/* Header with Khalti Logo */}
-        <div className="bg-purple-600 p-6 text-white text-center">
+        {/* Header with Bank Logo */}
+        <div className="bg-blue-600 p-6 text-white text-center">
           <div className="flex justify-center mb-4">
-            <img
-              src="/images/khalti-logo.svg"
-              alt="Khalti"
-              className="h-16 w-auto bg-white rounded-lg p-2"
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/80?text=Khalti";
-              }}
-            />
+            <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+              <Landmark className="w-8 h-8 text-blue-600" />
+            </div>
           </div>
-          <h2 className="text-2xl font-bold">Khalti Payment</h2>
-          <p className="text-purple-100 mt-2">Secure & Fast Payment</p>
+          <h2 className="text-2xl font-bold">Bank Transfer</h2>
+          <p className="text-blue-100 mt-2">Secure & Direct Payment</p>
         </div>
 
         {/* Payment Details */}
@@ -257,11 +250,11 @@ const KhaltiPayment = ({
             <div className="animate-in fade-in duration-300">
               {/* Payment Instructions */}
               <Alert severity="info" className="mb-4">
-                <AlertTitle>How to pay with Khalti?</AlertTitle>
+                <AlertTitle>How to pay with Bank Transfer?</AlertTitle>
                 <ul className="text-sm list-disc list-inside mt-2 space-y-1">
-                  <li>Click "Pay with Khalti" to review your order</li>
+                  <li>Click "Pay with Bank" to review your order</li>
                   <li>Confirm your details on the receipt</li>
-                  <li>Scan the provided QR code to pay manually</li>
+                  <li>Transfer the amount to the provided bank account</li>
                   <li>Click "I have completed the payment" to finish</li>
                 </ul>
               </Alert>
@@ -270,15 +263,15 @@ const KhaltiPayment = ({
               <div className="space-y-3 mt-6">
                 <button
                   onClick={() => setStep(2)}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <CreditCard className="w-5 h-5" />
-                  Pay with Khalti
+                  Pay with Bank
                 </button>
 
                 <button
                   onClick={downloadOrderReceipt}
-                  className="w-full border-2 border-purple-600 text-purple-600 dark:text-purple-400 font-bold py-3 px-6 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-bold py-3 px-6 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all flex items-center justify-center gap-2"
                 >
                   <Receipt className="w-5 h-5" />
                   Download Order Summary Receipt
@@ -327,14 +320,14 @@ const KhaltiPayment = ({
                 amount={dynamicAmount}
                 orderId={dynamicOrderId}
                 user={user}
-                paymentMethod="Khalti Wallet"
+                paymentMethod="Bank Transfer"
               />
 
               <div className="space-y-3 mt-6">
                 <button
                   onClick={handleConfirmAndPay}
                   disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -368,20 +361,20 @@ const KhaltiPayment = ({
                 <AlertTitle className="font-bold">
                   Integration in Progress
                 </AlertTitle>
-                We apologize, but our automated Khalti integration is currently
-                under development. Please complete your payment manually by
-                scanning the QR code below.
+                We apologize, but our automated Bank Transfer integration is
+                currently under development. Please complete your payment
+                manually using the bank details or QR code below.
               </Alert>
 
               {/* QR Code Section */}
-              <div className="mb-6 p-4 border-2 border-dashed border-purple-200 dark:border-purple-900 rounded-2xl bg-white dark:bg-zinc-800 flex flex-col items-center">
+              <div className="mb-6 p-4 border-2 border-dashed border-blue-200 dark:border-blue-900 rounded-2xl bg-white dark:bg-zinc-800 flex flex-col items-center">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                   Scan to Pay Directly
                 </h3>
                 <div className="relative group">
                   <img
-                    src="/images/khalti-qr-code.png"
-                    alt="Khalti QR Code"
+                    src="/images/bank-qr-code.png"
+                    alt="Bank QR Code"
                     className="w-48 h-48 object-contain rounded-lg shadow-sm mb-3"
                     onError={(e) => {
                       e.target.src =
@@ -391,7 +384,7 @@ const KhaltiPayment = ({
                 </div>
                 <button
                   onClick={downloadLogo}
-                  className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold text-sm transition-colors py-2 px-4 rounded-full bg-purple-50 hover:bg-purple-100"
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors py-2 px-4 rounded-full bg-blue-50 hover:bg-blue-100"
                 >
                   <Download className="w-4 h-4" />
                   Download QR Code
@@ -399,8 +392,18 @@ const KhaltiPayment = ({
               </div>
 
               <Alert variant="outlined" severity="info" className="mt-4 mb-6">
-                <AlertTitle>Khalti Number</AlertTitle>
-                Use khalti number: <strong>9806800001</strong>
+                <AlertTitle>Bank Details</AlertTitle>
+                <div className="mt-2 text-sm">
+                  <p>
+                    <strong>Bank:</strong> Global IME Bank
+                  </p>
+                  <p>
+                    <strong>Account Name:</strong> CHAUBISE DHAKA
+                  </p>
+                  <p>
+                    <strong>Account No:</strong> 012345678901234
+                  </p>
+                </div>
               </Alert>
 
               <button
@@ -415,7 +418,7 @@ const KhaltiPayment = ({
                   // Optionally redirect to success manually if onSuccess doesn't handle it
                   window.location.href = `${window.location.origin}/payment/success`;
                 }}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 I have completed the payment
               </button>
@@ -427,4 +430,4 @@ const KhaltiPayment = ({
   );
 };
 
-export default KhaltiPayment;
+export default BankPayment;
