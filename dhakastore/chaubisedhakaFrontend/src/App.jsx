@@ -19,7 +19,11 @@ import Category from "./components/admin/categories/Category";
 import Orders from "./components/admin/orders/Orders";
 import ShoeCleaner from "./components/admin/shoecleaner/ShoeCleaner";
 import ShoeCleanerCategory from "./components/admin/shoecleaner/ShoeCleanerCategory";
+import Offers from "./components/admin/offers/Offers";
 import Navigation from "./components/Navbar/Navigation";
+
+
+
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
 import NewLaunches from "./components/Category/NewLaunches";
@@ -84,7 +88,11 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route path="" element={<DashBoard />} />
                 <Route path="products" element={<AdminProduct />} />
+                <Route path="offers" element={<Offers />} />
                 <Route path="sellers" element={<Sellers />} />
+
+
+
                 <Route path="shoe-cleaner" element={<ShoeCleaner />} />
                 <Route path="shoe-cleaner-category" element={<ShoeCleanerCategory />} />
                 <Route path="orders" element={<Orders />} />

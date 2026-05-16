@@ -6,7 +6,9 @@ export const adminProductTableColumn = (
   handleDelete,
   handleImageUpload,
   handleProductView,
+  handleToggleSection,
 ) => [
+
   {
     disableColumnMenu: true,
     sortable: false,
@@ -155,6 +157,46 @@ export const adminProductTableColumn = (
       );
     },
   },
+  {
+    field: "isOffer",
+    headerName: "Offer",
+    align: "center",
+    width: 100,
+    editable: false,
+    disableColumnMenu: true,
+    headerClassName: "text-black font-semibold border",
+    cellClassName: "text-slate-700 font-normal border text-center",
+    renderHeader: (params) => <span>Offer</span>,
+    renderCell: (params) => {
+      const sections = params.row.sections || [];
+      const isOffer = Array.isArray(sections)
+        ? sections.includes("offer")
+        : typeof sections === "string"
+          ? sections.includes("offer")
+          : false;
+
+      return (
+        <div className="flex items-center justify-center h-full">
+          <input
+            type="checkbox"
+            checked={isOffer}
+            onChange={() => {
+              if (
+                window.confirm(
+                  `Are you sure you want to ${isOffer ? "remove" : "add"} this product ${isOffer ? "from" : "to"} Special Offers?`,
+                )
+              ) {
+                handleToggleSection(params.row, "offer");
+              }
+            }}
+            className="w-5 h-5 cursor-pointer accent-red-600"
+          />
+        </div>
+      );
+    },
+  },
+
+
   // {
   //   disableColumnMenu: true,
   //   field: "sections",
@@ -769,3 +811,60 @@ export const sellerTableColumns = [
     },
   },
 ];
+
+export const specialOfferTableColumn = (
+  handleEdit,
+  handleDelete,
+  handleImageUpload,
+  handleProductView,
+  handleToggleSection,
+) => [
+  ...adminProductTableColumn(
+    handleEdit,
+    handleDelete,
+    handleImageUpload,
+    handleProductView,
+    handleToggleSection,
+  ).filter((col) => col.field !== "isOffer"),
+  {
+    field: "isOffer",
+    headerName: "Active Offer",
+    align: "center",
+    width: 150,
+    renderHeader: (params) => <span>Enable Offer</span>,
+    renderCell: (params) => {
+      const sections = params.row.sections || [];
+      const isOffer = Array.isArray(sections)
+        ? sections.includes("offer")
+        : typeof sections === "string"
+          ? sections.includes("offer")
+          : false;
+
+      return (
+        <div className="flex items-center justify-center h-full gap-2">
+          <input
+            type="checkbox"
+            id={`offer-${params.row.id}`}
+            checked={isOffer}
+            onChange={() => {
+              const action = isOffer ? "disable" : "enable";
+              if (
+                window.confirm(`Do you want to ${action} this special offer?`)
+              ) {
+                handleToggleSection(params.row, "offer");
+              }
+            }}
+            className="w-5 h-5 cursor-pointer accent-red-600"
+          />
+          <label
+            htmlFor={`offer-${params.row.id}`}
+            className={`text-xs font-bold uppercase ${isOffer ? "text-red-600" : "text-gray-400"}`}
+          >
+            {isOffer ? "Enabled" : "Disabled"}
+          </label>
+        </div>
+      );
+    },
+  },
+];
+

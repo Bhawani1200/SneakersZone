@@ -56,6 +56,11 @@ export const adminNavigation = [
     icon: FaBoxOpen,
   },
   {
+    name: "Special Offers",
+    href: "/admin/offers",
+    icon: FaBoxOpen,
+  },
+  {
     name: "Sellers",
     href: "/admin/sellers",
     icon: FaStore,
