@@ -54,10 +54,10 @@ const ItemContent = ({
   };
 
   return (
-    <div className="grid md:grid-cols-5 grid-cols-4 md:text-lg text-sm gap-4 items-center rounded-md border border-slate-200 lg:px-4 py-4 p-2">
+    <div className="grid md:grid-cols-5 grid-cols-4 md:text-lg text-sm gap-4 items-center rounded-md border border-slate-200 dark:border-zinc-800 lg:px-4 py-4 p-2">
       <div className="md:col-span-2 justify-self-start flex flex-col gap-2">
         <div className="flex md:flex-row flex-col lg:gap-4 sm:gap-3 gap-0 items-start">
-          <h3 className="lg:text-[17px] text-sm text-slate-600 font-semibold">
+          <h3 className="lg:text-[17px] text-sm text-slate-600 dark:text-zinc-300 font-semibold">
             {trauncateText(productName)}
           </h3>
         </div>
@@ -88,11 +88,11 @@ const ItemContent = ({
           </div>
         </div>
       </div>
-      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600">
+      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600 dark:text-zinc-300">
         {formatPrice(Number(specialPrice))}
       </div>
 
-      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600">
+      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600 dark:text-zinc-300">
         <SetQuantity
           quantity={currentQuantity}
           cardCounter={true}
@@ -121,7 +121,7 @@ const ItemContent = ({
         />
       </div>
 
-      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600">
+      <div className="justify-self-center lg:text-[17px] text-sm font-semibold text-slate-600 dark:text-zinc-300">
         {formatPrice(Number(currentQuantity) * Number(specialPrice))}
       </div>
     </div>

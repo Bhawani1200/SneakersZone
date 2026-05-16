@@ -57,7 +57,7 @@ const BestSeller = () => {
   if (products.length === 0) return null;
 
   return (
-    <section className="w-full bg-[#e8ebe4] py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-[#e8ebe4] dark:bg-zinc-950 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-full mx-auto">
         {/* ── Header ── */}
         <div className="flex flex-col items-center justify-center mb-10 md:mb-16 gap-6">
@@ -81,7 +81,7 @@ const BestSeller = () => {
           <button
             onClick={() => scroll(-1)}
             aria-label="Previous launches"
-            className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 backdrop-blur-md border border-black/10 flex items-center justify-center text-gray-800 shadow-xl hover:bg-black/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
+            className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-white shadow-xl hover:bg-black/20 dark:hover:bg-white/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
           >
             <ChevronLeft size={24} />
           </button>
@@ -89,7 +89,7 @@ const BestSeller = () => {
           <button
             onClick={() => scroll(1)}
             aria-label="Next launches"
-            className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 backdrop-blur-md border border-black/10 flex items-center justify-center text-gray-800 shadow-xl hover:bg-black/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
+            className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 dark:bg-white/10 backdrop-blur-md border border-black/10 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-white shadow-xl hover:bg-black/20 dark:hover:bg-white/20 transition-all opacity-0 group-hover/carousel:opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100 hidden sm:flex"
           >
             <ChevronRight size={24} />
           </button>
@@ -97,13 +97,13 @@ const BestSeller = () => {
           <div className="flex sm:hidden absolute inset-x-0 top-1/2 -translate-y-1/2 justify-between px-2 pointer-events-none z-10">
             <button
               onClick={() => scroll(-1)}
-              className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-gray-800 pointer-events-auto"
+              className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/20 backdrop-blur-md flex items-center justify-center text-gray-800 dark:text-white pointer-events-auto"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={() => scroll(1)}
-              className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-gray-800 pointer-events-auto"
+              className="w-10 h-10 rounded-full bg-black/20 dark:bg-white/20 backdrop-blur-md flex items-center justify-center text-gray-800 dark:text-white pointer-events-auto"
             >
               <ChevronRight size={20} />
             </button>
@@ -128,7 +128,7 @@ const BestSeller = () => {
 
         <div className="flex justify-center mt-8 md:mt-10">
           <Link to="/products">
-            <button className="flex items-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full border border-gray-800 text-gray-800 text-sm sm:text-base md:text-lg font-semibold hover:bg-gray-900 hover:text-white transition-colors duration-200">
+            <button className="flex items-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 rounded-full border border-gray-800 dark:border-zinc-300 text-gray-800 dark:text-zinc-300 text-sm sm:text-base md:text-lg font-semibold hover:bg-gray-900 dark:hover:bg-zinc-800 hover:text-white transition-colors duration-200">
               View All
               <ChevronRight size={18} />
             </button>

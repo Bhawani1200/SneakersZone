@@ -49,7 +49,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="pt-32 pb-14 min-h-[calc(100vh-100px)] flex flex-col">
+    <div className="pt-32 pb-14 min-h-[calc(100vh-100px)] flex flex-col bg-white dark:bg-zinc-950">
       <div className="w-full max-w-7xl mx-auto px-4">
         <Stepper activeStep={activeStep} alternativeLabel className="mt-20">
           {steps.map((label, index) => (
@@ -91,7 +91,7 @@ const Checkout = () => {
       </div>
 
       <div
-        className="flex justify-between items-center px-4 sticky z-50 h-24 bottom-0 bg-white w-full py-4 border-t border-slate-200"
+        className="flex justify-between items-center px-4 sticky z-50 h-24 bottom-0 bg-white dark:bg-zinc-950 w-full py-4 border-t border-slate-200 dark:border-zinc-800"
         style={{ boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)" }}
       >
         <Button

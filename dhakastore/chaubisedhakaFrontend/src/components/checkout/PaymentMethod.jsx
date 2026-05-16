@@ -33,7 +33,7 @@ const PaymentMethod = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-5 bg-white shadow-md rounded-lg mt-16 border">
+    <div className="max-w-3xl mx-auto p-5 bg-white dark:bg-zinc-900 shadow-md rounded-lg mt-16 border dark:border-zinc-800">
       <h1 className="font-semibold text-2xl mb-4">Select Payment method</h1>
       <FormControl>
         <FormControl>

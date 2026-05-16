@@ -211,7 +211,7 @@ const Products = () => {
         <div className="flex-1">
           {activeFiltersStr && (
             <div className="mb-4 flex items-center gap-2">
-              <span className="text-sm text-gray-500">Filtering by:</span>
+              <span className="text-sm text-gray-500 dark:text-zinc-400">Filtering by:</span>
               <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full uppercase">
                 {activeFiltersStr}
               </span>
@@ -224,8 +224,8 @@ const Products = () => {
             <Loader />
           ) : errorMessage ? (
             <div className="flex justify-center items-center h-[200px]">
-              <FaExclamationTriangle className="text-slate-800 text-3xl mr-2" />
-              <span className="text-slate-800 text-lg font-medium">
+              <FaExclamationTriangle className="text-slate-800 dark:text-slate-200 text-3xl mr-2" />
+              <span className="text-slate-800 dark:text-slate-200 text-lg font-medium">
                 {errorMessage}
               </span>
             </div>
@@ -234,7 +234,7 @@ const Products = () => {
               {filteredProducts?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[400px] gap-3">
                   <span className="text-5xl">👟</span>
-                  <p className="text-gray-500 font-medium text-lg">
+                  <p className="text-gray-500 dark:text-zinc-400 font-medium text-lg">
                     No products found for{" "}
                     <span className="text-blue-600 font-bold capitalize">
                       {activeFiltersStr}

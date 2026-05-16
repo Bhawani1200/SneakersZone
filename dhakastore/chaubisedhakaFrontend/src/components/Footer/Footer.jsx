@@ -12,47 +12,44 @@ import {
 export function Footer() {
   return (
     <footer className="bg-zinc-950 text-zinc-300">
-      {/* Main Footer Content */}
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* About Us */}
           <div>
             <h3 className="text-white font-black text-2xl md:text-3xl mb-8 tracking-tight">
-              About Chaubisedhaka
+              About SneakersZone
             </h3>
             <p className="text-lg md:text-xl leading-relaxed mb-8 text-zinc-400">
               Your premier destination for premium footwear. We bring you the
               finest collection of shoes from top brands around the world.
             </p>
             <div className="flex gap-3">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="w-10 h-10 bg-zinc-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
               >
                 <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="w-10 h-10 bg-zinc-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
               >
                 <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="w-10 h-10 bg-zinc-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
               >
                 <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="w-10 h-10 bg-zinc-800 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"
               >
                 <Youtube className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-white font-black text-2xl md:text-3xl mb-8 tracking-tight">
               Quick Links
@@ -174,7 +171,7 @@ export function Footer() {
             <ul className="space-y-5 text-lg md:text-xl">
               <li className="flex items-start gap-3">
                 <MapPin className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" />
-                <span>Thamel, Kathmandu 44600, Nepal</span>
+                <span>CollegeRoad, Dharan Sunsari, Nepal</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-6 h-6 text-blue-500 flex-shrink-0" />
@@ -188,20 +185,17 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Mail className="w-6 h-6 text-blue-500 flex-shrink-0" />
                 <a
-                  href="mailto:info@chaubisedhaka.com"
+                  href="mailto:sneakerszone1980@gmail.com"
                   className="hover:text-blue-400 transition-colors"
                 >
-                  info@chaubisedhaka.com
+                  @sneakerszone1980@gmail.com
                 </a>
               </li>
             </ul>
             <div className="mt-8">
               <p className="text-xl font-bold mb-3 text-white">Store Hours:</p>
               <p className="text-lg text-zinc-400">
-                Mon - Sat: 9:00 AM - 8:00 PM
-              </p>
-              <p className="text-lg text-zinc-400">
-                Sunday: 10:00 AM - 6:00 PM
+                Morning -9:00 AM -Evening- 8:00 PM
               </p>
             </div>
           </div>
@@ -220,11 +214,11 @@ export function Footer() {
                 We Accept:
               </span>
               <div className="flex items-center gap-4">
-                <div className="bg-white px-5 py-2 rounded-lg text-base font-black text-zinc-900 shadow-xl">
-                  VISA
+                <div className="bg-white px-5 py-2 rounded-lg text-base font-black text-[#00A651] shadow-xl">
+                  NABIL BANK
                 </div>
-                <div className="bg-white px-5 py-2 rounded-lg text-base font-black text-zinc-900 shadow-xl">
-                  MASTERCARD
+                <div className="bg-white px-5 py-2 rounded-lg text-base font-black text-[#00529B] shadow-xl">
+                  HIMALAYAN BANK
                 </div>
                 <div className="bg-[#19A139] px-5 py-2 rounded-lg text-base font-black text-white shadow-xl">
                   eSewa

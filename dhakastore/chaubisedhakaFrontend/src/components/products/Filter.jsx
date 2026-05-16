@@ -78,16 +78,16 @@ const Filter = ({ categories }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           type="text"
           placeholder="Search products"
-          className="border border-gray-400 text-slate-800 rounded-md py-2 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
+          className="border border-gray-400 dark:bg-zinc-800 dark:border-zinc-700 text-slate-800 dark:text-zinc-200 dark:placeholder-zinc-500 rounded-md py-2 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-[#1976d2]"
         />
-        <FiSearch className="absolute left-3 text-slate-800 size={20}" />
+        <FiSearch className="absolute left-3 text-slate-800 dark:text-zinc-400 size={20}" />
       </div>
       {/* CATEGORY SELECTION */}
       <div className="flex sm:flex-row flex-col gap-4 items-center">
         <FormControl
           variant="outlined"
           size="small"
-          className="text-slate-800 border-slate-700"
+          className="text-slate-800 dark:text-zinc-200 border-slate-700 dark:border-zinc-600"
         >
           <InputLabel id="category-select-label">Category</InputLabel>
           <Select
@@ -95,7 +95,7 @@ const Filter = ({ categories }) => {
             value={category}
             onChange={handleCategoryChange}
             label="Category"
-            className="min-w-[120px] text-slate-800 border-slate-700"
+            className="min-w-[120px] text-slate-800 dark:text-zinc-200 border-slate-700 dark:border-zinc-600"
           >
             <MenuItem value="all">All</MenuItem>
             {categories.map((item) => (

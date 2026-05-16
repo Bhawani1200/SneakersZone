@@ -65,7 +65,7 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="pt-[180px] min-h-screen bg-white dark:bg-black">
+      <div className="pt-[180px] min-h-screen bg-white dark:bg-zinc-950">
         <div className="container mx-auto px-4 py-16 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
@@ -98,7 +98,7 @@ const ProductDetails = () => {
     : [];
 
   return (
-    <div className="pt-[180px] min-h-screen bg-white dark:bg-black">
+    <div className="pt-[180px] min-h-screen bg-white dark:bg-zinc-950">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}

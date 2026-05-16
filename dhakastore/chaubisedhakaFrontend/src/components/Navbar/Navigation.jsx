@@ -20,6 +20,7 @@ import { FaTiktok } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
 import UserMenu from "../UserMenu";
 import SearchBar from "./SearchBar";
+import logo2 from "./logo/logo2.png";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -92,20 +93,20 @@ const Navigation = () => {
       <div className="bg-zinc-900 border-b border-zinc-800 text-white py-3 text-sm hidden md:block">
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 flex justify-between items-center font-bold">
           <div className="flex items-center gap-10">
-            <a
+            <Link
               href="tel:+9779800000000"
               className="flex items-center gap-3 hover:text-blue-400 transition-all hover:scale-105"
             >
               <Phone className="w-5 h-5 text-blue-500" />
               <span>+977 9800000000</span>
-            </a>
-            <a
-              href="mailto:info@chaubisedhaka.com"
+            </Link>
+            <Link
+              to="mailto:sneakerszone1980@gmail.com"
               className="flex items-center gap-3 hover:text-blue-400 transition-all hover:scale-105"
             >
               <Mail className="w-5 h-5 text-blue-500" />
-              <span>info@chaubisedhaka.com</span>
-            </a>
+              <span>sneakerszone1980@gmail.com</span>
+            </Link>
           </div>
 
           <div className="flex items-center gap-8">
@@ -135,7 +136,7 @@ const Navigation = () => {
             <div className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition-colors">
               <MapPin className="w-5 h-5 text-blue-500" />
               <span className="tracking-widest capitalize">
-                Dharan-9 AcharyaLine,Nepal
+                Dharan-9 CollegeRoad,Dharan Sunsari
               </span>
             </div>
           </div>
@@ -159,10 +160,12 @@ const Navigation = () => {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tighter uppercase">
-                CHAUBISE<span className="text-blue-600">DHAKA</span>
-              </h1>
+            <Link to="/" className="flex-shrink-0 block">
+              <img
+                src={logo2}
+                alt="Logo"
+                className="h-8 sm:h-14 lg:h-14 w-auto max-w-[140px] sm:max-w-none object-contain"
+              />
             </Link>
 
             {/* Search Bar */}
@@ -182,6 +185,10 @@ const Navigation = () => {
                   <Moon className="w-6 h-6 text-blue-600" />
                 )}
               </button>
+
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+              </div>
 
               <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800 mx-1 hidden sm:block" />
 

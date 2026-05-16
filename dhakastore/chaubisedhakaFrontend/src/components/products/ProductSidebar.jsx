@@ -16,10 +16,10 @@ const FilterSection = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-gray-100 py-4">
+    <div className="border-b border-gray-100 dark:border-zinc-800 py-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center text-left font-bold text-gray-900 hover:text-blue-600 transition-colors"
+        className="w-full flex justify-between items-center text-left font-bold text-gray-900 dark:text-zinc-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
       >
         <span className="text-xl tracking-tight uppercase">{title}</span>
         {isOpen ? (
@@ -259,7 +259,7 @@ const ProductSidebar = () => {
                   onChange={() => handleFilterChange("gender", opt)}
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                 />
-                <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
+                <span className="text-lg text-gray-700 dark:text-zinc-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">
                   {opt}
                 </span>
               </label>
@@ -289,13 +289,13 @@ const ProductSidebar = () => {
                     }
                     className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                   />
-                  <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
+                  <span className="text-lg text-gray-700 dark:text-zinc-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">
                     {cat.categoryName || cat.name}
                   </span>
                 </label>
               ))
             ) : (
-              <p className="text-gray-500">No categories available</p>
+              <p className="text-gray-500 dark:text-zinc-400">No categories available</p>
             )}
           </div>
         </FilterSection>
@@ -315,7 +315,7 @@ const ProductSidebar = () => {
                     onChange={() => handleFilterChange("brand", brand)}
                     className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black"
                   />
-                  <span className="text-lg text-gray-700 group-hover:text-black font-medium transition-colors">
+                  <span className="text-lg text-gray-700 dark:text-zinc-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">
                     {brand}
                   </span>
                 </label>
@@ -335,8 +335,8 @@ const ProductSidebar = () => {
                   onClick={() => handleFilterChange("size", strSize)}
                   className={`border py-2 text-xs font-medium rounded transition-colors ${
                     isSelected
-                      ? "bg-black text-white border-black shadow-md"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-black"
+                      ? "bg-black text-white border-black shadow-md dark:bg-white dark:text-black dark:border-white"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-black dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-400"
                   }`}
                 >
                   {strSize}
@@ -358,8 +358,8 @@ const ProductSidebar = () => {
                   onClick={() => handleFilterChange("color", colorValue)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium border transition-all ${
                     isSelected
-                      ? "bg-black text-white border-black shadow-md"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-black active:scale-95"
+                      ? "bg-black text-white border-black shadow-md dark:bg-white dark:text-black dark:border-white"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-black active:scale-95 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-400"
                   }`}
                 >
                   {colorStr}
@@ -371,9 +371,9 @@ const ProductSidebar = () => {
 
         <FilterSection title="Price" defaultOpen={true}>
           <div className="space-y-3">
-            <div className="flex justify-between text-sm text-gray-500">
+            <div className="flex justify-between text-sm text-gray-500 dark:text-zinc-400">
               <span>Rs. {PRICE_MIN.toLocaleString("en-IN")}</span>
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-gray-900 dark:text-zinc-100">
                 up to Rs. {maxPrice.toLocaleString("en-IN")}
               </span>
             </div>
@@ -387,10 +387,10 @@ const ProductSidebar = () => {
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               onMouseUp={() => handlePriceChange(maxPrice)}
               onTouchEnd={() => handlePriceChange(maxPrice)}
-              className="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-black"
+              className="w-full h-1.5 bg-gray-200 dark:bg-zinc-700 rounded-full appearance-none cursor-pointer accent-black dark:accent-white"
             />
 
-            <div className="flex justify-between text-xs text-gray-400">
+            <div className="flex justify-between text-xs text-gray-400 dark:text-zinc-500">
               <span>Rs. 2,000</span>
               <span>Rs. 10,000</span>
             </div>
@@ -413,7 +413,7 @@ const ProductSidebar = () => {
                     }
                     className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black cursor-pointer"
                   />
-                  <span className="text-base text-gray-700 font-medium group-hover:text-black transition-colors">
+                  <span className="text-base text-gray-700 dark:text-zinc-300 font-medium group-hover:text-black dark:group-hover:text-white transition-colors">
                     {d.label}
                   </span>
                 </div>
@@ -437,7 +437,7 @@ const ProductSidebar = () => {
                   }
                   className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black cursor-pointer"
                 />
-                <span className="text-base text-gray-700 font-medium group-hover:text-black transition-colors">
+                <span className="text-base text-gray-700 dark:text-zinc-300 font-medium group-hover:text-black dark:group-hover:text-white transition-colors">
                   In stock only
                 </span>
               </div>
@@ -453,7 +453,7 @@ const ProductSidebar = () => {
       <div className="flex-1">
         {displayProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-500">No products found</p>
+            <p className="text-gray-500 dark:text-zinc-400">No products found</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -8,7 +8,7 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
       <div className="flex flex-wrap">
         <div className="w-full lg:w-8/12 pr-4">
           <div className="space-y-4">
-            <div className="p-4 border rounded-lg shadow-xs">
+            <div className="p-4 border dark:border-zinc-800 dark:bg-zinc-900 rounded-lg shadow-xs">
               <h2 className="text-2xl font-semibold mb-2">Billing Address</h2>
               <p>
                 <strong>Building Name:</strong>
@@ -42,7 +42,7 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
                 {address?.wardNo}
               </p>
             </div>
-            <div className="p-4 border rounded-lg shadow-xs">
+            <div className="p-4 border dark:border-zinc-800 dark:bg-zinc-900 rounded-lg shadow-xs">
               <h2 className="text-2xl font-semibold mb-2">Payment Method</h2>
               <p>
                 <strong>Method: </strong>
@@ -50,7 +50,7 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
               </p>
             </div>
 
-            <div className="p-4 border rounded-lg shadow-xs mb-6">
+            <div className="p-4 border dark:border-zinc-800 dark:bg-zinc-900 rounded-lg shadow-xs mb-6">
               <h2 className="text-2xl font-semibold mb-2">Order Items</h2>
               <div className="space-y-2">
                 {cart?.map((item) => (
@@ -78,7 +78,7 @@ const OrderSummary = ({ totalPrice, address, cart, paymentMethod }) => {
         </div>
 
         <div className="w-full lg:w-4/12 mt-4 lg:mt-0">
-          <div className="border rounded-lg shadow-xs p-4 space-y-4">
+          <div className="border dark:border-zinc-800 dark:bg-zinc-900 rounded-lg shadow-xs p-4 space-y-4">
             <h2 className="text-2xl font-semibold mb-2">Order Summary</h2>
             <div className="space-y-2">
               <div className="flex justify-between">
