@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from "motion/react";
 import UserMenu from "../UserMenu";
 import SearchBar from "./SearchBar";
 import logo2 from "./logo/logo2.png";
+import ThemeToggle from "../ThemeToggle";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);

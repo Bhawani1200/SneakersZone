@@ -57,7 +57,7 @@ export function Footer() {
             <ul className="space-y-4 text-lg md:text-xl">
               <li>
                 <Link
-                  to="/men"
+                  to="/products?gender=MEN"
                   className="hover:text-blue-400 transition-colors"
                 >
                   Men's Shoes
@@ -65,7 +65,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/women"
+                  to="/products?gender=WOMEN"
                   className="hover:text-blue-400 transition-colors"
                 >
                   Women's Shoes
@@ -73,7 +73,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/kids"
+                  to="/products?gender=KIDS"
                   className="hover:text-blue-400 transition-colors"
                 >
                   Kids' Shoes
@@ -89,7 +89,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/sale"
+                  to="/category/sale"
                   className="hover:text-blue-400 transition-colors"
                 >
                   Sale
@@ -97,7 +97,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/brands"
+                  to="/category/brands"
                   className="hover:text-blue-400 transition-colors"
                 >
                   Brands
