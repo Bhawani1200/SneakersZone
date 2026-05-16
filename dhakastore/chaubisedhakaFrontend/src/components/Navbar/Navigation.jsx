@@ -21,7 +21,6 @@ import { motion, AnimatePresence } from "motion/react";
 import UserMenu from "../UserMenu";
 import SearchBar from "./SearchBar";
 import logo2 from "./logo/logo2.png";
-import ThemeToggle from "../ThemeToggle";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -186,10 +185,6 @@ const Navigation = () => {
                   <Moon className="w-6 h-6 text-blue-600" />
                 )}
               </button>
-
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-              </div>
 
               <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800 mx-1 hidden sm:block" />
 

@@ -147,6 +147,8 @@
 // export default ProductCard;
 
 import React, { useState } from "react";
+import { motion } from "motion/react";
+
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
@@ -186,7 +188,12 @@ const ProductCard = ({
   };
 
   return (
-    <div className="group flex flex-col bg-stone-50 dark:bg-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 border border-transparent dark:border-gray-700 hover:border-stone-200 dark:hover:border-gray-600">
+    <motion.div
+      whileHover={{ scale: 1.02, y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      className="group flex flex-col bg-stone-50 dark:bg-gray-800 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 border border-transparent dark:border-gray-700 hover:border-stone-200 dark:hover:border-gray-600"
+    >
       {/* Image Container */}
       <div
         onClick={() =>
@@ -291,7 +298,7 @@ const ProductCard = ({
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

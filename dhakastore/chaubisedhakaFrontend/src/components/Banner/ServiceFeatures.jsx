@@ -1,5 +1,7 @@
 import React from "react";
+import { motion } from "motion/react";
 import { ShieldCheck, Truck, Award, Headphones } from "lucide-react";
+
 
 const ServiceFeatures = () => {
   const features = [
@@ -38,12 +40,36 @@ const ServiceFeatures = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-white dark:bg-zinc-950 border-t border-b border-gray-100 dark:border-zinc-900">
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="py-16 md:py-24 bg-white dark:bg-zinc-950 border-t border-b border-gray-100 dark:border-zinc-900"
+    >
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-14">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+              },
+            },
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-14"
+        >
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
               className={`group flex flex-col items-center sm:items-start text-center sm:text-left p-6 sm:p-8 rounded-2xl border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${feature.bgClass}`}
             >
               {feature.icon}
@@ -53,11 +79,11 @@ const ServiceFeatures = () => {
               <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+
 import { Link, useLocation } from "react-router-dom";
 import LaunchCard from "../shared/LaunchCard";
 import api from "../../api/api";
@@ -83,8 +85,16 @@ const NewLaunches = () => {
   };
 
   return (
-    <section className={`w-full bg-[#e8ebe4] dark:bg-zinc-950 py-8 md:py-12 px-4 sm:px-6 lg:px-8 ${isNewArrivalsPage ? "mt-[200px] md:mt-[240px]" : ""}`}>
-      <div className="max-w-full mx-auto">
+    <section
+      className={`w-full bg-[#e8ebe4] dark:bg-zinc-950 py-8 md:py-12 px-4 sm:px-6 lg:px-8 ${isNewArrivalsPage ? "mt-[200px] md:mt-[240px]" : ""}`}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="max-w-full mx-auto"
+      >
         {/* ── Header ── */}
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
@@ -151,7 +161,7 @@ const NewLaunches = () => {
             </button>
           </Link>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

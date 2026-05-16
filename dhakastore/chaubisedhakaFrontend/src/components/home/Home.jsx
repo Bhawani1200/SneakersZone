@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { motion } from "motion/react";
+
 import Banner from "../Banner/Banner";
 import CategoryShowcase from "../Category/CategoryShowcase";
 import NewLaunches from "../Category/NewLaunches";
@@ -75,16 +77,86 @@ const Home = () => {
     <div className="w-full mx-auto">
       <Banner />
       {/* <CategoryShowcase /> */}
-      <ServiceFeatures />
-      <NewLaunches products={newLaunchesProducts} />
-      <OfferBanners />
-      <FeaturedProducts products={featuredProducts} />
-      <Offer products={offerProducts} />
-      <BrandLogosStrip />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <ServiceFeatures />
+      </motion.div>
 
-      <PromotionalBanners />
-      <BestSeller />
-      <Testimonials />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <NewLaunches products={newLaunchesProducts} />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <OfferBanners />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <FeaturedProducts products={featuredProducts} />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <Offer products={offerProducts} />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <BrandLogosStrip />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <PromotionalBanners />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <BestSeller />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <Testimonials />
+      </motion.div>
     </div>
   );
 };

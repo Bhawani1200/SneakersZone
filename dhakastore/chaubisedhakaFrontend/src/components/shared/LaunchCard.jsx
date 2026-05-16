@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { motion } from "motion/react";
+
 import { FaShoppingCart, FaStar } from "react-icons/fa";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useDispatch } from "react-redux";
@@ -79,7 +81,12 @@ const LaunchCard = ({
   const displayImage = formatImageUrl(image);
 
   return (
-    <div className="h-full bg-white dark:bg-zinc-900 rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative">
+    <motion.div
+      whileHover={{ scale: 1.02, y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, stiffness: 400, damping: 17 }}
+      className="h-full bg-white dark:bg-zinc-900 rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
+    >
       {/* New Badge */}
       <span className="absolute top-3 left-3 z-10 bg-green-600 text-white text-[10px] xl:text-xs font-semibold px-2 py-0.5 rounded-sm">
         New
@@ -235,7 +242,7 @@ const LaunchCard = ({
           {isAvailable ? "Add to Cart" : "Stock Out"}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
