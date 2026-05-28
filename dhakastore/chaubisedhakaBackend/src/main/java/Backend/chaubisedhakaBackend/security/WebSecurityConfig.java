@@ -8,6 +8,9 @@ import Backend.chaubisedhakaBackend.repositories.UserRepository;
 import Backend.chaubisedhakaBackend.security.jwt.AuthEntryPointJwt;
 import Backend.chaubisedhakaBackend.security.jwt.AuthTokenFilter;
 import Backend.chaubisedhakaBackend.security.services.UserDetailsServiceImpl;
+import Backend.chaubisedhakaBackend.model.*;
+import Backend.chaubisedhakaBackend.repositories.*;
+import org.springframework.http.HttpMethod;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -73,14 +76,23 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        auth -> auth.
-                                requestMatchers("/api/auth/**").permitAll()
+                        auth -> auth
+                                .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/admin/cloudinary/upload").permitAll()
-//                                .requestMatchers("/h2-console/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/admin/shoe-cleaner/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/seller/**").hasAnyRole("ADMIN","SELLER")
                                 .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/api/public/**", "/api/user/public/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/api/login", "/api/register").permitAll()
+                                .requestMatchers("/api/categories", "/api/products").permitAll()
+                                // Admin endpoints - require admin role
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers(
+                                        "/api/user/public/**",
+                                        "/api/public/**"
+                                ).permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
                                 .requestMatchers("/images/**").permitAll()
                                 .requestMatchers("/", "/error").permitAll()
@@ -229,3 +241,4 @@ public CommandLineRunner initData(RoleRepository roleRepository,
 }
 
 }
+

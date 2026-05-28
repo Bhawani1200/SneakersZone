@@ -187,6 +187,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+<!--        <finalName>sneakers-zone-docker</finalName>-->
 	</build>
 
 </project>
