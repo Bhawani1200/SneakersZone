@@ -84,7 +84,7 @@ const LaunchCard = ({
     <motion.div
       whileHover={{ scale: 1.02, y: -5 }}
       whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, stiffness: 400, damping: 17 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       className="h-full bg-white dark:bg-zinc-900 rounded-2xl shadow-md overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 relative"
     >
       {/* New Badge */}

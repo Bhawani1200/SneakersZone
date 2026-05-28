@@ -12,6 +12,9 @@ export const formatImageUrl = (image) => {
     return image;
   }
   
-  const baseUrl = import.meta.env.VITE_BACK_END_URL || "http://localhost:8080";
+  let baseUrl = import.meta.env.VITE_BACK_END_URL || "http://localhost:8080";
+  if (baseUrl.endsWith("/api")) {
+    baseUrl = baseUrl.slice(0, -4);
+  }
   return `${baseUrl}/images/${image}`;
 };

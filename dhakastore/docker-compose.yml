@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgresql_container
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dhakastore
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: javadeveloper12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./chaubisedhakaBackend
+    container_name: rest_crud_container
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_SCHEMA=dhakastore
+      - DB_USER=postgres
+      - DB_PASSWORD=javadeveloper12
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - FRONTEND_URL=http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: on-failure
+
+  frontend:
+    build: ./chaubisedhakaFrontend
+    container_name: react_frontend_container
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

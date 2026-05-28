@@ -22,14 +22,16 @@ import ShoeCleanerCategory from "./components/admin/shoecleaner/ShoeCleanerCateg
 import Offers from "./components/admin/offers/Offers";
 import Navigation from "./components/Navbar/Navigation";
 
-
-
 import Home from "./components/home/Home";
 import ProductDetails from "./components/products/ProductDetails";
 import NewLaunches from "./components/Category/NewLaunches";
 
 import MainLayout from "./components/layout/MainLayout";
 import DealsOfTheDay from "./components/Offer/Offer";
+
+import { FloatingWhatsApp } from "react-floating-whatsapp";
+import { color } from "framer-motion";
+import whatsappIcon from "./assets/logo/whatsapp.jpg";
 
 const MyContext = createContext();
 function App() {
@@ -91,10 +93,11 @@ function App() {
                 <Route path="offers" element={<Offers />} />
                 <Route path="sellers" element={<Sellers />} />
 
-
-
                 <Route path="shoe-cleaner" element={<ShoeCleaner />} />
-                <Route path="shoe-cleaner-category" element={<ShoeCleanerCategory />} />
+                <Route
+                  path="shoe-cleaner-category"
+                  element={<ShoeCleanerCategory />}
+                />
                 <Route path="orders" element={<Orders />} />
                 <Route path="categories" element={<Category />} />
               </Route>
@@ -102,6 +105,8 @@ function App() {
           </Routes>
         </Router>
         <Toaster position="top-center" />
+
+        {/* WhatsApp Component Removed Temporarily to fix Dead UI */}
       </MyContext.Provider>
     </React.Fragment>
   );

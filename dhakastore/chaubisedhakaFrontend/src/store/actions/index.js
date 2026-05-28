@@ -2,12 +2,12 @@ import { data } from "react-router-dom";
 import api from "../../api/api";
 import { useSelector } from "react-redux";
 
-export const fetchProducts = (queryString) => async (dispatch) => {
+export const fetchProducts = (queryString = "") => async (dispatch) => {
   try {
     dispatch({ type: "IS_FETCHING" });
-    console.log("Fetching products with query:", queryString);
-    const { data } = await api.get(`/user/public/products?${queryString}`);
-    console.log("Products API response:", data);
+    const query = queryString ? `?${queryString}` : "";
+    console.log("Fetching products with query:", query || "none");
+    const { data } = await api.get(`/user/public/products${query}`);
     dispatch({
       type: "FETCH_PRODUCTS",
       payload: data.content,

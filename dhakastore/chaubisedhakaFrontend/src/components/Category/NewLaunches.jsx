@@ -43,7 +43,6 @@ const NewLaunches = () => {
         const { data } = await api.get(
           "/user/public/products?pageNumber=0&pageSize=100&sortBy=productId&sortOrder=desc&minPrice=0&maxPrice=999999",
         );
-        console.log("New Launches raw:", data);
 
         const formattedProducts = (data.content || [])
           .filter((product) => {
@@ -62,7 +61,6 @@ const NewLaunches = () => {
             image: formatImageUrl(product.image),
           }));
 
-        console.log("New Launches formatted:", formattedProducts);
         setProducts(formattedProducts);
       } catch (error) {
         console.error("Failed to fetch new launches", error);
