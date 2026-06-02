@@ -285,6 +285,23 @@ export const authenticateLoginUser =
     }
   };
 
+export const authenticateGoogleLoginUser =
+  (credential, toast, navigate, setLoader) => async (dispatch) => {
+    try {
+      setLoader(true);
+      const { data } = await api.post("/auth/google", { credential });
+      dispatch({ type: "LOGIN_USER", payload: data });
+      localStorage.setItem("auth", JSON.stringify(data));
+      toast.success("Google Login success");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Google Authentication failed");
+    } finally {
+      setLoader(false);
+    }
+  };
+
 export const registerNewUser =
   (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
     try {

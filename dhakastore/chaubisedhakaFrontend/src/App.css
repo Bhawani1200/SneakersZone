@@ -282,3 +282,63 @@ nav .navPart2 ul li a svg{
 
 
  */
+
+
+
+ /* App.css - Add these dark mode overrides */
+
+/* Dark mode overrides for existing classes */
+.dark .headerWrapper {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.dark .headerWrapper .header .part2 .countryDrop {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+}
+
+.dark .headerWrapper .header .part2 .countryDrop .name {
+  color: #6ea8fe;
+}
+
+.dark .headerWrapper .header .part2 .countryDrop .lable {
+  color: rgba(255,255,255,0.6);
+}
+
+.dark .headerSearch {
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dark .headerSearch input {
+  color: rgba(255,255,255,0.9);
+}
+
+.dark .headerSearch input::-webkit-input-placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.dark .part3 .circle {
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #fff;
+}
+
+.dark nav .navPart2 ul li a button {
+  color: rgba(255,255,255,0.7);
+}
+
+.dark nav .navPart2 ul li a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.dark .locationModal .countryList li button {
+  color: #fff !important;
+}
+
+.dark .locationModal .countryList li button:hover {
+  background: #1a1a1a;
+}
+
+.dark .locationModal .btn {
+  color: #fff !important;
+}

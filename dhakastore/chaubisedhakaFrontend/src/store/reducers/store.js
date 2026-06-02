@@ -6,8 +6,9 @@ import { authReducer } from "./authReducer";
 import { paymentMethodReducer } from "./paymentMethodReducer";
 import { adminReducer } from "./adminReducer";
 import { orderReducer } from "./OrderReducer";
-import { sellerReducer } from "./SellerReducer";
+
 import { shoeCleanerReducer } from "./shoeCleanerReducer";
+import { sellerReducer } from "./sellerReducer";
 
 const user = localStorage.getItem("auth")
   ? JSON.parse(localStorage.getItem("auth"))

@@ -106,7 +106,43 @@ function App() {
         </Router>
         <Toaster position="top-center" />
 
-        {/* WhatsApp Component Removed Temporarily to fix Dead UI */}
+        <FloatingWhatsApp
+          phoneNumber="+977 9810357550"
+          accountName="SneakersZone"
+          avatar={whatsappIcon}
+          chatMessage="Hello! How can I help you with your shoe needs today? 👟"
+          placeHolder="Type your message..."
+          messageDelay={3000}
+          darkMode={false}
+          allowClickAway={true}
+          allowEsc={true}
+          chatboxHeight={400}
+          notification={true}
+          notificationDelay={5000}
+          notificationsound={true}
+          notificationLoop={3000}
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 9999,
+            pointerEvents: "auto",
+          }}
+          buttonStyle={{
+            backgroundColor: "#25D366",
+            color: "white",
+            pointerEvents: "auto",
+          }}
+          chatboxStyle={{
+            backgroundColor: "#00A884",
+            pointerEvents: "auto",
+          }}
+          onClick={() => console.log("Whatsapp button clicked!!!")}
+          onSubmit={(event, inputValue) =>
+            console.log("User submitted:", inputValue)
+          }
+          onClose={() => console.log("Chat box closed...")}
+        />
       </MyContext.Provider>
     </React.Fragment>
   );
