@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 public interface AuthService {
     AuthenticationResult login(LoginRequest loginRequest);
 
+    AuthenticationResult loginGoogle(String idToken);
+
 
     ResponseEntity<MessageResponse> register(@Valid SignupRequest signUpRequest);
 

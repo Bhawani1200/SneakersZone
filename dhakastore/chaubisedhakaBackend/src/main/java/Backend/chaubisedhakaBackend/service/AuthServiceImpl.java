@@ -34,6 +34,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.Optional;
+import java.util.Map;
+import org.springframework.web.client.RestTemplate;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +71,69 @@ public class AuthServiceImpl implements AuthService{
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        UserInfoResponse response = new UserInfoResponse(userDetails.getId(),
+                userDetails.getUsername(), roles, userDetails.getEmail(), jwtCookie.toString());
+
+        return new AuthenticationResult(response, jwtCookie);
+    }
+
+    @Override
+    public AuthenticationResult loginGoogle(String idToken) {
+        // 1. Fetch info from Google tokeninfo endpoint
+        String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken;
+        RestTemplate restTemplate = new RestTemplate();
+        Map googleResponse = null;
+        try {
+            googleResponse = restTemplate.getForObject(url, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error communicating with Google authentication server: " + e.getMessage());
+        }
+
+        if (googleResponse == null || googleResponse.containsKey("error_description")) {
+            throw new RuntimeException("Invalid Google Token");
+        }
+
+        String email = (String) googleResponse.get("email");
+        String name = (String) googleResponse.get("name");
+        if (name == null || name.trim().isEmpty()) {
+            name = email.split("@")[0];
+        }
+
+        // 2. Check if user already exists
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        User user;
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+        } else {
+            // Check if username is already taken, if so, append random characters or generate a unique name
+            String baseUsername = name.replaceAll("\\s+", ""); // remove spaces
+            String username = baseUsername;
+            int count = 1;
+            while (userRepository.existsByUserName(username)) {
+                username = baseUsername + count++;
+            }
+
+            // Create user if not exist
+            String tempPassword = UUID.randomUUID().toString(); // Secure random password
+            user = new User(username, email, encoder.encode(tempPassword));
+
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Default ROLE_USER is not found."));
+            Set<Role> roles = new HashSet<>();
+            roles.add(userRole);
+            user.setRoles(roles);
+            user = userRepository.save(user);
+        }
+
+        // 3. Load UserDetails manually and generate the JWT session cookie
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 

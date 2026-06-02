@@ -49,6 +49,15 @@ public class AuthController {
                 .body(result.getResponse());
     }
 
+    @PostMapping("/google")
+    public ResponseEntity<?> authenticateGoogleUser(@RequestBody Map<String, String> request) {
+        String idToken = request.get("credential");
+        AuthenticationResult result = authService.loginGoogle(idToken);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,
+                        result.getJwtCookie().toString())
+                .body(result.getResponse());
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return authService.register(signUpRequest);
