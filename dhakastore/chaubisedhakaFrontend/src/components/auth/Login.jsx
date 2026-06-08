@@ -99,7 +99,7 @@
 
 // export default Login;
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InputField from "../shared/InputField";
 import { AiOutlineEye, AiOutlineLogin } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
@@ -134,48 +134,60 @@ const Login = () => {
     dispatch(authenticateLoginUser(data, toast, reset, navigate, setLoader));
   };
 
-  const handleGoogleLoginResponse = (response) => {
-    const { credential } = response;
-    dispatch(
-      authenticateGoogleLoginUser(credential, toast, navigate, setLoader),
+  const handleGoogleButtonClick = () => {
+    const clientId =
+      import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+      "564478148906-8n9gfv4e402h2f33i7g4rjg12cda472d.apps.googleusercontent.com";
+    const redirectUri = window.location.origin + "/auth/google/callback";
+    const nonce = Math.random().toString(36).substring(2);
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: "id_token",
+      scope: "openid email profile",
+      nonce,
+      prompt: "select_account",
+    });
+
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    const popup = window.open(
+      `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+      "google-login",
+      `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`
     );
+
+    if (!popup) {
+      toast.error("Popup was blocked. Please allow popups for this site.");
+      return;
+    }
+
+    const timer = setInterval(() => {
+      try {
+        if (popup.closed) {
+          clearInterval(timer);
+          return;
+        }
+        const hash = popup.location.hash;
+        if (hash && hash.includes("id_token")) {
+          const hashParams = new URLSearchParams(hash.substring(1));
+          const idToken = hashParams.get("id_token");
+          if (idToken) {
+            clearInterval(timer);
+            popup.close();
+            dispatch(
+              authenticateGoogleLoginUser(idToken, toast, navigate, setLoader)
+            );
+          }
+        }
+      } catch (e) {
+        // Cross-origin — popup still on Google's domain, safe to ignore
+      }
+    }, 300);
   };
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-
-    script.onload = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id:
-            import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-            "564478148906-8n9gfv4e402h2f33i7g4rjg12cda472d.apps.googleusercontent.com",
-          callback: handleGoogleLoginResponse,
-        });
-
-        window.google.accounts.id.renderButton(
-          document.getElementById("google-login-button"),
-          {
-            theme: "outline",
-            size: "large",
-            text: "continue_with",
-            shape: "rectangular",
-            width: "360",
-          },
-        );
-      }
-    };
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, [dispatch]);
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex justify-center items-center text-gray-900 bg-gray-50/50 font-bodyFont py-12 px-6 sm:px-12">
@@ -192,13 +204,20 @@ const Login = () => {
             Log into your account
           </h2>
 
-          {/* Google Sign-In Integrated Button */}
-          <div className="flex justify-center items-center w-full mt-2 min-h-[46px]">
-            <div
-              id="google-login-button"
-              className="w-full flex justify-center"
-            ></div>
-          </div>
+          <button
+            type="button"
+            onClick={handleGoogleButtonClick}
+            className="flex items-center justify-center gap-3 w-full border border-gray-300 rounded-md px-4 py-2.5 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              <path fill="none" d="M0 0h48v48H0z"/>
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">Sign in with Google</span>
+          </button>
         </div>
 
         <div className="relative flex py-4 items-center">

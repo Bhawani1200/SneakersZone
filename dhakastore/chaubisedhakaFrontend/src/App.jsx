@@ -9,6 +9,7 @@ import Cart from "./components/cart/Cart";
 import PrivateRoute from "./components/PrivateRoute";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
+import GoogleCallback from "./components/auth/GoogleCallback";
 import Checkout from "./components/checkout/Checkout";
 import AdminLayout from "./components/admin/AdminLayout";
 import PaymentSuccess from "./components/checkout/PaymentSuccess";
@@ -29,9 +30,9 @@ import NewLaunches from "./components/Category/NewLaunches";
 import MainLayout from "./components/layout/MainLayout";
 import DealsOfTheDay from "./components/Offer/Offer";
 
-import { FloatingWhatsApp } from "react-floating-whatsapp";
+// import { FloatingWhatsApp } from "react-floating-whatsapp";
 import { color } from "framer-motion";
-import whatsappIcon from "./assets/logo/whatsapp.jpg";
+// import whatsappIcon from "./assets/logo/whatsapp.jpg";
 
 const MyContext = createContext();
 function App() {
@@ -84,6 +85,7 @@ function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             <Route path="/" element={<PrivateRoute publicPage />}></Route>
 
             <Route path="/" element={<PrivateRoute adminOnly />}>
@@ -106,7 +108,7 @@ function App() {
         </Router>
         <Toaster position="top-center" />
 
-        <FloatingWhatsApp
+        {/* <FloatingWhatsApp
           phoneNumber="+977 9810357550"
           accountName="SneakersZone"
           avatar={whatsappIcon}
@@ -142,7 +144,7 @@ function App() {
             console.log("User submitted:", inputValue)
           }
           onClose={() => console.log("Chat box closed...")}
-        />
+        /> */}
       </MyContext.Provider>
     </React.Fragment>
   );
