@@ -30,10 +30,6 @@ import NewLaunches from "./components/Category/NewLaunches";
 import MainLayout from "./components/layout/MainLayout";
 import DealsOfTheDay from "./components/Offer/Offer";
 
-// import { FloatingWhatsApp } from "react-floating-whatsapp";
-import { color } from "framer-motion";
-// import whatsappIcon from "./assets/logo/whatsapp.jpg";
-
 const MyContext = createContext();
 function App() {
   const [countryList, setCountryList] = useState([]);
@@ -107,44 +103,7 @@ function App() {
           </Routes>
         </Router>
         <Toaster position="top-center" />
-
-        {/* <FloatingWhatsApp
-          phoneNumber="+977 9810357550"
-          accountName="SneakersZone"
-          avatar={whatsappIcon}
-          chatMessage="Hello! How can I help you with your shoe needs today? 👟"
-          placeHolder="Type your message..."
-          messageDelay={3000}
-          darkMode={false}
-          allowClickAway={true}
-          allowEsc={true}
-          chatboxHeight={400}
-          notification={true}
-          notificationDelay={5000}
-          notificationsound={true}
-          notificationLoop={3000}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 9999,
-            pointerEvents: "auto",
-          }}
-          buttonStyle={{
-            backgroundColor: "#25D366",
-            color: "white",
-            pointerEvents: "auto",
-          }}
-          chatboxStyle={{
-            backgroundColor: "#00A884",
-            pointerEvents: "auto",
-          }}
-          onClick={() => console.log("Whatsapp button clicked!!!")}
-          onSubmit={(event, inputValue) =>
-            console.log("User submitted:", inputValue)
-          }
-          onClose={() => console.log("Chat box closed...")}
-        /> */}
+        <Whatsapp />
       </MyContext.Provider>
     </React.Fragment>
   );
