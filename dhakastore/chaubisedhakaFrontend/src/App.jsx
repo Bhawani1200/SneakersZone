@@ -29,6 +29,7 @@ import NewLaunches from "./components/Category/NewLaunches";
 
 import MainLayout from "./components/layout/MainLayout";
 import DealsOfTheDay from "./components/Offer/Offer";
+import Whatsapp from "./components/whatsapp/Whatsapp";
 
 const MyContext = createContext();
 function App() {

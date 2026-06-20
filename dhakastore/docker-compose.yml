@@ -3,13 +3,14 @@ services:
     image: postgres:16
     container_name: postgresql_container
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_DB: dhakastore
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: javadeveloper12
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./dhakastore_backup.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
     healthcheck:
@@ -24,10 +25,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=postgres
-      - DB_SCHEMA=dhakastore
-      - DB_USER=postgres
-      - DB_PASSWORD=javadeveloper12
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/dhakastore
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=javadeveloper12
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
       - FRONTEND_URL=http://localhost:5173

@@ -141,7 +141,6 @@ export default function Whatsapp() {
     <div style={styles.wrapper}>
       {open && (
         <div style={styles.chatBox}>
-          {/* Header */}
           <div style={styles.chatHeader}>
             <img src={whatsappIcon} alt="WhatsApp" style={styles.avatar} />
             <div style={styles.headerInfo}>
@@ -152,12 +151,10 @@ export default function Whatsapp() {
             </div>
           </div>
 
-          {/* Body */}
           <div style={styles.chatBody}>
             <div style={styles.bubble}>{CHAT_MESSAGE}</div>
           </div>
 
-          {/* Footer */}
           <div style={styles.chatFooter}>
             <input
               style={styles.input}
@@ -172,7 +169,6 @@ export default function Whatsapp() {
               onClick={handleSend}
               aria-label="Send message"
             >
-              {/* Send icon */}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
